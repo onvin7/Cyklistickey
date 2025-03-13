@@ -9,6 +9,13 @@ use function imagecreatefromjpeg;
 use function imagecreatefrompng;
 use function imagecreatefromgif;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Google\Cloud\TextToSpeech\V1\TextToSpeechClient;
+use Google\Cloud\TextToSpeech\V1\SynthesisInput;
+use Google\Cloud\TextToSpeech\V1\VoiceSelectionParams;
+use Google\Cloud\TextToSpeech\V1\AudioConfig;
+use Google\Cloud\TextToSpeech\V1\AudioEncoding;
+
 class ArticleAdminController
 {
     private $model;
@@ -56,7 +63,7 @@ class ArticleAdminController
 
         // Zpracování nahrání souboru
         $nahledFoto = "default.jpg";
-        $targetDir = __DIR__ . '../../../../public/uploads/thumbnails/';
+        $targetDir = __DIR__ . '/../../../web/uploads/thumbnails/';
 
         if (isset($_FILES['nahled_foto']) && $_FILES['nahled_foto']['error'] === UPLOAD_ERR_OK) {
             $uniqueName = basename($_FILES['nahled_foto']['name']);
@@ -88,7 +95,7 @@ class ArticleAdminController
             }
         }
 
-        $slug = $this->generateSlug($postData['title']);
+        $slug = $this->generateSlug($postData['nazev']);
 
         $data = [
             'nazev' => $postData['nazev'],
@@ -138,7 +145,7 @@ class ArticleAdminController
             return;
         }
 
-        $targetDir = __DIR__ . '../../../../public/uploads/thumbnails/';
+        $targetDir = __DIR__ . '/../../../web/uploads/thumbnails/';
         $nahledFoto = $postData['current_foto']; // Použijeme aktuální foto, pokud není nové
 
         // Kontrola a vytvoření složky, pokud neexistuje
@@ -268,7 +275,7 @@ class ArticleAdminController
 
     public function uploadImage()
     {
-        $uploadDir = __DIR__ . '/../../../public/uploads/articles/';
+        $uploadDir = __DIR__ . '/../../../web/uploads/articles/';
         $publicPath = '/uploads/articles/';
 
         // ✅ Kontrola složky
@@ -322,4 +329,29 @@ class ArticleAdminController
 
         return $slug;
     }
+    /*
+    function generateArticleAudio($text, $articleId)
+    {
+        $client = new TextToSpeechClient([
+            'credentials' => 'path/to/your-google-cloud-key.json'
+        ]);
+
+        $input = new SynthesisInput();
+        $input->setText($text);
+
+        $voice = new VoiceSelectionParams();
+        $voice->setLanguageCode('cs-CZ');
+        $voice->setSsmlGender(1); // 1 = MALE, 2 = FEMALE
+
+        $audioConfig = new AudioConfig();
+        $audioConfig->setAudioEncoding(AudioEncoding::MP3);
+
+        $response = $client->synthesizeSpeech($input, $voice, $audioConfig);
+        $filePath = "uploads/audio/article_" . $articleId . ".mp3";
+        file_put_contents($filePath, $response->getAudioContent());
+
+        $client->close();
+        return $filePath;
+    }
+        */
 }

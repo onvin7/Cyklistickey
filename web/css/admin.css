@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+.container-admin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-inline: auto;
+  margin-top: 150px;
+  border-radius: 25px;
+  color: white;
+  width: 50%;
+  max-width: 600px;
+  padding: 20px;
+  background-color: #171925;
+}
+
+.container-admin h1 {
+  margin-bottom: 20px;
+  font-weight: 300;
+  color: white;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.container-admin .tlacitka {
+  width: 100%;
+  display: flex;
+  gap: 15px;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.container-admin .tlacitka a {
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  background-color: #1A1C22;
+  padding: 8px;
+  border-radius: 25px;
+}
+
+@media screen and (max-width: 800px) {
+  .container-admin {
+    width: 80%;
+  }
+}
+
+.container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 75px !important;
+}
+
+.container h1 {
+    width: 90%;
+    align-self: left;
+    margin-bottom: 40px;
+    font-size: 30px;
+    font-weight: 300;
+    text-transform: uppercase;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgb(187, 187, 187);
+    color: grey;
+}
+
+.container-table {
+    width: 90%;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.container .dropdown {
+    width: 90%;
+    display: flex;
+    justify-content: end;
+    margin-bottom: 20px;
+}
+
+.container .dropdown .dropdown-menu i {
+    margin-right: 1vh;
+    color: #7b2cbf;
+}
+
+.container .dropdown .dropdown-menu {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+}
+
+.viditelnost {
+    display: flex;
+    align-items: center;
+}
+
+.dot{
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.blue {
+    background-color: #1565ee;
+    color: #1565ee;
+}
+
+.green {
+    color: #0dd73c;
+}
+
+.red {
+    color: #ff0d25;
+}
+
+table.table.table-striped.table-hover th, table.table.table-striped.table-hover td {
+    text-align: center;
+}
+
+table.table.table-striped.table-hover th#name, table.table.table-striped.table-hover th#email, table.table.table-striped.table-hover td.name, table.table.table-striped.table-hover td.email {
+    text-align: start;
+}
+
+button#toggleChart {
+    display: block;
+    margin-bottom: 30px;
+    align-self: right   ;
+}

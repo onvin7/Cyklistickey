@@ -3,7 +3,8 @@
     "description": "Projekt pro cyklistický magazín",
     "require": {
         "phpmailer/phpmailer": "^6.9",
-        "vlucas/phpdotenv": "^5.5"
+        "vlucas/phpdotenv": "^5.5",
+        "google/cloud-text-to-speech": "^2.0"
     },
     "autoload": {
         "psr-4": {

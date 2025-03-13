@@ -1,6 +1,13 @@
 <?php
 class Database
 {
+    /*
+    private $host = 'db.mp.spse-net.cz';
+    private $db_name = 'vincenon21_1';
+    private $username = 'vincenon21';
+    private $password = 'larahobujulu';
+    */
+
     private $host = 'localhost';
     private $db_name = 'cyklistickey';
     private $username = 'root';

@@ -1,0 +1,690 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: 'Fira Sans Condensed', sans-serif;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: white;
+}
+
+::-webkit-scrollbar {
+  background-color: #00000F;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #171925;
+  border-radius: 25px;
+}
+
+.clanek {
+  width: 100%;
+  color: white;
+}
+
+.clanek .hlavicka {
+  background-image: linear-gradient(rgba(0, 0, 15, 0.63), #00000F);
+  min-height: 80vh;
+  margin-top: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.clanek .hlavicka::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-position: center center;
+  background-size: cover;
+  z-index: -1;
+}
+
+.clanek .hlavicka .nadpis {
+  position: absolute;
+  bottom: 20%;
+  margin-inline: 8%;
+}
+
+.clanek .hlavicka .nadpis h1 {
+  font-weight: 300;
+  font-size: 6vh;
+  text-transform: uppercase;
+  margin-bottom: 0;
+}
+
+.clanek .hlavicka .nadpis .article-info {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: grey;
+  padding-left: 2px;
+}
+
+.clanek .hlavicka .nadpis .kategorie a {
+  color: white;
+  text-decoration: none;
+  background-color: #F1008D;
+  padding: 3px 12px;
+  border-radius: 25px;
+  text-transform: uppercase;
+  font-size: 12px;
+  border: 3px solid transparent;
+  transition: 0.2s;
+}
+
+.clanek .hlavicka .nadpis .kategorie a:hover {
+  background-color: #00000F;
+  border: 3px solid #F1008D;
+  color: #F1008D;
+  transition: 0.2s;
+}
+
+.clanek .obsah {
+  padding-top: 50px;
+  max-width: 65ch;
+  margin-inline: auto;
+  line-height: 1.5;
+  padding-inline: 10px;
+  margin-bottom: 5vh;
+}
+
+.clanek p {
+  margin-block: 20px;
+  font-weight: 300;
+  font-size: 18px;
+}
+
+.clanek a {
+  font-weight: 300;
+  color: #f1008d;
+  font-style: italic;
+  text-decoration: none;
+}
+
+.clanek a:hover {
+  color: #f87fc6;
+}
+
+.clanek h2 {
+  font-weight: 300;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  font-weight: 300;
+  color: #f1008d;
+}
+
+.clanek h3 {
+  font-weight: 300;
+  margin-top: 25px;
+  margin-bottom: 10px;
+  color: #f1008d;
+}
+
+.clanek ul, .clanek ol {
+  font-weight: 300;
+  font-size: 18px;
+  margin-left: 20px;
+  margin-block: 15px;
+}
+
+.clanek figure img {
+  max-width: 100%;
+  height: auto;
+  margin-block: 15px;
+}
+
+.clanek figcaption {
+  font-size: 14px;
+  color: grey;
+  text-align: center;
+  font-weight: 300;
+  font-style: italic;
+  margin-top: -10px;
+  margin-bottom: 15px;
+}
+
+.clanek .obsah .autor {
+  margin-block: 10px;
+  font-size: 16px;
+  color: grey;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.clanek .obsah .autor span {
+  color: #f1008d;
+  font-style: normal;
+}
+
+.clanek .obsah blockquote {
+  margin-block: 20px;
+  padding-left: 20px;
+  border-left: 5px solid #f1008d;
+  font-weight: 300;
+  color: #cccccc;
+  font-style: italic;
+  font-size: 19px;
+}
+
+.clanek .obsah .obsah-clanku {
+  display: flex;
+  flex-direction: column;
+  margin-block: 20px;
+  padding: 20px;
+  border-radius: 25px;
+  background-color: #171925;
+}
+
+.clanek .obsah .obsah-clanku ul {
+  list-style: none;
+  margin-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.clanek .obsah .obsah-clanku ul li {
+  font-weight: 300;
+}
+
+.clanek .obsah .obsah-clanku ul li a {
+  color: white;
+  text-decoration: none;
+  font-style: normal;
+}
+
+.clanek .obsah .obsah-clanku ul li a:hover {
+  color: #f1008d;
+}
+
+.clanek .obsah .obsah-clanku .cisla-kapitol {
+  color: #f1008d;
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+.clanek .obsah .vaha-300 {
+  font-weight: 300;
+}
+
+.clanek .obsah .vaha-500 {
+  font-weight: 500;
+}
+
+.clanek .obsah .vaha-700 {
+  font-weight: 700;
+}
+
+.clanek .obsah .vaha-900 {
+  font-weight: 900;
+}
+
+.clanek .obsah video {
+  width: 100%;
+  margin-block: 15px;
+}
+
+.clanek .obsah .ramecek-sedy {
+  margin-block: 20px;
+  padding: 15px;
+  border-radius: 25px;
+  background-color: #171925;
+}
+
+.clanek .obsah .ramecek-link {
+  margin-block: 20px;
+  padding: 15px;
+  border-radius: 25px;
+  background-color: #171925;
+  border: 3px solid #f1008d;
+}
+
+.clanek .obsah .ramecek-link:hover {
+  background-color: #f1008d;
+  transition: 0.2s;
+}
+
+.clanek .obsah .ramecek-link:hover p {
+  color: white;
+  transition: 0.2s;
+}
+
+.clanek .obsah .ramecek-link:hover a {
+  color: white;
+  transition: 0.2s;
+}
+
+.clanek .obsah .ramecek-link p {
+  color: #f1008d;
+  margin-block: 0;
+  transition: 0.2s;
+}
+
+.clanek .obsah .ramecek-link a {
+  color: #f1008d;
+  font-style: normal;
+  transition: 0.2s;
+}
+
+.clanek .obsah table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-block: 20px;
+}
+
+.clanek .obsah table tr th {
+  text-align: left;
+  padding: 10px;
+  font-weight: 300;
+}
+
+.clanek .obsah table tr td {
+  text-align: left;
+  padding: 10px;
+  font-weight: 300;
+}
+
+.clanek .obsah table.tabulka-barvy tr:first-child {
+  background-color: #1A1C22;
+}
+
+.clanek .obsah table.tabulka-barvy tr:nth-child(odd) {
+  background-color: #171925;
+}
+
+.clanek .obsah table.tabulka-barvy tr:nth-child(even) {
+  background-color: #1A1C22;
+}
+
+.clanek .obsah table.tabulka-ohraniceni {
+  border: 1px solid white;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.clanek .obsah table.tabulka-ohraniceni tr th {
+  border: 1px solid white;
+}
+
+.clanek .obsah table.tabulka-ohraniceni tr td {
+  border: 1px solid white;
+}
+
+@media screen and (max-width: 800px) {
+  .clanek .hlavicka .nadpis h1 {
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container-zobrazit .text {
+    font-size: 4vw;
+  }
+
+  .container-zobrazit .text h1 {
+    font-size: 1.75em;
+  }
+
+  .categories .output {
+    flex-wrap: wrap;
+  }
+
+  .categories .output .kategorie .podkategorie {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: flex-start;
+    margin-left: 5%;
+  }
+
+  .categories .output .kategorie {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .categories .output .kategorie #kategorie {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container-zobrazit .text {
+    font-size: 5.5vw;
+  }
+
+  .container-zobrazit .text h1 {
+    font-size: 1.5em;
+  }
+
+  .container-zobrazit .text h2 {
+    font-size: 1.5em;
+  }
+}
+
+.categories {
+  width: 100%;
+  align-items: left;
+}
+
+.categories .output {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.categories .output .kategorie {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.categories .output .kategorie a#kategorie,
+.categories .output .kategorie a#podkategorie {
+  margin-right: 5px;
+  color: white;
+  text-decoration: none;
+}
+
+.categories .output .kategorie a#podkategorie:nth-child(n+4) {
+  display: none;
+}
+
+.categories .output .kategorie #kategorie p {
+  display: block;
+  width: max-content;
+  padding: 0.5vh 1vh;
+  border-radius: 25px;
+  background-color: #f1008d;
+  font-size: 12px;
+  text-transform: uppercase;
+  border: 3px solid transparent;
+  transition: 0.2s;
+  margin: 0;
+}
+
+.categories .output .kategorie #kategorie p:hover {
+  border: 3px solid #f1008d;
+  background-color: white;
+  transition: 0.2s;
+  color: #f1008d;
+}
+
+.categories .output .kategorie #podkategorie p {
+  display: block;
+  width: max-content;
+  padding: 0.5vh 1vh;
+  border-radius: 25px;
+  background-color: #3eb7e7;
+  font-size: 12px;
+  text-transform: uppercase;
+  border: 3px solid transparent;
+  transition: 0.2s;
+  color: white;
+  min-width: max-content;
+  margin: 0;
+}
+
+.categories .output .kategorie .podkategorie {
+  display: flex;
+  gap: 5px;
+}
+
+.container-clanky .card {
+  background-color: white;
+  border: 0;
+}
+
+.container-clanky .card h5 {
+  color: black;
+}
+
+.container-clanky .card p {
+  display: block;
+  width: max-content;
+  padding: 0.5vh 1vh;
+  border-radius: 25px;
+  background-color: #f1008d;
+  font-size: 12px;
+  text-transform: uppercase;
+  border: 3px solid transparent;
+  transition: 0.2s;
+}
+
+.container-clanky .card p:hover {
+  border: 3px solid #f1008d;
+  background-color: white;
+  transition: 0.2s;
+  color: #f1008d;
+}
+
+.categories .output .kategorie #podkategorie p:hover {
+  border: 3px solid #3eb7e7;
+  background-color: white;
+  transition: 0.2s;
+  color: #3eb7e7;
+}
+
+.container-zobrazit {
+  background-color: white;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.prehravac {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  margin-top: 15px;
+}
+
+.container-zobrazit .text {
+  width: 70%;
+  text-align: justify;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container-zobrazit .text h1 {
+  width: 100%;
+  font-weight: 200;
+  text-align: left;
+  font-size: 39.6px;
+}
+
+.container-zobrazit .text h2 {
+  font-weight: 500;
+  font-size: 27px;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 20px;
+  color: black;
+  text-transform: uppercase;
+}
+
+.container-zobrazit .text h3 {
+  font-weight: 300;
+  font-size: 20px;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 20px;
+  color: grey;
+}
+
+.container-zobrazit .text iframe {
+  width: 60% !important;
+  max-width: none !important;
+  margin-inline: 20% !important;
+  border: none !important;
+}
+
+.twitter-tweet {
+  max-width: none !important;
+}
+
+.container-zobrazit .text .column {
+  width: 100% !important;
+  align-items: center !important;
+  justify-content: center !important;
+  display: flex !important;
+}
+
+.text img {
+  height: 600px;
+}
+
+.container-zobrazit .text .text-editor {
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  width: 80%;
+  margin-top: 50px;
+}
+
+.container-zobrazit .text .text-editor p {
+  padding: 1px;
+  overflow: hidden;
+}
+
+.container-zobrazit .text .text-editor b {
+  font-weight: 500;
+}
+
+.container-zobrazit .text .text-editor a {
+  color: #f1008d;
+  font-size: 18px;
+  transition: 0.2s;
+}
+
+.container-zobrazit .text .text-editor a:hover {
+  transition: 0.2s;
+  text-decoration: underline 1px solid;
+}
+
+.container-zobrazit .text .text-editor em {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.image-title {
+  text-align: center;
+  margin-top: 15px;
+  font-style: italic;
+  color: grey;
+  font-size: 15px;
+}
+
+.container-zobrazit .text .text-editor img {
+  width: 80%;
+  margin-inline: 10%;
+  height: auto;
+  cursor: pointer;
+  object-fit: contain;
+  max-height: 450px;
+  margin-block: 20px;
+}
+
+.container-zobrazit .foto-header {
+  width: 100%;
+  height: 500px;
+  object-fit: contain;
+  overflow: hidden;
+  background-position: 50% 0;
+  margin-bottom: 50px;
+  margin-top: -52.5px;
+}
+
+.parallax-image {
+  width: 100%;
+  object-fit: contain;
+  top: 0;
+  left: 0;
+  position: relative;
+}
+
+.container-zobrazit .foto-header img {
+  object-fit: contain;
+}
+
+#lightbox {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+#lightbox img {
+  position: absolute;
+  max-width: 90%;
+  max-height: 90%;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%, -50%);
+}
+
+#lightbox:target {
+  display: flex;
+}
+
+.text audio {
+  margin-top: 10px;
+}
+
+.text h1 {
+  text-transform: uppercase;
+}
+
+@media screen and (max-width: 770px) {
+  .container-zobrazit .text {
+    width: 90%;
+  }
+}
+
+@media screen and (max-width: 930px) {
+  .container-zobrazit .foto-header {
+    height: max-content;
+    margin-top: 8px;
+    margin-bottom: 20px;
+  }
+
+  .container-zobrazit .text iframe {
+    width: 90% !important;
+    max-width: none !important;
+    margin-inline: 5% !important;
+    border: none !important;
+  }
+}
+
+@media screen and (max-width: 1250px) {
+  .container-zobrazit .text {
+    text-align: left;
+  }
+
+  .container-zobrazit .text .text-editor {
+    width: 100%;
+    color: black;
+  }
+
+  .container-zobrazit .text .text-editor .Column {
+    padding: 0 !important;
+  }
+}

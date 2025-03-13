@@ -31,7 +31,7 @@ class User
     public function create($data)
     {
         $query = "INSERT INTO users (email, heslo, name, surname, role, profil_foto, zahlavi_foto, popis)
-              VALUES (:email, :heslo, :name, :surname, :role, :profil_foto, :zahlavi_foto, :popis)";
+                VALUES (:email, :heslo, :name, :surname, :role, :profil_foto, :zahlavi_foto, :popis)";
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':email', $data['email'], \PDO::PARAM_STR);
         $stmt->bindValue(':heslo', $data['heslo'], \PDO::PARAM_STR);
@@ -47,7 +47,7 @@ class User
     public function update($data)
     {
         $query = "UPDATE users SET email = :email, name = :name, surname = :surname, role = :role,
-              profil_foto = :profil_foto, zahlavi_foto = :zahlavi_foto, popis = :popis WHERE id = :id";
+                profil_foto = :profil_foto, zahlavi_foto = :zahlavi_foto, popis = :popis WHERE id = :id";
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':id', $data['id'], \PDO::PARAM_INT);
         $stmt->bindValue(':email', $data['email'], \PDO::PARAM_STR);
@@ -189,7 +189,6 @@ class User
         return $stmt->execute([':heslo' => $hashedPassword, ':id' => $userId]);
     }
 
-
     // Smaže použitý token
     public function deleteResetToken($token)
     {
@@ -197,5 +196,55 @@ class User
             DELETE FROM password_resets WHERE token = :token
         ");
         return $stmt->execute([':token' => $token]);
+    }
+
+    public function updateUser($id, $name, $surname, $email, $description, $profile_photo, $header_photo)
+    {
+        $query = "UPDATE users SET 
+                    name = :name, 
+                    surname = :surname, 
+                    email = :email, 
+                    popis = :description, 
+                    profil_foto = :profile_photo, 
+                    zahlavi_foto = :header_photo 
+                    WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute([
+            ':id' => $id,
+            ':name' => $name,
+            ':surname' => $surname,
+            ':email' => $email,
+            ':description' => $description,
+            ':profile_photo' => $profile_photo,
+            ':header_photo' => $header_photo
+        ]);
+    }
+
+    public function getUserSocialLinks($userId)
+    {
+        $query = "SELECT fa_class, link FROM user_social WHERE user_id = :userId";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([':userId' => $userId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function saveUserSocialLink($userId, $faClass, $link)
+    {
+        $query = "INSERT INTO user_social (user_id, fa_class, link) VALUES (:userId, :faClass, :link)
+                  ON DUPLICATE KEY UPDATE link = :link";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([
+            ':userId' => $userId,
+            ':faClass' => $faClass,
+            ':link' => $link
+        ]);
+    }
+
+    public function getAvailableSocialSites()
+    {
+        $query = "SELECT * FROM social_sites ORDER BY name ASC";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

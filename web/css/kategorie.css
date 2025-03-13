@@ -1,0 +1,320 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: 'Fira Sans Condensed', sans-serif;
+}
+
+::-webkit-scrollbar {
+  background-color: #00000F;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #171925;
+  border-radius: 25px;
+}
+
+body {
+  background: #00000F;
+}
+
+body .nadpis {
+  padding-top: 30vh;
+  padding-bottom: 15vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body .nadpis h1 {
+  font-size: 70px;
+  color: white;
+  width: 100%;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 100;
+}
+
+body .nadpis h2 {
+  font-size: 150px;
+  color: rgba(23, 25, 37, 0.54);
+  width: 100%;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 900;
+  font-style: italic;
+  position: absolute;
+  z-index: -1;
+}
+
+.container-clanky {
+  max-width: 100%;
+  display: flex;
+  flex-direction: row;
+  height: max-content;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 10vh;
+  margin-inline: 30px;
+}
+
+.container-clanky .card {
+  flex-basis: calc(33.333% - 20px); /* Adjusted for 3 cards per row, accounting for the gap */
+  display: flex;
+  overflow: hidden;
+  background: #00000F;
+  color: white;
+  height: max-content;
+  min-width: 250px; /* Ensures cards do not get too small; adjust as needed */
+}
+
+@media screen and (max-width: 930px) {
+  body .nadpis {
+    padding-top: 10vh;
+    padding-bottom: 5vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  body .nadpis h1 {
+    padding-top: 5vh;
+  }
+}
+
+@media screen and (max-width: 876px) {
+  body h1 {
+    font-size: 70px;
+    color: white;
+    padding-top: 15vh;
+    padding-bottom: 5vh;
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 100;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .container-clanky {
+    display: flex;
+    flex-direction: column;
+  }
+  .container-clanky .card {
+    flex-basis: auto; /* Allows cards to take full width in mobile view */
+    min-width: 100%; /* Makes cards full width in mobile view */
+  }
+}
+
+.container-clanky .card img {
+  width: 100%;
+  object-fit: cover;
+  display: block;
+  aspect-ratio: 16/9;
+  transition: 0.5s;
+}
+
+.container-clanky .card .card-body {
+  padding: 0;
+  padding-top: 10px;
+  height: 100%;
+}
+
+.container-clanky .card .card-body .kategorie {
+  display: flex;  
+  margin-left: -3px;
+  margin-top: 5px;
+}
+
+.container-clanky .card .card-body .kategorie a {
+  margin-right: 5px;
+  color: white;
+  text-decoration: none;
+}
+
+.container-clanky .card h5 {
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+.container-clanky .card p {
+  display: block;
+  width: max-content;
+  padding: 0.5vh 1vh;
+  border-radius: 25px;
+  background-color: #f1008d;
+  font-size: 12px;
+  text-transform: uppercase;
+  border: 3px solid transparent;
+  transition: 0.2s;
+}
+
+.container-clanky .card p:hover {
+  border: 3px solid #f1008d;
+  background-color: #00000F;
+  transition: 0.2s;
+  color: #f1008d;
+}
+
+.container-clanky .card a {
+  color: white;
+  text-decoration: none;
+}
+
+.container-kategorie {
+  display: flex;
+  flex-direction: row;
+  width: 85%;
+  margin-inline: auto;
+  justify-content: start;
+}
+
+.container-kategorie .list-kategorie {
+  margin-top: 100px;
+  width: 250px;
+  height: max-content;
+  background-color: #171925;
+  border-radius: 25px;
+  padding: 20px;
+  overflow: hidden;
+  margin-right: 25px;
+  position: sticky;
+  top: 100px;
+}
+
+.container-kategorie .list-kategorie h1 {
+  color: white;
+  font-weight: 300;
+  text-transform: uppercase;
+  font-size: 30px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.container-kategorie .list-kategorie ul {
+  list-style: none;
+  color: white;
+  margin-left: 5px;
+}
+
+.container-kategorie .list-kategorie ul li {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.container-kategorie .list-kategorie ul li a {
+  color: white;
+  text-decoration: none;
+  margin-left: 10px;
+  font-weight: 300;
+  transition: 0.2s;
+}
+
+.container-kategorie .list-kategorie ul li a:hover {
+  color: #f1008d;
+  transition: 0.2s;
+}
+
+.container-kategorie .list-kategorie ul li a.active {
+  color: #f1008d;
+}
+
+.container-kategorie .content-kategorie {
+  margin-top: 100px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: max-content;
+  overflow: hidden;
+}
+
+.container-kategorie .content-kategorie h1 {
+  color: white;
+  font-weight: 100;
+  text-transform: uppercase;
+  font-size: 50px;
+  margin-bottom: 25px;
+}
+
+.container-kategorie .content-kategorie .hlavni-clanek {
+  border-radius: 25px;
+  margin-bottom: 50px;
+  height: max-content;
+  width: 100%;
+  overflow: hidden;
+}
+
+.container-kategorie .content-kategorie .hlavni-clanek img {
+  width: 100%;
+  height: 50vh;
+  object-fit: cover;
+  display: block;
+  transition: 0.5s;
+}
+
+.container-kategorie .content-kategorie .hlavni-clanek img:hover {
+  scale: 1.05;
+  transition: 0.5s;
+}
+
+.container-kategorie .content-kategorie .hlavni-clanek .text-clanek {
+  padding: 15px;
+  background-color: #171925;
+  border-radius: 0 0 25px 25px;
+}
+
+.container-kategorie .content-kategorie .hlavni-clanek .text-clanek a {
+  text-decoration: none;
+  color: white;
+}
+
+.container-kategorie .content-kategorie .hlavni-clanek .text-clanek a h2 {
+  font-weight: 300;
+  font-size: 25px;
+  text-transform: uppercase;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.container-kategorie .content-kategorie .hlavni-clanek .text-clanek p {
+  color: grey;
+  font-weight: 300;
+  max-width: 550px;
+}
+
+.container-kategorie .content-kategorie .hlavni-clanek .text-clanek a.kategorie {
+  display: block;
+  width: max-content;
+  padding: 0.5vh 1vh;
+  border-radius: 25px;
+  background-color: #f1008d;
+  font-size: 12px;
+  text-transform: uppercase;
+  border: 3px solid transparent;
+  transition: 0.2s;
+  margin-bottom: 10px;
+}
+
+.container-kategorie .content-kategorie .hlavni-clanek .text-clanek a.kategorie:hover {
+  border: 3px solid #f1008d;
+  background-color: #171925;
+  transition: 0.2s;
+  color: #f1008d;
+}
+
+@media screen and (max-width: 1000px) {
+  .container-kategorie {
+    flex-direction: column;
+    width: 90%;
+  }
+
+  .container-kategorie .list-kategorie {
+    width: auto;
+    position: relative;
+    margin-right: 0;
+    margin-bottom: 50px;
+  }
+}
