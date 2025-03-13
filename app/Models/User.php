@@ -21,9 +21,19 @@ class User
 
     public function getById($id)
     {
-        $query = "SELECT * FROM users WHERE id = :id";
+        $query = "SELECT u.*, (SELECT COUNT(*) FROM clanky WHERE user_id = u.id AND viditelnost = 1 AND datum <= NOW()) AS views FROM users u WHERE u.id = :id";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function getByName($name, $surname)
+    {
+        $query = "SELECT u.*, (SELECT COUNT(*) FROM clanky WHERE user_id = u.id AND viditelnost = 1 AND datum <= NOW()) AS views FROM users u WHERE u.name = :name AND u.surname = :surname";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':name', $name, \PDO::PARAM_STR);
+        $stmt->bindParam(':surname', $surname, \PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
@@ -220,31 +230,51 @@ class User
         ]);
     }
 
-    public function getUserSocialLinks($userId)
+    public function getSocials($userId)
     {
-        $query = "SELECT fa_class, link FROM user_social WHERE user_id = :userId";
+        $query = "SELECT s.id as social_id, s.fa_class, s.nazev, us.link 
+                  FROM user_social us 
+                  JOIN socials s ON us.social_id = s.id 
+                  WHERE us.user_id = :userId";
         $stmt = $this->db->prepare($query);
-        $stmt->execute([':userId' => $userId]);
+        $stmt->bindParam(':userId', $userId, \PDO::PARAM_INT);
+        $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function saveUserSocialLink($userId, $faClass, $link)
+    public function deleteUserSocialLinks($userId)
     {
-        $query = "INSERT INTO user_social (user_id, fa_class, link) VALUES (:userId, :faClass, :link)
-                  ON DUPLICATE KEY UPDATE link = :link";
+        $query = "DELETE FROM user_social WHERE user_id = :userId";
         $stmt = $this->db->prepare($query);
-        $stmt->execute([
+        return $stmt->execute([':userId' => $userId]);
+    }
+
+    public function saveUserSocialLink($userId, $socialId, $link)
+    {
+        $query = "INSERT INTO user_social (user_id, social_id, link) 
+                  VALUES (:userId, :socialId, :link)";
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute([
             ':userId' => $userId,
-            ':faClass' => $faClass,
+            ':socialId' => $socialId,
             ':link' => $link
         ]);
     }
 
     public function getAvailableSocialSites()
     {
-        $query = "SELECT * FROM social_sites ORDER BY name ASC";
+        $query = "SELECT * FROM socials ORDER BY nazev ASC";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getVisiblePublishedArticlesCount($userId)
+    {
+        $query = "SELECT COUNT(*) FROM clanky WHERE user_id = :userId AND viditelnost = 1 AND datum <= NOW()";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':userId', $userId, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchColumn();
     }
 }

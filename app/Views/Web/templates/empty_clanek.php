@@ -1,5 +1,5 @@
 <div class="chybi-clanek">
-    <img src="<?php echo path3(); ?>assets/img/graphics/empty_clanek.png">
+    <img src="/assets/graphics/empty_clanek.png">
 </div>
 
 <style>

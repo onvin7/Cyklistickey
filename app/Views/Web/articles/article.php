@@ -1,7 +1,6 @@
 <?php
 
 use App\Helpers\TextHelper;
-use App\Helpers\FileHelper;
 
 ?>
 
@@ -117,7 +116,7 @@ use App\Helpers\FileHelper;
             </div>
         </div>
         <div class="odkaz">
-            <a href="/autor/<?php echo (TextHelper::generateFriendlyUrl($author['name']) . "-" . TextHelper::generateFriendlyUrl($author['surname'])); ?>/">
+            <a href="/user/<?php echo (TextHelper::generateFriendlyUrl($author['name']) . "-" . TextHelper::generateFriendlyUrl($author['surname'])); ?>/">
                 <p>Zobrazit profil</p><i class="fa-solid fa-angle-right"></i>
             </a>
         </div>

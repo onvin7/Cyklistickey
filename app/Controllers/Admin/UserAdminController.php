@@ -97,11 +97,34 @@ class UserAdminController
         $userId = $_SESSION['user_id'];
 
         $user = $this->model->getById($userId);
-        $social_links = $this->model->getUserSocialLinks($userId);
+        $social_links = $this->model->getSocials($userId);
         $available_socials = $this->model->getAvailableSocialSites();
 
         $view = '../../app/Views/Admin/users/settings.php';
         include '../../app/Views/Admin/layout/base.php';
+    }
+
+    public function saveSocialSites()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $userId = $_SESSION['user_id'];
+            
+            // First, delete all existing social links for this user
+            $this->model->deleteUserSocialLinks($userId);
+            
+            // Then save the new ones
+            if (isset($_POST['social_id']) && isset($_POST['link'])) {
+                foreach ($_POST['social_id'] as $key => $socialId) {
+                    if (!empty($socialId) && !empty($_POST['link'][$key])) {
+                        $this->model->saveUserSocialLink($userId, $socialId, $_POST['link'][$key]);
+                    }
+                }
+            }
+            
+            header('Location: /admin/settings?success=1');
+        } else {
+            header('Location: /admin/settings');
+        }
     }
 
     public function updateSettings()
@@ -239,7 +262,7 @@ class UserAdminController
 
     public function socialSites()
     {
-        $socials = $this->model->getAllSocialSites();
+        $socials = $this->model->getSocials();
         $view = '../../app/Views/Admin/users/social_sites.php';
         include '../../app/Views/Admin/layout/base.php';
     }

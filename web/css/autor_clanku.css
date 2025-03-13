@@ -269,11 +269,16 @@
     padding-right: 50px;
     border-right: 1px solid white;
     padding-block: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .container-zobrazit-user .text .stats .pocet h2 {
     font-weight: 300;
     font-size: 25px;
+    padding: 0;
+    margin: 0;
 }
 
 .container-zobrazit-user .text .stats .socky {
@@ -284,6 +289,18 @@
     font-size: 35px;
     padding-block: 15px;
     margin-bottom: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-zobrazit-user .text .stats .socky a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.container-zobrazit-user .text .stats .socky a:hover {
+  text-decoration: none;
 }
 
 .container-zobrazit-user .text .stats .socky a i {
@@ -525,3 +542,95 @@
         display: block;
     }
 }
+
+.user-articles-button {
+  text-align: center;
+  margin: 2rem 0;
+  padding: 1rem;
+}
+
+.btn-view-articles {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: #171925;
+  color: #007bff;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid #007bff;
+  text-transform: uppercase;
+}
+
+.btn-view-articles:hover {
+  background: #171925;
+  border-color: #f1008d;
+  color: #f1008d;
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+.btn-view-articles .icon {
+  font-size: 1.2rem;
+  color: #007bff;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+}
+
+.btn-view-articles:hover .icon {
+  color: #f1008d;
+}
+
+.btn-view-articles .text {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.user-articles-section {
+  text-align: center;
+  margin: 3rem 0;
+  padding: 1.5rem;
+}
+
+.user-articles-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.2rem 2.5rem;
+  background: #1a1a1a;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid #333;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-articles-link:hover {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #ffffff;
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.user-articles-icon {
+  font-size: 1.2rem;
+  color: #888;
+  transition: all 0.3s ease;
+}
+
+.user-articles-link:hover .user-articles-icon {
+  color: #ffffff;
+}
+
+.user-articles-label {
+  font-size: 1rem;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+} 
