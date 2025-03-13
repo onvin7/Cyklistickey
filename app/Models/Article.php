@@ -43,7 +43,6 @@ class Article
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-
     // Získání jednoho článku podle ID
     public function getById($id)
     {
@@ -54,7 +53,9 @@ class Article
                     FROM clanky
                     LEFT JOIN users ON clanky.user_id = users.id
                     LEFT JOIN clanky_kategorie ON clanky.id = clanky_kategorie.id_clanku
-                    WHERE clanky.id = :id";
+                    WHERE clanky.id = :id  
+                    AND clanky.viditelnost = 1 
+                    AND clanky.datum <= NOW()";
 
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
@@ -62,6 +63,104 @@ class Article
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
+    public function getByIdUser($userId)
+    {
+        $query = "SELECT DISTINCT c.id, c.nazev, c.nahled_foto, c.datum, c.url,
+                   GROUP_CONCAT(DISTINCT k.nazev_kategorie) as kategorie_nazvy,
+                   GROUP_CONCAT(DISTINCT k.url) as kategorie_urls
+            FROM clanky c
+            LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
+            LEFT JOIN kategorie k ON ck.id_kategorie = k.id
+            WHERE c.user_id = :userId
+            AND c.viditelnost = 1
+            GROUP BY c.id, c.nazev, c.nahled_foto, c.datum, c.url
+            ORDER BY c.datum DESC";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':userId', $userId, \PDO::PARAM_INT);
+        $stmt->execute();
+        $articles = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        // Pro debugování
+        error_log("Articles before processing: " . print_r($articles, true));
+
+        // Zpracování kategorií pro každý článek
+        foreach ($articles as &$article) {
+            $article['kategorie'] = [];
+            if (!empty($article['kategorie_nazvy']) && !empty($article['kategorie_urls'])) {
+                $nazvy = explode(',', $article['kategorie_nazvy']);
+                $urls = explode(',', $article['kategorie_urls']);
+                
+                for ($i = 0; $i < count($nazvy); $i++) {
+                    if (!empty($nazvy[$i]) && !empty($urls[$i])) {
+                        $article['kategorie'][] = [
+                            'nazev_kategorie' => trim($nazvy[$i]),
+                            'url' => trim($urls[$i])
+                        ];
+                    }
+                }
+            }
+            
+            // Pro debugování
+            error_log("Article after processing: " . print_r($article, true));
+            
+            // Odstraníme pomocná pole
+            unset($article['kategorie_nazvy']);
+            unset($article['kategorie_urls']);
+        }
+
+        return $articles;
+    }
+
+    public function getByUser($userId, $limit = null)
+    {
+        $query = "SELECT clanky.*, 
+                        users.name AS autor_jmeno, 
+                        users.surname AS autor_prijmeni,
+                        GROUP_CONCAT(DISTINCT kategorie.nazev_kategorie) as kategorie_nazvy,
+                        GROUP_CONCAT(DISTINCT kategorie.url) as kategorie_urls,
+                        COALESCE(views.pocet, 0) as views_count
+                    FROM clanky
+                    LEFT JOIN users ON clanky.user_id = users.id
+                    LEFT JOIN clanky_kategorie ON clanky.id = clanky_kategorie.id_clanku
+                    LEFT JOIN kategorie ON clanky_kategorie.id_kategorie = kategorie.id
+                    LEFT JOIN views_clanku views ON clanky.id = views.id_clanku
+                    WHERE clanky.user_id = :userId
+                        AND clanky.viditelnost = 1 
+                        AND clanky.datum <= NOW()
+                    GROUP BY clanky.id
+                    ORDER BY views_count DESC, clanky.datum DESC";
+
+        if ($limit !== null) {
+            $query .= " LIMIT :limit";
+        }
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':userId', $userId, \PDO::PARAM_INT);
+        if ($limit !== null) {
+            $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        $articles = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        // Převedení řetězců kategorií na pole
+        foreach ($articles as &$article) {
+            $nazvy = explode(',', $article['kategorie_nazvy'] ?? '');
+            $urls = explode(',', $article['kategorie_urls'] ?? '');
+            
+            $article['category'] = array_map(function($nazev, $url) {
+                return [
+                    'nazev_kategorie' => $nazev,
+                    'url_kategorie' => $url
+                ];
+            }, $nazvy, $urls);
+
+            unset($article['kategorie_nazvy']);
+            unset($article['kategorie_urls']);
+        }
+
+        return $articles;
+    }
 
     // Získání kategorií článku
     public function getCategories($articleId)

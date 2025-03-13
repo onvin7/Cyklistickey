@@ -32,11 +32,13 @@ if (preg_match('/^\/uploads\/(.+)$/', $uri, $matches)) {
 $routes = [
     '/' => [HomeController::class, 'index'],
     '' => [HomeController::class, 'index'],
-    '/category' => [CategoryController::class, 'listByCategory', 'slug'],
-    '/article' => [ArticleController::class, 'articleDetail', 'slug'],
+    '/category/([^/]+)' => [CategoryController::class, 'listByCategory'],
+    '/article/([^/]+)' => [ArticleController::class, 'articleDetail'],
     '/categories' => [CategoryController::class, 'index'],
     '/articles' => [ArticleController::class, 'index'],
+    '/authors' => [UserController::class, 'authors'],
     '/login' => [LoginController::class, 'showLoginForm'],
+    '/login/submit' => [LoginController::class, 'login'],
     '/logout' => [LoginController::class, 'logout'],
     '/kontakt' => [HomeController::class, 'kontakt'],
     '/race' => [HomeController::class, 'race'],
@@ -45,20 +47,23 @@ $routes = [
     '/register' => [LoginController::class, 'create'],
     '/register/submit' => [LoginController::class, 'store'],
     '/reset-password' => [LoginController::class, 'reset'],
-    '/user' => [UserController::class, 'index', 'username'],
+    '/user/([^/]+)' => [UserController::class, 'userDetail'],
+    '/user/([^/]+)/articles' => [UserController::class, 'userArticles'],
 ];
 
 $routeFound = false;
 
 foreach ($routes as $path => $route) {
-    if (preg_match('#^' . preg_quote($path, '#') . '$#', $uri, $matches)) {
+    if (preg_match('#^' . $path . '$#', $uri, $matches)) {
         $controllerClass = $route[0];
         $method = $route[1];
-        $param = $matches[2] ?? null;
+        $param = $matches[1] ?? null;
 
         $controller = new $controllerClass($db);
 
-        if ($param) {
+        if ($method === 'login') {
+            $controller->$method($_POST['email'], $_POST['password']);
+        } else if ($param) {
             $controller->$method($param);
         } else {
             $controller->$method();

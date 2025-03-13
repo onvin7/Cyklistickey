@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <!-- ✅ Výchozí SEO hodnoty (přepíší se, pokud kontroler nastaví jiné) -->
     <?php
     $defaultTitle = "Cyklistický magazín – Novinky, závody a technika";
@@ -112,6 +112,8 @@
     $links = generateLinks([
         ['url' => '/', 'text' => 'DOMŮ'],
         ['url' => '/race/', 'text' => 'RACE'],
+        ['url' => '/category/', 'text' => 'KATEGORIE'],
+        ['url' => '/authors/', 'text' => 'REDAKCE'],
         ['url' => '/kontakt/', 'text' => 'O NÁS']
     ]);
      

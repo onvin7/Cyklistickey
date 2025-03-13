@@ -3,14 +3,85 @@
 namespace App\Controllers\Web;
 
 use App\Models\User;
-
+use App\Models\Article;
 class UserController
 {
-    private $model;
+    private $userModel;
+    private $articleModel;
 
     public function __construct($db)
     {
-        $this->model = new User($db);
+        $this->userModel = new User($db);
+        $this->articleModel = new Article($db);
+    }
+
+    // Zobrazení všech článků
+    public function index()
+    {
+        $articles = $this->articleModel->getAll();
+        $css = ['main-page'];
+
+        $view = '../app/Views/Web/articles/index.php';
+        require '../app/Views/Web/layouts/base.php';
+    }
+
+    // Zobrazení jednoho článku
+    public function userDetail($username)
+    {
+        $parts = explode('-', $username);
+        $name = $parts[0];
+        $surname = $parts[1];
+
+        $user = $this->userModel->getByName($name, $surname);
+  
+        if (!$user) {
+            header("HTTP/1.0 404 Not Found"); 
+            $view = '../app/Views/Web/templates/404.php';
+            require '../app/Views/Web/layouts/base.php';
+            exit;
+        }
+
+        $socials = $this->userModel->getSocials($user['id']);
+
+        $relatedArticles = $this->articleModel->getByUser($user['id'], 3);
+
+        $css = ["main-page", "autor_clanku"];
+
+        $view = '../app/Views/Web/user/detail.php';
+        require '../app/Views/Web/layouts/base.php';
+    }
+
+    public function userArticles($username)
+    {
+        $parts = explode('-', $username);
+        $name = $parts[0];
+        $surname = $parts[1];
+
+        $user = $this->userModel->getByName($name, $surname);
+  
+        if (!$user) {
+            header("HTTP/1.0 404 Not Found"); 
+            $view = '../app/Views/Web/templates/404.php';
+            require '../app/Views/Web/layouts/base.php';
+            exit;
+        }
+
+        $articles = $this->articleModel->getByIdUser($user['id']);
+
+        $css = ["kategorie"];
+
+        $view = '../app/Views/Web/user/article.php';
+        include '../app/Views/Web/layouts/base.php';
+    }
+
+    public function authors()
+    {
+        $users = $this->userModel->getAll();
+        
+        $css = ["main-page"];
+        
+        $view = '../app/Views/Web/user/authors.php';
+        require '../app/Views/Web/layouts/base.php';
     }
 
     // Registrace uživatele

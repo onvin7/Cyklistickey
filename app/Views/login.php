@@ -9,7 +9,7 @@ $disableNavbar = true;
                     <h3>Přihlášení</h3>
                 </div>
                 <div class="card-body">
-                    <form action="/login" method="POST">
+                    <form action="/login/submit" method="POST">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" name="email" id="email" class="form-control" required>

@@ -55,11 +55,11 @@
                 <form method="POST" action="/admin/social-sites/save">
                     <?php foreach ($social_links as $social): ?>
                         <div class="d-flex mb-2 social-entry">
-                            <select class="form-select me-2" name="fa_class[]">
-                                <option value="">Vyber ikonu</option>
-                                <?php foreach ($fontawesome_icons as $icon): ?>
-                                    <option value="<?= $icon ?>" <?= $social['fa_class'] == $icon ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($icon) ?>
+                            <select class="form-select me-2" name="social_id[]">
+                                <option value="">Vyber sociální síť</option>
+                                <?php foreach ($available_socials as $site): ?>
+                                    <option value="<?= $site['id'] ?>" <?= $social['social_id'] == $site['id'] ? 'selected' : '' ?>>
+                                        <?php echo htmlspecialchars($site['nazev']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
