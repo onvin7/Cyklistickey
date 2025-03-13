@@ -1,0 +1,384 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+::-webkit-scrollbar {
+    background-color: white;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(188, 188, 188);
+    border-radius: 5px;
+}
+
+#db-connection-indicator {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 1000;
+    /* Ensure it's above other elements */
+    display: none;
+    /* Hidden by default */
+    align-items: center;
+    font-size: 0.9em;
+}
+
+#db-connection-indicator.success {
+    background-color: green;
+}
+
+#db-connection-indicator.error {
+    background-color: red;
+}
+
+#db-connection-indicator i {
+    margin-left: 5px;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+h1 {
+    width: 90%;
+    margin-left: 5px;
+    align-self: left;
+    margin-bottom: 40px;
+    font-size: 30px;
+    font-weight: 300;
+    text-transform: uppercase;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgb(187, 187, 187);
+    color: grey;
+}
+
+.inputs .prvek p {
+    margin-bottom: 5px;
+    margin-left: -10px;
+}
+
+.inputs {
+    width: 500px;
+    margin: 0 auto;
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+
+.prvek {
+    width: calc(100% - 30px);
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.inputs input[type="text"],
+input[type="email"], 
+input[type="date"],
+input[type="password"],
+input[type="file"],
+textarea {
+    width: 450px;
+    padding: 0.75rem 10px 0.75rem 10px;
+    margin-left: -10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 0.25rem;
+}
+
+input[type="datetime-local"] {
+    display: block;
+    position: relative;
+    padding: 0.75rem 3.5rem 0.75rem 0.75rem;
+    margin-left: -10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='22' viewBox='0 0 20 22'%3E%3Cg fill='none' fill-rule='evenodd' stroke='%23688EBB' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' transform='translate(1 1)'%3E%3Crect width='18' height='18' y='2' rx='2'/%3E%3Cpath d='M13 0L13 4M5 0L5 4M0 8L18 8'/%3E%3C/g%3E%3C/svg%3E") right 1rem center no-repeat;
+    cursor: pointer;
+    width: 400px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+input[type="datetime-local"]:focus {
+    outline: none;
+    border-color: #7b2cbf;
+    box-shadow: 0 0 0 0.25rem rgba(0, 120, 250, 0.1);
+}
+
+input[type="text"] {
+    width: 430px;
+    padding: 0.75rem 10px 0.75rem 10px;
+    margin-left: -10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 0.25rem;
+}
+
+::-webkit-datetime-localtime-edit-month-field:hover,
+::-webkit-datetime-localtime-edit-day-field:hover,
+::-webkit-datetime-localtime-edit-year-field:hover {
+    background: #7b2cbf;
+}
+
+::-webkit-datetime-localtime-edit-text {
+    opacity: 0;
+}
+
+::-webkit-clear-button,
+::-webkit-inner-spin-button {
+    display: none;
+}
+
+::-webkit-calendar-picker-indicator {
+    position: absolute;
+    width: 2.5rem;
+    height: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    cursor: pointer;
+    color: #7b2cbf;
+    background: #7b2cbf;
+}
+
+input[type="datetime-local"]:hover::-webkit-calendar-picker-indicator {
+    opacity: 0.05;
+}
+
+input[type="datetime-local"]:hover::-webkit-calendar-picker-indicator:hover {
+    opacity: 0.15;
+}
+
+.tag-input-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+}
+
+.custom-select {
+    cursor: pointer;
+    position: relative;
+}
+
+.custom-select span {
+    width: 430px;
+    align-self: center;
+    padding: 10px;
+    padding: 0.75rem 10px 0.75rem 10px;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    margin-left: -10px;
+    border-radius: 5px;
+}
+
+.custom-select span i {
+    color: #7b2cbf;
+}
+
+.dropdown-content {
+    transition: visibility 0.3s, opacity 0.3s ease;
+    display: none;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    width: max-content;
+    box-shadow:
+        0px 2.5px 2.2px rgba(0, 0, 0, 0.02),
+        0px 5.9px 5.3px rgba(0, 0, 0, 0.028),
+        0px 11.1px 10px rgba(0, 0, 0, 0.035),
+        0px 19.9px 17.9px rgba(0, 0, 0, 0.042),
+        0px 37.2px 33.4px rgba(0, 0, 0, 0.05),
+        0px 89px 80px rgba(0, 0, 0, 0.07);
+    z-index: 1;
+    padding-right: 284px;
+    margin-left: -10px;
+    height: 400px;
+    overflow-y: auto;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/* Style the list to look like the provided image */
+.custom-select ul {
+    list-style: none;
+    padding: 0;
+}
+
+.custom-select li {
+    padding-left: 20px;
+}
+
+.delete-btn {
+    cursor: pointer;
+}
+
+.custom-select .show {
+    display: block;
+    /* or whatever display type you need */
+}
+
+/*nahravani obrazku*/
+
+.custom-select,
+.file-upload {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.file-upload .file-upload-select {
+    display: block;
+    color: black;
+    cursor: pointer;
+    text-align: left;
+    background: white;
+    overflow: hidden;
+    position: relative;
+    border-radius: 5px;
+    width: 470px;
+    margin-left: -10px;
+    box-sizing: border-box;
+}
+
+.file-upload .file-upload-select .file-select-button {
+    background: #7b2cbf;
+    color: white;
+    padding: 10px;
+    display: inline-block;
+}
+
+.file-upload .file-upload-select .file-select-name {
+    display: inline-block;
+    padding: 10px;
+}
+
+.file-upload .file-upload-select:hover .file-select-button {
+    background: #7b2cbf;
+    color: #ffffff;
+    transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -webkit-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+}
+
+.file-upload .file-upload-select input[type="file"] {
+    display: none;
+}
+
+#image-preview {
+    width: 470px;
+    margin-left: -10px;
+    margin-top: -5px;
+    height: auto;
+}
+
+.odeslat {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.button-odeslat {
+    margin-left: -20px;
+    width: 470px;
+    margin-top: 30px;
+    cursor: pointer;
+    padding: 15px 10px;
+    border: none;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #7b2cbf;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s;
+}
+
+.button-odeslat:hover {
+    background-color: #6a239c;
+}
+
+.button-odeslat:active {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/*-avatar-*/
+
+.avatar-upload {
+    position: relative;
+    max-width: 205px;
+    margin: 50px auto;
+}
+
+.avatar-upload .avatar-edit {
+    position: absolute;
+    right: 12px;
+    z-index: 1;
+    top: 10px;
+}
+
+.avatar-upload .avatar-edit input {
+    display: none;
+}
+
+.avatar-upload .avatar-edit input+label {
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 0;
+    border-radius: 100%;
+    background: #FFFFFF;
+    border: 1px solid transparent;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    font-weight: normal;
+    transition: all 0.2s ease-in-out;
+}
+
+.avatar-upload .avatar-edit input+label:hover {
+    background: #f1f1f1;
+    border-color: #d6d6d6;
+}
+
+.avatar-upload .avatar-edit input+label:after {
+    content: "\f4ff";
+    font-family: 'FontAwesome';
+    color: #757575;
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    margin: auto;
+}
+
+.avatar-upload .avatar-preview {
+    width: 192px;
+    height: 192px;
+    position: relative;
+    border-radius: 100%;
+    border: 6px solid #F8F8F8;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-upload .avatar-preview>div {
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}

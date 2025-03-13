@@ -194,7 +194,7 @@ class Article
 
         // Vložení dat do databáze
         $query = "INSERT INTO clanky (nazev, id_kategorie, datum, viditelnost, nahled_foto, obsah, autor)
-                  VALUES (:title, :category, :publishDate, :isPublic, :thumbnail, :content, :showAuthor)";
+                    VALUES (:title, :category, :publishDate, :isPublic, :thumbnail, :content, :showAuthor)";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':category', $category);
@@ -212,26 +212,113 @@ class Article
         }
     }
 
-    public function getLatestArticles($limit)
+    public function getNewestArticle()
     {
-        $query = "SELECT id, nazev, nahled_foto, datum , url
-                  FROM clanky 
-                  WHERE viditelnost = 1 
-                  ORDER BY datum DESC 
-                  LIMIT :limit";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt = $this->db->prepare("
+            SELECT c.*, GROUP_CONCAT(k.nazev_kategorie SEPARATOR ', ') AS kategorie
+            FROM clanky c
+            LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
+            LEFT JOIN kategorie k ON ck.id_kategorie = k.id
+            WHERE c.viditelnost = 1 AND c.datum <= NOW()
+            GROUP BY c.id
+            ORDER BY c.datum DESC LIMIT 1
+        ");
+        $stmt->execute();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    // Další 3 články s kategoriemi
+    public function getLatestArticles($limit, $offset)
+    {
+        $stmt = $this->db->prepare("
+            SELECT c.*, GROUP_CONCAT(k.nazev_kategorie SEPARATOR ', ') AS kategorie
+            FROM clanky c
+            LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
+            LEFT JOIN kategorie k ON ck.id_kategorie = k.id
+            WHERE c.viditelnost = 1 AND c.datum <= NOW()
+            GROUP BY c.id
+            ORDER BY c.datum DESC
+            LIMIT :offset, :limit
+        ");
+        $stmt->bindValue(':offset', (int)$offset, \PDO::PARAM_INT);
+        $stmt->bindValue(':limit', (int)$limit, \PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    public function getCategoriesWithArticlesSorted()
+    {
+        $stmt = $this->db->query("
+            SELECT k.id, k.nazev_kategorie, k.url, MAX(c.datum) as posledni_clanek
+            FROM kategorie k
+            LEFT JOIN clanky_kategorie ck ON k.id = ck.id_kategorie
+            LEFT JOIN clanky c ON ck.id_clanku = c.id
+            WHERE c.viditelnost = 1 AND c.datum <= NOW()
+            GROUP BY k.id
+            ORDER BY posledni_clanek DESC
+        ");
+
+        $categories = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+        foreach ($categories as &$category) {
+            $articlesStmt = $this->db->prepare("
+                SELECT c.*
+                FROM clanky c
+                LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
+                WHERE ck.id_kategorie = :id AND c.viditelnost = 1 AND c.datum <= NOW()
+                ORDER BY c.datum DESC
+                LIMIT 3
+            ");
+            $articlesStmt->execute(['id' => $category['id']]);
+            $category['articles'] = $articlesStmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        }
+
+        return $categories;
+    }
+    
+
     public function getByUrl($url)
     {
-        $query = "SELECT * FROM clanky WHERE url = :url AND viditelnost = 1";
+        $query = "SELECT c.*, GROUP_CONCAT(k.nazev_kategorie) as kategorie_nazvy, 
+                         GROUP_CONCAT(k.id) as kategorie_ids,
+                         GROUP_CONCAT(k.url) as kategorie_urls
+                  FROM clanky c 
+                  LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
+                  LEFT JOIN kategorie k ON ck.id_kategorie = k.id
+                  WHERE c.url = :url 
+                  AND c.viditelnost = 1 
+                  AND c.datum <= NOW()
+                  GROUP BY c.id";
+
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':url', $url, \PDO::PARAM_STR);
         $stmt->execute();
-        return $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+        $article = $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+        if ($article) {
+            // Převedení řetězců kategorií na pole
+            $article['kategorie_nazvy'] = $article['kategorie_nazvy'] ? explode(',', $article['kategorie_nazvy']) : [];
+            $article['kategorie_ids'] = $article['kategorie_ids'] ? explode(',', $article['kategorie_ids']) : [];
+            $article['kategorie_urls'] = $article['kategorie_urls'] ? explode(',', $article['kategorie_urls']) : [];
+            
+            // Vytvoření pole kategorií pro snadnější použití ve view
+            $article['kategorie'] = [];
+            for ($i = 0; $i < count($article['kategorie_ids']); $i++) {
+                $article['kategorie'][] = [
+                    'id' => $article['kategorie_ids'][$i],
+                    'nazev_kategorie' => $article['kategorie_nazvy'][$i],
+                    'url' => $article['kategorie_urls'][$i]
+                ];
+            }
+            
+            // Odstranění pomocných polí
+            unset($article['kategorie_nazvy']);
+            unset($article['kategorie_ids']);
+            unset($article['kategorie_urls']);
+        }
+        
+        return $article;
     }
 
     public function getAllWithSortingAndFiltering($sortBy, $order, $filter)
@@ -241,15 +328,15 @@ class Article
         $order = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
 
         $query = "SELECT clanky.*, 
-                     users.name AS autor_jmeno, 
-                     users.surname AS autor_prijmeni, 
-                     SUM(views_clanku.pocet) AS pocet_zobrazeni 
-              FROM clanky
-              LEFT JOIN users ON clanky.user_id = users.id
-              LEFT JOIN views_clanku ON clanky.id = views_clanku.id_clanku
-              WHERE clanky.nazev LIKE :filter
-              GROUP BY clanky.id, users.name, users.surname
-              ORDER BY $sortBy $order";
+                    users.name AS autor_jmeno, 
+                    users.surname AS autor_prijmeni, 
+                    SUM(views_clanku.pocet) AS pocet_zobrazeni 
+            FROM clanky
+            LEFT JOIN users ON clanky.user_id = users.id
+            LEFT JOIN views_clanku ON clanky.id = views_clanku.id_clanku
+            WHERE clanky.nazev LIKE :filter
+            GROUP BY clanky.id, users.name, users.surname
+            ORDER BY $sortBy $order";
 
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':filter', '%' . $filter . '%', \PDO::PARAM_STR);
@@ -269,5 +356,68 @@ class Article
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchColumn() > 0;
+    }
+
+    public function saveArticleAudio($articleId, $audioPath)
+    {
+        $query = "UPDATE clanky SET audio = :audio_path WHERE id = :article_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([
+            ':audio_path' => $audioPath,
+            ':article_id' => $articleId
+        ]);
+    }
+
+    public function getRelatedArticles($articleId, $limit = 3)
+    {
+        // Nejdřív získáme všechny kategorie aktuálního článku
+        $query = "
+            SELECT DISTINCT c.id, c.nazev, c.nahled_foto, c.datum, c.url,
+                   GROUP_CONCAT(k.nazev_kategorie) as kategorie_nazvy,
+                   GROUP_CONCAT(k.url) as kategorie_urls
+            FROM clanky c
+            INNER JOIN clanky_kategorie ck1 ON c.id = ck1.id_clanku
+            LEFT JOIN clanky_kategorie ck2 ON c.id = ck2.id_clanku
+            LEFT JOIN kategorie k ON ck2.id_kategorie = k.id
+            WHERE ck1.id_kategorie IN (
+                SELECT id_kategorie 
+                FROM clanky_kategorie 
+                WHERE id_clanku = :articleId
+            )
+            AND c.id != :articleId
+            AND c.viditelnost = 1 
+            AND c.datum <= NOW()
+            GROUP BY c.id
+            ORDER BY c.datum DESC
+            LIMIT 10";  // Nejdřív vybereme 10 nejnovějších
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':articleId', $articleId, \PDO::PARAM_INT);
+        $stmt->execute();
+        $articles = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        // Zpracování kategorií pro každý článek
+        foreach ($articles as &$article) {
+            $article['kategorie'] = [];
+            if ($article['kategorie_nazvy'] && $article['kategorie_urls']) {
+                $nazvy = explode(',', $article['kategorie_nazvy']);
+                $urls = explode(',', $article['kategorie_urls']);
+                
+                for ($i = 0; $i < count($nazvy); $i++) {
+                    $article['kategorie'][] = [
+                        'nazev_kategorie' => $nazvy[$i],
+                        'url' => $urls[$i]
+                    ];
+                }
+            }
+            
+            // Odstraníme pomocná pole
+            unset($article['kategorie_nazvy']);
+            unset($article['kategorie_urls']);
+        }
+
+        // Náhodně vybereme 3 články z těch 10
+        shuffle($articles);
+        return array_slice($articles, 0, $limit);
     }
 }

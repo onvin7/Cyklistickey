@@ -4,11 +4,6 @@ namespace App\Controllers;
 
 use App\Models\User;
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require_once __DIR__ . '/../../vendor/autoload.php';
-
 class LoginController
 {
     private $model;
@@ -48,6 +43,8 @@ class LoginController
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['email'] = $user['email'];
+        $_SESSION['profil_foto'] = $user['profil_foto'];
+
 
         echo "<script>window.location.href='/admin';</script>";
         exit();

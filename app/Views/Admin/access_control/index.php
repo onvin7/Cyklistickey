@@ -8,8 +8,8 @@
             <thead class="table-dark text-center">
                 <tr>
                     <th>Stránka</th>
-                    <th>Role 1</th>
-                    <th>Role 2</th>
+                    <th>Redaktor</th>
+                    <th>Editor</th>
                 </tr>
             </thead>
             <tbody>

@@ -1,0 +1,238 @@
+<?php
+
+use App\Helpers\TextHelper;
+use App\Helpers\FileHelper;
+
+?>
+
+<div class="container-zobrazit">
+
+    <div id="lightbox" onclick="this.style.display='none'">
+        <img loading="lazy" src="#" id="lightbox-img" alt="Fullscreen image">
+    </div>
+
+    <div class="foto-header">
+        <img loading="lazy" class='parallax-image' width='100%' src='/uploads/thumbnails/velke/<?php echo !empty($article['nahled_foto']) ? $article['nahled_foto'] : 'noimage.png'; ?>' alt='<?php echo htmlspecialchars($article["nazev"], ENT_QUOTES); ?>'>
+    </div>
+
+    <div class="text">
+        <div class="categories">
+            <div class="output">
+                <?php
+                foreach ($article['kategorie'] as $kategorie) {
+                ?>
+                    <div class='kategorie'>
+                        <a id='kategorie' href='/category/<?php echo $kategorie['url']; ?>/'>
+                            <p><?php echo htmlspecialchars($kategorie['nazev_kategorie']); ?></p>
+                        </a>
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+
+        <h1><?php echo htmlspecialchars($article["nazev"], ENT_QUOTES); ?></h1>
+        <h3><?php echo htmlspecialchars($article["datum"], ENT_QUOTES); ?></h3>
+        <?php
+        if (!empty($audioFiles)) : ?>
+            <?php foreach ($audioFiles as $audioFileName) : ?>
+                <?php if ($audioFileName !== 'default.mp3') : ?>
+                    <div class="prehravac">
+                        <audio controls>
+                            <source src='uploads/audio/clanek_<?php echo $article['id']; ?>.mp3' type='audio/mpeg'>
+                            Váš prohlížeč nepodporuje prvek audio.
+                        </audio>
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
+
+        <div class="text-editor">
+            <?php
+
+
+            if (isset($article['obsah'])) {
+                echo $article['obsah'];
+            } else {
+                include $emptyArticlePath;
+            }
+            ?>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        var parallax = -0.3;
+        var $parallaxImages = $(".parallax-image");
+        var original_offsets = $parallaxImages.map(function() {
+            return $(this).offset().top;
+        });
+
+        function updateParallax() {
+            if ($(window).width() > 930) {
+                var dy = $(window).scrollTop();
+                $parallaxImages.each(function(i, el) {
+                    var original_offset = original_offsets[i];
+                    $(el).css("top", (original_offset + dy * parallax) + "px");
+                });
+            } else {
+                $parallaxImages.each(function(i, el) {
+                    $(el).css("top", original_offsets[i] + "px");
+                });
+            }
+        }
+
+        $(window).scroll(updateParallax);
+        $(window).resize(updateParallax).trigger('resize');
+    });
+
+    $(document).ready(function() {
+        $('.text').on('click', 'img', function() {
+            var src = $(this).attr('src');
+            $('#lightbox-img').attr('src', src);
+            $('#lightbox').show();
+        });
+
+        $('#lightbox-img').on('click', function(e) {
+            $('#lightbox').hide();
+            e.stopPropagation();
+        });
+    });
+</script>
+
+
+<div class="container-autor">
+    <div class="text">
+        <div class="image">
+            <img loading="lazy" src="/uploads/users/thumbnails/<?php echo !empty($author['profil_foto']) ? $author['profil_foto'] : 'noimage.png'; ?>">
+        </div>
+        <div class="container-popis">
+            <div class="popis">
+                <div>
+                    <h5><?php echo htmlspecialchars($author["name"], ENT_QUOTES); ?>&nbsp;<?php echo htmlspecialchars($author["surname"], ENT_QUOTES); ?>
+                    </h5>
+                    <h6><a href="mailto:<?php echo htmlspecialchars($author["email"], ENT_QUOTES); ?>"><?php echo htmlspecialchars($author["email"], ENT_QUOTES); ?></a>
+                    </h6>
+                </div>
+                <p><?php echo TextHelper::truncate($author['popis'], 220); ?></p>
+            </div>
+        </div>
+        <div class="odkaz">
+            <a href="/autor/<?php echo (TextHelper::generateFriendlyUrl($author['name']) . "-" . TextHelper::generateFriendlyUrl($author['surname'])); ?>/">
+                <p>Zobrazit profil</p><i class="fa-solid fa-angle-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container-autor-mobile">
+    <div class="text">
+        <div class="fotka-text">
+            <div>
+                <div class="img" style="background-image: url('/uploads/users/thumbnails/<?php echo !empty($author["profil_foto"]) ? $author["profil_foto"] : 'noimage.png'; ?>')">
+                </div>
+            </div>
+            <div class="container-popis">
+                <div class="popis">
+                    <div>
+                        <h5><?php echo htmlspecialchars($author["name"], ENT_QUOTES); ?><br><?php echo htmlspecialchars($author["surname"], ENT_QUOTES); ?>
+                        </h5>
+                        <h6><a href="mailto:<?php echo htmlspecialchars($author["email"], ENT_QUOTES); ?>"><?php echo htmlspecialchars($author["email"], ENT_QUOTES); ?></a>
+                        </h6>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <p><?php echo TextHelper::truncate($author['popis'], 220); ?></p>
+        <div class="odkaz">
+            <a href="/autor/<?php echo (TextHelper::generateFriendlyUrl($author['name']) . "-" . TextHelper::generateFriendlyUrl($author['surname'])); ?>/">
+                <p>Zobrazit profil</p><i class="fa-solid fa-angle-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-clanky">
+    <?php foreach ($relatedArticles as $result): ?>
+        <a href="/article/<?php echo ($result['url']); ?>/">
+            <div class="card">
+                <img loading="lazy" src="/uploads/thumbnails/male/<?php echo !empty($result["nahled_foto"]) ? htmlspecialchars($result["nahled_foto"]) : 'noimage.png'; ?>" alt="<?php echo htmlspecialchars($result["nazev"]); ?>">
+                <div class="card-body">
+                    <div class="kategorie">
+                        <?php foreach ($result['kategorie'] as $kategorie): ?>
+                            <a href="/category/<?php echo htmlspecialchars($kategorie["url"]); ?>/">
+                                <p><?php echo htmlspecialchars($kategorie["nazev_kategorie"]); ?></p>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                    <a href="/articles/<?php echo $result['url']; ?>/">
+                        <h5><?php echo htmlspecialchars($result["nazev"]); ?></h5>
+                    </a>
+                </div>
+            </div>
+        </a>
+    <?php endforeach; ?>
+</div>
+
+<script>
+    const bannerFiles = [
+        'banner1.jpg',
+        'banner2.jpg',
+        'banner3.jpg',
+        'banner4.jpg',
+        'banner5.jpg',
+        'banner6.jpg',
+        'banner7.jpg'
+    ];
+
+    function createRandomBanner() {
+        const randomBannerName = bannerFiles[Math.floor(Math.random() * bannerFiles.length)];
+        const bannerImg = document.createElement('div');
+        bannerImg.style.width = "100%";
+        bannerImg.style.height = "15vh";
+        const imgPath = "https://cyklistickey.cz/assets/img/banner/" + randomBannerName;
+        bannerImg.style.backgroundImage = `url('${imgPath}')`;
+        bannerImg.style.backgroundSize = 'contain';
+        bannerImg.style.backgroundRepeat = "no-repeat";
+        bannerImg.style.backgroundPosition = 'center';
+        bannerImg.style.cursor = "pointer";
+        bannerImg.style.marginTop = "5vh";
+        bannerImg.style.marginBottom = "5vh";
+        const sponsorHref = document.createElement('a');
+        sponsorHref.href = "https://www.cycli.cz/";
+        sponsorHref.target = "_blank";
+        sponsorHref.classList = "ad-banner"
+        sponsorHref.appendChild(bannerImg);
+        return sponsorHref;
+    }
+
+    function addBanners() {
+        const textEditorDiv = document.querySelector('div.text-editor');
+        if (textEditorDiv) {
+            let secondParagraphIndex = findNthParagraph(textEditorDiv.children);
+            textEditorDiv.insertBefore(createRandomBanner(), textEditorDiv.children[secondParagraphIndex]);
+            textEditorDiv.append(createRandomBanner())
+        }
+    }
+
+    function findNthParagraph(children, n = 2) {
+        let paragraphCount = 0;
+        if (children[0].textContent.toLowerCase()[0] != "<") {
+            paragraphCount++;
+        }
+        for (let i = 0; i < children.length; i++) {
+            if (["p", "div"].includes(children[i].tagName.toLowerCase())) {
+                if (children[i].innerHtml != "" || !children[i].innerHtml.contains("<br>")) {
+                    paragraphCount++;
+                }
+                if (paragraphCount >= n && i > 0 && !children[i - 1].tagName.toLowerCase().includes("h")) {
+                    return i;
+                }
+            }
+        }
+        return null;
+    }
+    addBanners();
+</script>

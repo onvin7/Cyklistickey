@@ -1,7 +1,8 @@
 <div class="container mt-4">
     <h1 class="mb-4 text-center">Správa uživatelů</h1>
 
-    <div class="row mb-4 align-items-center justify-content-end">
+    <div class="d-flex flex-row mb-4 flex-flow justify-content-between">
+        <div></div>
         <div class="col-md-6">
             <form action="/admin/users" method="GET">
                 <div class="input-group">

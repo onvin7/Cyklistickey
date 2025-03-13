@@ -1,0 +1,26 @@
+article {
+    color: white;
+    padding-inline: 5%;
+    font-weight: 200;
+    padding-top: 200px;
+    text-align: justify;
+}
+
+article h1 {
+    font-weight: 200;
+}
+
+article h2 {
+    font-weight: 200;
+}
+
+article a:hover {
+    color: #f1008d;
+    text-decoration: none;
+}
+
+@media screen and (max-width: 930px) {
+    article {
+        padding-top: 100px;
+    }
+}

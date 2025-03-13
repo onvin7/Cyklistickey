@@ -98,16 +98,53 @@ class Category
     public function getArticlesByCategory($categoryId)
     {
         $query = "
-            SELECT clanky.id, clanky.nazev, clanky.nahled_foto, clanky.datum, clanky.url
-            FROM clanky
-            INNER JOIN clanky_kategorie ON clanky_kategorie.id_clanku = clanky.id
-            WHERE clanky_kategorie.id_kategorie = :categoryId AND clanky.viditelnost = 1
-            ORDER BY clanky.datum DESC
+            SELECT DISTINCT c.id, c.nazev, c.nahled_foto, c.datum, c.url,
+                   GROUP_CONCAT(DISTINCT k.nazev_kategorie) as kategorie_nazvy,
+                   GROUP_CONCAT(DISTINCT k.url) as kategorie_urls
+            FROM clanky c
+            INNER JOIN clanky_kategorie ck1 ON c.id = ck1.id_clanku
+            LEFT JOIN clanky_kategorie ck2 ON c.id = ck2.id_clanku
+            LEFT JOIN kategorie k ON ck2.id_kategorie = k.id
+            WHERE ck1.id_kategorie = :categoryId 
+            AND c.viditelnost = 1
+            GROUP BY c.id, c.nazev, c.nahled_foto, c.datum, c.url
+            ORDER BY c.datum DESC
         ";
+        
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':categoryId', $categoryId, \PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $articles = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        // Pro debugování
+        error_log("Articles before processing: " . print_r($articles, true));
+
+        // Zpracování kategorií pro každý článek
+        foreach ($articles as &$article) {
+            $article['kategorie'] = [];
+            if (!empty($article['kategorie_nazvy']) && !empty($article['kategorie_urls'])) {
+                $nazvy = explode(',', $article['kategorie_nazvy']);
+                $urls = explode(',', $article['kategorie_urls']);
+                
+                for ($i = 0; $i < count($nazvy); $i++) {
+                    if (!empty($nazvy[$i]) && !empty($urls[$i])) {
+                        $article['kategorie'][] = [
+                            'nazev_kategorie' => trim($nazvy[$i]),
+                            'url' => trim($urls[$i])
+                        ];
+                    }
+                }
+            }
+            
+            // Pro debugování
+            error_log("Article after processing: " . print_r($article, true));
+            
+            // Odstraníme pomocná pole
+            unset($article['kategorie_nazvy']);
+            unset($article['kategorie_urls']);
+        }
+
+        return $articles;
     }
 
 
