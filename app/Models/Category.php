@@ -13,23 +13,19 @@ class Category
 
     public function getAll($limit = null)
     {
-        $query = "
-            SELECT kategorie.id, kategorie.nazev_kategorie, kategorie.url, COUNT(clanky_kategorie.id_clanku) AS pocet_clanku
+        $query = "SELECT kategorie.id, kategorie.nazev_kategorie, kategorie.url, COUNT(clanky_kategorie.id_clanku) AS pocet_clanku
             FROM kategorie
             LEFT JOIN clanky_kategorie ON clanky_kategorie.id_kategorie = kategorie.id
             LEFT JOIN clanky ON clanky.id = clanky_kategorie.id_clanku AND clanky.viditelnost = 1
             GROUP BY kategorie.id, kategorie.nazev_kategorie, kategorie.url
-            ORDER BY pocet_clanku DESC
-        ";
+            ORDER BY pocet_clanku DESC";
 
-        // Pokud je nastaven limit, přidáme jej do dotazu
         if ($limit !== null) {
             $query .= " LIMIT :limit";
         }
 
         $stmt = $this->db->prepare($query);
 
-        // Pokud je nastaven limit, přiřadíme jeho hodnotu
         if ($limit !== null) {
             $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
         }

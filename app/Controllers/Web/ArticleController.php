@@ -22,8 +22,8 @@ class ArticleController
     // Zobrazení všech článků
     public function index()
     {
-        $articles = $this->articleModel->getAll();
-        $css = ['main-page'];
+        $articles = $this->articleModel->getAllWithAuthors();
+        $css = ["main-page", "kategorie"];
 
         $view = '../app/Views/Web/articles/index.php';
         require '../app/Views/Web/layouts/base.php';

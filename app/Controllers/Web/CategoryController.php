@@ -20,6 +20,8 @@ class CategoryController
     {
         $categories = $this->categoryModel->getAll();
 
+        $css = ["main-page", "kategorie"];
+
         $view = '../app/Views/Web/category/index.php';
         include '../app/Views/Web/layouts/base.php';
     }
