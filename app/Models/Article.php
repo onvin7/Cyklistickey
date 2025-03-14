@@ -469,9 +469,7 @@ class Article
 
     public function getRelatedArticles($articleId, $limit = 3)
     {
-        // Nejdřív získáme všechny kategorie aktuálního článku
-        $query = "
-            SELECT DISTINCT c.id, c.nazev, c.nahled_foto, c.datum, c.url,
+        $query = "SELECT DISTINCT c.id, c.nazev, c.nahled_foto, c.datum, c.url,
                    GROUP_CONCAT(k.nazev_kategorie) as kategorie_nazvy,
                    GROUP_CONCAT(k.url) as kategorie_urls
             FROM clanky c
@@ -518,5 +516,20 @@ class Article
         // Náhodně vybereme 3 články z těch 10
         shuffle($articles);
         return array_slice($articles, 0, $limit);
+    }
+
+    public function getAllWithAuthors()
+    {
+        $sql = "SELECT c.*, u.name as author_name, u.surname as author_surname 
+                FROM clanky c 
+                LEFT JOIN users u ON c.user_id = u.id 
+                WHERE c.viditelnost = 1
+                AND c.datum <= NOW()
+                ORDER BY c.datum DESC";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        
+        return $stmt->fetchAll();
     }
 }

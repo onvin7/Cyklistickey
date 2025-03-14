@@ -1,359 +1,717 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
-* {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-family: 'Fira Sans Condensed', sans-serif;
-}
-
-body {
-    background-color: #00000F;
-}
-
-::-webkit-scrollbar {
-    background-color: #00000F;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: #171925;
-    border-radius: 25px;
-}
-
-.container-race {
-    background: #00000f;
-    padding-top: 150px;
-    padding-inline: 5%;
-}
-
-.pink {
-    color: #f1008d;
-}
-
-.container-race .hlavicka {
-    height: auto;
-    width: 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    padding-top: 130px;
-    padding-bottom: 130px;
-}
-
-.container-race .hlavicka .cist-clanek {
-    width: 220px;
-}
-
-.container-race .hlavicka .cist-clanek a {
-    font-weight: 300;
-    color: white;
-    text-decoration: none;
-    display: flex;
-    justify-content: space-between;
-    font-size: 20px;
-    overflow: hidden;
-}
-
-.container-race .hlavicka h1 {
-    color: white;
-    text-transform: uppercase;
-    font-weight: 200;
-    font-size: 65px;
-}
-
-.container-race .hlavicka p {
-    color: white;
-    font-size: 20px;
-    font-weight: 300;
-}
-
-.container-race .hlavicka .info {
-    display: flex;
-    flex-direction: row;
-    gap: 5%;
-    height: 200px;
-    margin-top: 20px;
-    overflow: hidden;
-}
-
-.container-race .hlavicka .info div {
-    flex: 1;
-    background: #171925;
-    padding: 20px;
-    border-radius: 25px;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: auto;
-    gap: 15px;
-    justify-content: center;
-    overflow: hidden;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: left;
-}
-
-.container-race .hlavicka .info div i {
-    font-size: 50px;
-    padding-top: 5px;
-    flex: 1;
-    height: max-content;
-    overflow: hidden;
-}
-
-.container-race .hlavicka .info div h2 {
-    display: block;
-    font-size: 25px;
-    text-align: center;
-}
-
-.desktop {
-    display: block;
-    overflow: hidden;
-}
-
-.mobile {
-    display: none;
-    overflow: hidden;
-}
-
-.kategorie {
-    display: flex;
-    gap: 5%;
-    justify-content: center;
-}
-
-.kategorie h1 {
-    text-transform: uppercase;
-    color: white;
-    font-weight: 100;
-    width: 100%;
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.kategorie div {
-    width: 50%;
-}
-
-.kategorie div table {
-    color: white;
-    background-color: #171925;
-    width: 100%;
-}
-
-.kategorie table tr th {
-    padding-right: 50px;
-    padding-left: 20px;
-    padding-block: 10px;
-    border: 3px solid #00000f;
-    background-color: #ffffff;
-    color: #00000F;
-}
-
-.kategorie table tr th:first-child {
-    width: 100px;
-}
-
-.kategorie table tr td {
-    padding-right: 50px;
-    padding-left: 20px;
-    padding-block: 10px;
-    border: 3px solid #00000f;
-}
-
-.trat {
-    margin-bottom: 50px;
-}
-
-.trat h1 {
-    color: white;
-    font-size: 55px;
-    font-weight: 100;
-    text-transform: uppercase;
-}
-
-.trat p {
-    color: white;
-    font-size: 20px;
-    font-weight: 200;
-}
-
-.prize-money {
-    margin-top: 50px;
-}
-
-.prize-money h1 {
-    color: white;
-    font-size: 55px;
-    font-weight: 100;
-    text-transform: uppercase;
-}
-
-.prize-money h2 {
-    color: white;
-    font-size: 40px;
-    font-weight: 100;
-    text-transform: uppercase;
-    margin-top: 25px;
-}
-
-.prize-money p {
-    color: white;
-    font-size: 20px;
-    font-weight: 200;
-}
-
-.program {
-    background-color: #00000F;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    margin-top: 50px;
-}
-
-.program div {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.program h1 {
-    text-transform: uppercase;
-    color: white;
-    font-weight: 100;
-    width: 100%;
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.program table {
-    width: 90%;
-    background-color: #171925;
-}
-
-.program table tr th {
-    padding-right: 50px;
-    padding-left: 20px;
-    padding-block: 10px;
-    border: 3px solid #00000f;
-    background-color: #ffffff;
-    color: #00000F;
-}
-
-.program table tr td {
-    padding-right: 50px;
-    padding-left: 20px;
-    padding-block: 10px;
-    border: 3px solid #00000f;
-}
-
-.program #table-mobile {
-    display: none;
-}
-
-.startovne {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-top: 50px;
-}
-
-.startovne .ceny {
-    display: flex;
-    flex-direction: column;
-    color: white;
-    width: 90%;
-}
-
-.startovne .ceny h1 {
-    font-weight: 100;
-    text-transform: uppercase;
-    font-size: 40px;
-    margin-top: 50px;
-}
-
-.startovne .ceny .cena {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #363948;
-    padding-top: 15px;  
-}
-
-.startovne .ceny .cena h2 {
-    font-weight: 300;
-    font-size: 20px;
-}
-
-.startovne .ceny .cena p {
-    font-weight: 500;
-    font-size: 20px;
-    background-color: white;
-    color: #00000F;
-    padding: 1vh 2vh;
-    border-radius: 25px;
-}
-
-@media screen and (max-width: 650px) {
-    .program #desktop {
-        display: none;
-    }
-
-    .program #table-mobile {
-        display: flex;
-    }
-}
-
-@media screen and (max-width: 850px) {
-    .container-race .hlavicka {
-        height: auto;
-        width: 100%;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: contain;
-        padding-top: 130px;
-    }
-
-    .container-race .hlavicka .info {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        height: max-content;
-        margin-top: 20px;
-    }
-
-    .container-race .hlavicka .info div {
-        padding: 70px 20px;
-    }
-
-    .kategorie {
-        flex-direction: column;
-    }
-
-    .kategorie div {
-        width: 100%;
-        margin-top: 50px;
-    }
-}
-
-@media screen and (max-width: 900px) {
-    .desktop {
-        display: none;
-    }
-
-    .mobile {
-        display: block;
-    }
-
-    .container-race .hlavicka {
-        background-image: none !important;
-        padding-top: 0;
-        padding-bottom: 50px;
-    }
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+
+* {
+
+    margin: 0;
+
+    padding: 0;
+
+    border: 0;
+
+    font-family: 'Fira Sans Condensed', sans-serif;
+
+}
+
+
+
+body {
+
+    background-color: #00000F;
+
+}
+
+
+
+::-webkit-scrollbar {
+
+    background-color: #00000F;
+
+}
+
+
+
+::-webkit-scrollbar-thumb {
+
+    background-color: #171925;
+
+    border-radius: 25px;
+
+}
+
+
+
+.container-race {
+
+    background: #00000f;
+
+    padding-top: 150px;
+
+    padding-inline: 5%;
+
+}
+
+
+
+.pink {
+
+    color: #f1008d;
+
+}
+
+
+
+.container-race .hlavicka {
+
+    height: auto;
+
+    width: 100%;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    background-size: contain;
+
+    padding-top: 130px;
+
+    padding-bottom: 130px;
+
+}
+
+
+
+.container-race .hlavicka .cist-clanek {
+
+    width: 220px;
+
+}
+
+
+
+.container-race .hlavicka .cist-clanek a {
+
+    font-weight: 300;
+
+    color: white;
+
+    text-decoration: none;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    font-size: 20px;
+
+    overflow: hidden;
+
+}
+
+
+
+.container-race .hlavicka h1 {
+
+    color: white;
+
+    text-transform: uppercase;
+
+    font-weight: 200;
+
+    font-size: 65px;
+
+}
+
+
+
+.container-race .hlavicka p {
+
+    color: white;
+
+    font-size: 20px;
+
+    font-weight: 300;
+
+}
+
+
+
+.container-race .hlavicka .info {
+
+    display: flex;
+
+    flex-direction: row;
+
+    gap: 5%;
+
+    height: 200px;
+
+    margin-top: 20px;
+
+    overflow: hidden;
+
+}
+
+
+
+.container-race .hlavicka .info div {
+
+    flex: 1;
+
+    background: #171925;
+
+    padding: 20px;
+
+    border-radius: 25px;
+
+    color: white;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    height: auto;
+
+    gap: 15px;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    background-size: contain;
+
+    background-repeat: no-repeat;
+
+    background-position: left;
+
+}
+
+
+
+.container-race .hlavicka .info div i {
+
+    font-size: 50px;
+
+    padding-top: 5px;
+
+    flex: 1;
+
+    height: max-content;
+
+    overflow: hidden;
+
+}
+
+
+
+.container-race .hlavicka .info div h2 {
+
+    display: block;
+
+    font-size: 25px;
+
+    text-align: center;
+
+}
+
+
+
+.desktop {
+
+    display: block;
+
+    overflow: hidden;
+
+}
+
+
+
+.mobile {
+
+    display: none;
+
+    overflow: hidden;
+
+}
+
+
+
+.kategorie {
+
+    display: flex;
+
+    gap: 5%;
+
+    justify-content: center;
+
+}
+
+
+
+.kategorie h1 {
+
+    text-transform: uppercase;
+
+    color: white;
+
+    font-weight: 100;
+
+    width: 100%;
+
+    text-align: center;
+
+    margin-bottom: 25px;
+
+}
+
+
+
+.kategorie div {
+
+    width: 50%;
+
+}
+
+
+
+.kategorie div table {
+
+    color: white;
+
+    background-color: #171925;
+
+    width: 100%;
+
+}
+
+
+
+.kategorie table tr th {
+
+    padding-right: 50px;
+
+    padding-left: 20px;
+
+    padding-block: 10px;
+
+    border: 3px solid #00000f;
+
+    background-color: #ffffff;
+
+    color: #00000F;
+
+}
+
+
+
+.kategorie table tr th:first-child {
+
+    width: 100px;
+
+}
+
+
+
+.kategorie table tr td {
+
+    padding-right: 50px;
+
+    padding-left: 20px;
+
+    padding-block: 10px;
+
+    border: 3px solid #00000f;
+
+}
+
+
+
+.trat {
+
+    margin-bottom: 50px;
+
+}
+
+
+
+.trat h1 {
+
+    color: white;
+
+    font-size: 55px;
+
+    font-weight: 100;
+
+    text-transform: uppercase;
+
+}
+
+
+
+.trat p {
+
+    color: white;
+
+    font-size: 20px;
+
+    font-weight: 200;
+
+}
+
+
+
+.prize-money {
+
+    margin-top: 50px;
+
+}
+
+
+
+.prize-money h1 {
+
+    color: white;
+
+    font-size: 55px;
+
+    font-weight: 100;
+
+    text-transform: uppercase;
+
+}
+
+
+
+.prize-money h2 {
+
+    color: white;
+
+    font-size: 40px;
+
+    font-weight: 100;
+
+    text-transform: uppercase;
+
+    margin-top: 25px;
+
+}
+
+
+
+.prize-money p {
+
+    color: white;
+
+    font-size: 20px;
+
+    font-weight: 200;
+
+}
+
+
+
+.program {
+
+    background-color: #00000F;
+
+    color: white;
+
+    display: flex;
+
+    flex-direction: column;
+
+    margin-top: 50px;
+
+}
+
+
+
+.program div {
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+
+.program h1 {
+
+    text-transform: uppercase;
+
+    color: white;
+
+    font-weight: 100;
+
+    width: 100%;
+
+    text-align: center;
+
+    margin-bottom: 25px;
+
+}
+
+
+
+.program table {
+
+    width: 90%;
+
+    background-color: #171925;
+
+}
+
+
+
+.program table tr th {
+
+    padding-right: 50px;
+
+    padding-left: 20px;
+
+    padding-block: 10px;
+
+    border: 3px solid #00000f;
+
+    background-color: #ffffff;
+
+    color: #00000F;
+
+}
+
+
+
+.program table tr td {
+
+    padding-right: 50px;
+
+    padding-left: 20px;
+
+    padding-block: 10px;
+
+    border: 3px solid #00000f;
+
+}
+
+
+
+.program #table-mobile {
+
+    display: none;
+
+}
+
+
+
+.startovne {
+
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    margin-top: 50px;
+
+}
+
+
+
+.startovne .ceny {
+
+    display: flex;
+
+    flex-direction: column;
+
+    color: white;
+
+    width: 90%;
+
+}
+
+
+
+.startovne .ceny h1 {
+
+    font-weight: 100;
+
+    text-transform: uppercase;
+
+    font-size: 40px;
+
+    margin-top: 50px;
+
+}
+
+
+
+.startovne .ceny .cena {
+
+    display: flex;
+
+    width: 100%;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    border-bottom: 1px solid #363948;
+
+    padding-top: 15px;
+
+}
+
+
+
+.startovne .ceny .cena h2 {
+
+    font-weight: 300;
+
+    font-size: 20px;
+
+}
+
+
+
+.startovne .ceny .cena p {
+
+    font-weight: 500;
+
+    font-size: 20px;
+
+    background-color: white;
+
+    color: #00000F;
+
+    padding: 1vh 2vh;
+
+    border-radius: 25px;
+
+}
+
+
+
+@media screen and (max-width: 650px) {
+
+    .program #desktop {
+
+        display: none;
+
+    }
+
+
+
+    .program #table-mobile {
+
+        display: flex;
+
+    }
+
+}
+
+
+
+@media screen and (max-width: 850px) {
+
+    .container-race .hlavicka {
+
+        height: auto;
+
+        width: 100%;
+
+        background-position: center;
+
+        background-repeat: no-repeat;
+
+        background-size: contain;
+
+        padding-top: 130px;
+
+    }
+
+
+
+    .container-race .hlavicka .info {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 20px;
+
+        height: max-content;
+
+        margin-top: 20px;
+
+    }
+
+
+
+    .container-race .hlavicka .info div {
+
+        padding: 70px 20px;
+
+    }
+
+
+
+    .kategorie {
+
+        flex-direction: column;
+
+    }
+
+
+
+    .kategorie div {
+
+        width: 100%;
+
+        margin-top: 50px;
+
+    }
+
+}
+
+
+
+@media screen and (max-width: 900px) {
+
+    .desktop {
+
+        display: none;
+
+    }
+
+
+
+    .mobile {
+
+        display: block;
+
+    }
+
+
+
+    .container-race .hlavicka {
+
+        background-image: none !important;
+
+        padding-top: 0;
+
+        padding-bottom: 50px;
+
+    }
+
 }

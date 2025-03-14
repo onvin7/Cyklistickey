@@ -15,13 +15,12 @@ class UserController
         $this->articleModel = new Article($db);
     }
 
-    // Zobrazení všech článků
     public function index()
     {
-        $articles = $this->articleModel->getAll();
+        $users = $this->userModel->getAll();
         $css = ['main-page'];
 
-        $view = '../app/Views/Web/articles/index.php';
+        $view = '../app/Views/Web/user/index.php';
         require '../app/Views/Web/layouts/base.php';
     }
 
@@ -72,16 +71,6 @@ class UserController
 
         $view = '../app/Views/Web/user/article.php';
         include '../app/Views/Web/layouts/base.php';
-    }
-
-    public function authors()
-    {
-        $users = $this->userModel->getAll();
-        
-        $css = ["main-page"];
-        
-        $view = '../app/Views/Web/user/authors.php';
-        require '../app/Views/Web/layouts/base.php';
     }
 
     // Registrace uživatele
