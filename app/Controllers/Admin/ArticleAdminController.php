@@ -35,8 +35,8 @@ class ArticleAdminController
 
         $articles = $this->articleModel->getAllWithSortingAndFiltering($sortBy, $order, $filter);
 
-        $view = '../../app/Views/Admin/articles/index.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/articles/index.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
 
@@ -45,8 +45,8 @@ class ArticleAdminController
     {
         $categoryModel = new Category($this->model); // Použití modelu kategorie
         $categories = $categoryModel->getAll(); // Načtení kategorií
-        $view = '../../app/Views/Admin/articles/create.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/articles/create.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     // Ukládání nového článku
@@ -63,7 +63,7 @@ class ArticleAdminController
 
         // Zpracování nahrání souboru
         $nahledFoto = "default.jpg";
-        $targetDir = __DIR__ . '/../../../web/uploads/thumbnails/';
+        $targetDir = __DIR__ . '/../../web/uploads/thumbnails/';
 
         if (isset($_FILES['nahled_foto']) && $_FILES['nahled_foto']['error'] === UPLOAD_ERR_OK) {
             $uniqueName = basename($_FILES['nahled_foto']['name']);
@@ -129,8 +129,8 @@ class ArticleAdminController
         $categoryModel = new Category($this->model); // Použití modelu kategorie
         $categories = $categoryModel->getAll(); // Načtení všech kategorií
 
-        $view = '../../app/Views/Admin/articles/edit.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/articles/edit.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     // Aktualizace článku
@@ -145,7 +145,7 @@ class ArticleAdminController
             return;
         }
 
-        $targetDir = __DIR__ . '/../../../web/uploads/thumbnails/';
+        $targetDir = __DIR__ . '/../../web/uploads/thumbnails/';
         $nahledFoto = $postData['current_foto']; // Použijeme aktuální foto, pokud není nové
 
         // Kontrola a vytvoření složky, pokud neexistuje
@@ -275,7 +275,7 @@ class ArticleAdminController
 
     public function uploadImage()
     {
-        $uploadDir = __DIR__ . '/../../../web/uploads/articles/';
+        $uploadDir = __DIR__ . '/../../web/uploads/articles/';
         $publicPath = '/uploads/articles/';
 
         // ✅ Kontrola složky

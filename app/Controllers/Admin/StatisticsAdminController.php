@@ -17,23 +17,23 @@ class StatisticsAdminController
     public function index()
     {
         $articleViews = $this->model->getAllArticleViews();
-        $view = '../../app/Views/Admin/statistics/index.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/statistics/index.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     // Detail statistik konkrétního článku
     public function view($articleId)
     {
         $articleViews = $this->model->getArticleViewsById($articleId);
-        $view = '../../app/Views/Admin/statistics/view.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/statistics/view.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     // Nejčtenější články
     public function top()
     {
         $topArticles = $this->model->getTopArticles();
-        $view = '../../app/Views/Admin/statistics/top.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/statistics/top.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 }

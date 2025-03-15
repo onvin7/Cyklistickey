@@ -26,7 +26,7 @@ class HomeAdminController
         $pageViewsData = $this->statisticsModel->getPageViewsAdmin(); // Data pro graf zobrazení stránek
         $articleViewsData = $this->statisticsModel->getArticleViewsAdmin(); // Data pro graf zobrazení článků
 
-        $view = '../../app/Views/Admin/home/index.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/home/index.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 }

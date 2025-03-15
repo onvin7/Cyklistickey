@@ -93,8 +93,7 @@ class Category
 
     public function getArticlesByCategory($categoryId)
     {
-        $query = "
-            SELECT DISTINCT c.id, c.nazev, c.nahled_foto, c.datum, c.url,
+        $query = "SELECT DISTINCT c.id, c.nazev, c.nahled_foto, c.datum, c.url,
                    GROUP_CONCAT(DISTINCT k.nazev_kategorie) as kategorie_nazvy,
                    GROUP_CONCAT(DISTINCT k.url) as kategorie_urls
             FROM clanky c
@@ -104,8 +103,7 @@ class Category
             WHERE ck1.id_kategorie = :categoryId 
             AND c.viditelnost = 1
             GROUP BY c.id, c.nazev, c.nahled_foto, c.datum, c.url
-            ORDER BY c.datum DESC
-        ";
+            ORDER BY c.datum DESC";
         
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':categoryId', $categoryId, \PDO::PARAM_INT);

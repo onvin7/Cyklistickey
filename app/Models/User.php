@@ -13,7 +13,7 @@ class User
 
     public function getAll()
     {
-        $query = "SELECT * FROM users ORDER BY name ASC";
+        $query = "SELECT u.*, (SELECT MAX(datum) FROM clanky WHERE user_id = u.id AND viditelnost = 1 AND datum <= NOW()) as last_article FROM users u ORDER BY last_article DESC";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);

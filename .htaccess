@@ -1,3 +1,9 @@
 RewriteEngine On
+
+# Přesměrování /web/admin na /admin
+RewriteRule ^web/admin(.*)$ /admin$1 [L,R=301]
+
+# Přesměrování ostatních požadavků na /web/, ale ne /admin
+RewriteCond %{REQUEST_URI} !^/admin/
 RewriteCond %{REQUEST_URI} !^/web/
 RewriteRule ^(.*)$ /web/$1 [L]

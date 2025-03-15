@@ -18,7 +18,7 @@ class UserController
     public function index()
     {
         $users = $this->userModel->getAll();
-        $css = ['main-page'];
+        $css = ['authors', 'kategorie'];
 
         $view = '../app/Views/Web/user/index.php';
         require '../app/Views/Web/layouts/base.php';
