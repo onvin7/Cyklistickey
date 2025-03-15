@@ -20,8 +20,8 @@ class PromotionAdminController
         $stmt = $this->db->query("SELECT * FROM clanky WHERE id NOT IN (SELECT id_clanku FROM propagace WHERE konec >= NOW()) ORDER BY clanky.datum DESC");
         $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $view = '../../app/Views/Admin/promotions/create.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/promotions/create.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     // Uložení nové propagace
@@ -46,8 +46,8 @@ class PromotionAdminController
         $stmt = $this->db->query("SELECT p.*, c.nazev FROM propagace p JOIN clanky c ON p.id_clanku = c.id WHERE p.zacatek <= NOW() AND p.konec >= NOW() ORDER BY p.zacatek DESC");
         $promotions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $view = '../../app/Views/Admin/promotions/index.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/promotions/index.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     // Zobrazení budoucích propagací
@@ -56,8 +56,8 @@ class PromotionAdminController
         $stmt = $this->db->query("SELECT p.*, c.nazev FROM propagace p JOIN clanky c ON p.id_clanku = c.id WHERE p.zacatek > NOW() ORDER BY p.zacatek ASC");
         $promotions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $view = '../../app/Views/Admin/promotions/upcoming.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/promotions/upcoming.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     // Zobrazení historie propagací
@@ -66,8 +66,8 @@ class PromotionAdminController
         $stmt = $this->db->query("SELECT p.*, c.nazev FROM propagace p JOIN clanky c ON p.id_clanku = c.id WHERE p.konec < NOW() ORDER BY p.konec DESC");
         $promotions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $view = '../../app/Views/Admin/promotions/history.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/promotions/history.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     // Smazání propagace

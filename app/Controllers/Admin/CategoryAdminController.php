@@ -23,15 +23,15 @@ class CategoryAdminController
         $categories = $this->model->getAllWithSortingAndFiltering($sortBy, $order, $filter);
 
         // Zobrazení view
-        $view = '../../app/Views/Admin/categories/index.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/categories/index.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
 
     public function create()
     {
-        $view = '../../app/Views/Admin/categories/create.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/categories/create.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     public function store($postData)
@@ -64,8 +64,8 @@ class CategoryAdminController
             return;
         }
 
-        $view = '../../app/Views/Admin/categories/edit.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/categories/edit.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     public function update($id, $postData)

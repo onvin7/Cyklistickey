@@ -1,8 +1,15 @@
 <?php
 session_start();
 
-require '../../config/db.php';
-require '../../config/autoloader.php';
+// Kontrola, zda není požadavek z /web/admin
+if (strpos($_SERVER['REQUEST_URI'], '/web/admin') === 0) {
+    $newUri = str_replace('/web/admin', '/admin', $_SERVER['REQUEST_URI']);
+    header("Location: " . $newUri);
+    exit;
+}
+
+require '../config/db.php';
+require '../config/autoloader.php';
 
 use App\Middleware\AuthMiddleware;
 use App\Controllers\Admin\HomeAdminController;
@@ -113,4 +120,4 @@ foreach ($routes as $path => $route) {
 // ✅ **Pokud routa nebyla nalezena, vypíšeme chybu**
 if (!$routeFound) {
     die("Err: Stránka nenalezena -> " . $uri);
-}
+} 

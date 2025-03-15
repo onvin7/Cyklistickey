@@ -28,8 +28,8 @@ class UserAdminController
         $users = $this->model->getAllWithSortingAndFiltering($sortBy, $order, $filter);
 
         // Zobrazení view
-        $view = '../../app/Views/Admin/users/index.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/users/index.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
 
@@ -45,8 +45,8 @@ class UserAdminController
         }
 
         // Zahrnutí šablony pro úpravu uživatele
-        $view = '../../app/Views/Admin/users/edit.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/users/edit.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     public function update($id, $postData)
@@ -100,8 +100,8 @@ class UserAdminController
         $social_links = $this->model->getSocials($userId);
         $available_socials = $this->model->getAvailableSocialSites();
 
-        $view = '../../app/Views/Admin/users/settings.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/users/settings.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     public function saveSocialSites()
@@ -140,7 +140,7 @@ class UserAdminController
         // **Profilová fotka**
         $profile_photo = $_SESSION['profile_photo'] ?? null;
         if (isset($_FILES['profil_foto']) && $_FILES['profil_foto']['error'] === UPLOAD_ERR_OK) {
-            $targetDir = __DIR__ . '/../../../web/uploads/users/thumbnails/';
+            $targetDir = __DIR__ . '/../../web/uploads/users/thumbnails/';
             if (!is_dir($targetDir)) {
                 mkdir($targetDir, 0777, true);
             }
@@ -160,7 +160,7 @@ class UserAdminController
         // **Background fotka (kontrola na prázdnou hodnotu)**
         $header_photo = $_SESSION['header_photo'] ?? null;
         if (isset($_FILES['zahlavi_foto']) && $_FILES['zahlavi_foto']['error'] === UPLOAD_ERR_OK) {
-            $targetDir = __DIR__ . '/../../../web/uploads/users/background/';
+            $targetDir = __DIR__ . '/../../web/uploads/users/background/';
             if (!is_dir($targetDir)) {
                 mkdir($targetDir, 0777, true);
             }
@@ -263,8 +263,8 @@ class UserAdminController
     public function socialSites()
     {
         $socials = $this->model->getSocials();
-        $view = '../../app/Views/Admin/users/social_sites.php';
-        include '../../app/Views/Admin/layout/base.php';
+        $view = '../app/Views/Admin/users/social_sites.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     public function saveSocialSite()
@@ -276,7 +276,7 @@ class UserAdminController
 
         // Nahrávání ikony
         if (!empty($_FILES['icon']['name']) && $_FILES['icon']['error'] === 0) {
-            $uploadDir = __DIR__ . '/../../../web/uploads/social_icons/';
+            $uploadDir = __DIR__ . '/../../web/uploads/social_icons/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
