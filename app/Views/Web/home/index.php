@@ -34,16 +34,6 @@ for ($i = 0; $i < 1; $i++) {
     </div>
 <?php } ?>
 
-<style>
-    @media screen and (max-width: 750px) {
-        .pinned .image {
-            height: 80vh;
-            background-image: linear-gradient(to top, rgba(0, 0, 15, 1) 0%, rgba(0, 0, 15, 0) 80%),
-                url('/uploads/thumbnails/velke/<?php echo htmlspecialchars($row["nahled_foto"]); ?>') !important;
-        }
-    }
-</style>
-
 <div class="container-clanky">
     <?php for ($i = 1; $i < count($articles); $i++) {
         $row = $articles[$i];
@@ -85,6 +75,7 @@ for ($i = 0; $i < 1; $i++) {
 </div>
 
 <?php include '../app/Views/Web/templates/yt.php'; ?>
+
 <?php if (!empty($categories) && is_array($categories)): ?>
     <?php foreach ($categories as $category): ?>
         <div class="container-clanky-kategorie">
@@ -99,13 +90,17 @@ for ($i = 0; $i < 1; $i++) {
 
             <?php if (!empty($category['articles']) && is_array($category['articles'])): ?>
                 <?php foreach ($category['articles'] as $clanek): ?>
-
-                    <div class="card">
+                    <div class="card clanek">
                         <a href="/article/<?php echo htmlspecialchars($clanek['url']); ?>/">
                             <img loading="lazy" src="/uploads/thumbnails/male/<?php echo !empty($clanek['nahled_foto']) ? htmlspecialchars($clanek['nahled_foto']) : 'noimage.png'; ?>" alt="Náhled článku">
                         </a>
                         <div class="card-body">
                             <div class="gradient"></div>
+                            <?php if (!empty($clanek['datum'])): ?>
+                                <span class="datum"><?php echo date("d. m. Y", strtotime($clanek['datum'])); ?></span>
+                            <?php else: ?>
+                                <span class="datum"><?php echo date("d. m. Y"); ?></span>
+                            <?php endif; ?>
                             <a href="/article/<?php echo htmlspecialchars($clanek['url']); ?>/">
                                 <h5 class="truncated-text"><?php echo htmlspecialchars(TextHelper::truncate($clanek['nazev'], 100)); ?></h5>
                             </a>
