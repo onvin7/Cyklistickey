@@ -21,8 +21,8 @@ body {
 }
 
 body .nadpis {
-  padding-top: 30vh;
-  padding-bottom: 15vh;
+  padding-top: 20vh;
+  padding-bottom: 10vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -49,25 +49,181 @@ body .nadpis h2 {
   z-index: -1;
 }
 
+/* Moderní světlejší výpis s horizontálními kartami */
 .container-clanky {
-  max-width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 8vh auto;
+  padding: 40px 20px 0;
   display: flex;
-  flex-direction: row;
-  height: max-content;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 10vh;
-  margin-inline: 30px;
+  flex-direction: column;
+  gap: 30px;
+  position: relative;
+  z-index: 1;
 }
 
-.container-clanky .card {
-  flex-basis: calc(33.333% - 20px); 
-  overflow: hidden;
-  background: #00000F;
+.container-clanky a {
+  text-decoration: none;
   color: white;
-  height: max-content;
-  min-width: 250px; 
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #101121;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px rgba(30, 123, 216, 0.12);
+  border: 1px solid rgba(30, 123, 216, 0.3);
+  position: relative;
+  padding: 10px;
+}
+
+.container-clanky a::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.container-clanky a:hover::after {
+  opacity: 1;
+}
+
+.container-clanky a:hover {
+  box-shadow: 0 20px 40px rgba(241, 0, 141, 0.25);
+  border: 1px solid rgba(241, 0, 141, 0.6);
+  z-index: 2;
+}
+
+/* Horizontální layout karty */
+.container-clanky .card {
+  display: flex;
+  flex-direction: row;
+  background: #101121;
+  color: white;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  border-radius: 8px;
+}
+
+.container-clanky .card img {
+  width: 350px;
+  height: 197px; /* Poměr 16:9 pro šířku 350px */
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+  flex-shrink: 0;
+  filter: brightness(1.05);
+  border-radius: 8px;
+  margin: 5px;
+}
+
+.container-clanky a:hover .card img {
+  filter: brightness(1.2);
+}
+
+.container-clanky .card .card-body {
+  padding: 20px 25px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: flex-start;
+  overflow: hidden;
+  position: relative;
+}
+
+.container-clanky .card h5 {
+  font-size: 24px;
+  line-height: 1.3;
+  font-weight: 400;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+.container-clanky .card .datum {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  font-weight: 300;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.container-clanky .card .card-body .kategorie {
+  display: flex;  
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 15px;
+  margin-top: 5px;
+}
+
+.container-clanky .card .card-body .kategorie .tag-kategorie {
+  cursor: pointer;
+}
+
+.container-clanky .card .clanek-excerpt {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.container-clanky .card p {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 50px;
+  background-color: rgba(241, 0, 141, 0.9);
+  font-size: 11px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.container-clanky .card .tag-kategorie:hover p {
+  background-color: transparent;
+  color: #f1008d;
+  border-color: #f1008d;
+  font-weight: 700;
+}
+
+/* Tlačítko Číst více */
+.container-clanky .card .read-more {
+  display: inline-block;
+  padding: 10px 26px;
+  background: transparent;
+  color: #1e7bd8;
+  border: 2px solid #1e7bd8;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  position: absolute;
+  bottom: 20px;
+  right: 25px;
+  box-shadow: 0 2px 8px rgba(30, 123, 216, 0.2);
+}
+
+.container-clanky .card .read-more:hover {
+  background-color: #1e7bd8;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 123, 216, 0.3);
 }
 
 @media screen and (max-width: 930px) {
@@ -97,72 +253,36 @@ body .nadpis h2 {
   }
 }
 
-@media screen and (max-width: 650px) {
-  .container-clanky {
-    display: flex;
-    flex-direction: column;
+@media screen and (max-width: 768px) {
+  .container-clanky a {
+    padding: 0;
   }
+  
   .container-clanky .card {
-    flex-basis: auto;
-    min-width: 100%;
+    flex-direction: column;
+    border-radius: 12px;
+  }
+  
+  .container-clanky .card img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+    border-radius: 12px;
+    margin: 0;
+  }
+  
+  .container-clanky .card .card-body {
+    padding: 18px;
+    padding-bottom: 70px;
+  }
+  
+  .container-clanky .card .read-more {
+    bottom: 20px;
+    right: 20px;
   }
 }
 
-.container-clanky .card img {
-  width: 100%;
-  object-fit: cover;
-  display: block;
-  aspect-ratio: 16/9;
-  transition: 0.5s;
-}
-
-.container-clanky .card .card-body {
-  padding: 0;
-  padding-top: 10px;
-  height: 100%;
-}
-
-.container-clanky .card .card-body .kategorie {
-  display: flex;  
-  margin-left: -3px;
-  margin-top: 5px;
-}
-
-.container-clanky .card .card-body .kategorie a {
-  margin-right: 5px;
-  color: white;
-  text-decoration: none;
-}
-
-.container-clanky .card h5 {
-  text-transform: uppercase;
-  font-weight: 300;
-}
-
-.container-clanky .card p {
-  display: block;
-  width: max-content;
-  padding: 0.5vh 1vh;
-  border-radius: 25px;
-  background-color: #f1008d;
-  font-size: 12px;
-  text-transform: uppercase;
-  border: 3px solid transparent;
-  transition: 0.2s;
-}
-
-.container-clanky .card p:hover {
-  border: 3px solid #f1008d;
-  background-color: #00000F;
-  transition: 0.2s;
-  color: #f1008d;
-}
-
-.container-clanky .card a {
-  color: white;
-  text-decoration: none;
-}
-
+/* Zbytek CSS ponechán beze změny */
 .container-kategorie {
   display: flex;
   flex-direction: row;
