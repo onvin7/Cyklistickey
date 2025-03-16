@@ -30,7 +30,7 @@ use App\Helpers\TextHelper;
         </div>
 
         <h1><?php echo htmlspecialchars($article["nazev"], ENT_QUOTES); ?></h1>
-        <h3><?php echo htmlspecialchars($article["datum"], ENT_QUOTES); ?></h3>
+        <h3><?php echo \App\Helpers\TimeHelper::getRelativeTime($article["datum"], true); ?></h3>
         <?php
         if (!empty($audioFiles)) : ?>
             <?php foreach ($audioFiles as $audioFileName) : ?>

@@ -93,7 +93,7 @@ class Category
 
     public function getArticlesByCategory($categoryId)
     {
-        $query = "SELECT DISTINCT c.id, c.nazev, c.nahled_foto, c.datum, c.url,
+        $query = "SELECT DISTINCT c.id, c.nazev, c.nahled_foto, c.datum, c.url, c.obsah,
                    GROUP_CONCAT(DISTINCT k.nazev_kategorie) as kategorie_nazvy,
                    GROUP_CONCAT(DISTINCT k.url) as kategorie_urls
             FROM clanky c

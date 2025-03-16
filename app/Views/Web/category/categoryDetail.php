@@ -9,49 +9,39 @@
             <div class="card">
                 <img loading="lazy" src="/uploads/thumbnails/male/<?php echo !empty($result["nahled_foto"]) ? htmlspecialchars($result["nahled_foto"]) : 'noimage.png'; ?>" alt="<?php echo htmlspecialchars($result["nazev"]); ?>">
                 <div class="card-body">
-                    <h5><?php echo htmlspecialchars($result["nazev"]); ?></h5>
-                    
-                    <span class="datum">
-                        <?php 
-                            // Zobrazení data publikace, pokud je k dispozici
-                            if (!empty($result["datum"])) {
-                                echo date("d. m. Y", strtotime($result["datum"]));
-                            } else {
-                                echo date("d. m. Y"); // Aktuální datum, pokud není datum článku k dispozici
-                            }
-                        ?>
-                    </span>
-                    
-                    <div class="kategorie">
-                        <?php if (!empty($result['kategorie'])): ?>
-                            <?php foreach ($result['kategorie'] as $kategorie): ?>
-                                <span class="tag-kategorie" data-url="/category/<?php echo htmlspecialchars($kategorie['url']); ?>/">
-                                    <p><?php echo htmlspecialchars($kategorie['nazev_kategorie']); ?></p>
-                                </span>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <div class="clanek-excerpt">
-                        <?php 
-                            // Zobrazení obsahu článku
-                            if (!empty($result["text"])) {
-                                // Odstranění HTML tagů a zkrácení textu
-                                $text = strip_tags($result["text"]);
-                                $excerpt = mb_substr($text, 0, 150);
-                                if (mb_strlen($text) > 150) {
-                                    $excerpt .= '...';
+                    <div class="card-content-left">
+                        <h5><?php echo htmlspecialchars($result["nazev"]); ?></h5>
+                        
+                        <span class="datum">
+                            <?php 
+                                // Použití TimeHelper pro získání relativního času
+                                echo \App\Helpers\TimeHelper::getRelativeTime($result["datum"]);
+                            ?>
+                        </span>
+                        
+                        <div class="clanek-excerpt">
+                            <?php 
+                                // Zkrácený výpis textu článku - pokud existuje
+                                if (!empty($result["obsah"])) {
+                                    echo substr(strip_tags($result["obsah"]), 0, 400) . "...";
                                 }
-                                echo htmlspecialchars($excerpt);
-                            } else if (!empty($result["perex"])) {
-                                echo htmlspecialchars($result["perex"]);
-                            } else {
-                                echo ""; // Prázdný řetězec místo výchozího textu
-                            }
-                        ?>
+                            ?>
+                        </div>
                     </div>
                     
-                    <span class="read-more">Číst článek</span>
+                    <div class="card-content-right">
+                        <div class="kategorie">
+                            <?php if (!empty($result['kategorie'])): ?>
+                                <?php foreach ($result['kategorie'] as $kategorie): ?>
+                                    <span class="tag-kategorie" data-url="/category/<?php echo htmlspecialchars($kategorie['url']); ?>/">
+                                        <p><?php echo htmlspecialchars($kategorie['nazev_kategorie']); ?></p>
+                                    </span>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <span class="read-more">Číst článek</span>
+                    </div>
                 </div>
             </div>
         </a>

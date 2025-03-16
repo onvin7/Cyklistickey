@@ -112,7 +112,7 @@
     $links = generateLinks([
         ['url' => '/', 'text' => 'DOMŮ'],
         ['url' => '/race/', 'text' => 'RACE'],
-        ['url' => '/category/', 'text' => 'KATEGORIE'],
+        ['url' => '/categories/', 'text' => 'KATEGORIE'],
         ['url' => '/authors/', 'text' => 'REDAKCE'],
         ['url' => '/kontakt/', 'text' => 'O NÁS']
     ]);

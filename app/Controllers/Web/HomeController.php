@@ -23,7 +23,6 @@ class HomeController
         $main_article = $this->articleModel->getNewestArticle();
         $articles = $this->articleModel->getLatestArticles(4, 0);
         $categories = $this->articleModel->getCategoriesWithArticlesSorted();
-        //echo '<pre>', var_dump($categories), '</pre>';
 
         if (!is_array($categories)) {
             $categories = [];

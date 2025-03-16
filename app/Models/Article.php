@@ -330,7 +330,10 @@ class Article
     public function getLatestArticles($limit, $offset)
     {
         $stmt = $this->db->prepare("
-            SELECT c.*, GROUP_CONCAT(k.nazev_kategorie SEPARATOR ', ') AS kategorie
+            SELECT c.*, 
+                   GROUP_CONCAT(k.nazev_kategorie) as kategorie_nazvy,
+                   GROUP_CONCAT(k.id) as kategorie_ids,
+                   GROUP_CONCAT(k.url) as kategorie_urls
             FROM clanky c
             LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
             LEFT JOIN kategorie k ON ck.id_kategorie = k.id
@@ -342,7 +345,34 @@ class Article
         $stmt->bindValue(':offset', (int)$offset, \PDO::PARAM_INT);
         $stmt->bindValue(':limit', (int)$limit, \PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $articles = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        
+        // Zpracování kategorií pro každý článek
+        foreach ($articles as &$article) {
+            // Převedení řetězců kategorií na pole
+            $article['kategorie_nazvy'] = $article['kategorie_nazvy'] ? explode(',', $article['kategorie_nazvy']) : [];
+            $article['kategorie_ids'] = $article['kategorie_ids'] ? explode(',', $article['kategorie_ids']) : [];
+            $article['kategorie_urls'] = $article['kategorie_urls'] ? explode(',', $article['kategorie_urls']) : [];
+            
+            // Vytvoření pole kategorií pro snadnější použití ve view
+            $article['kategorie'] = [];
+            for ($i = 0; $i < count($article['kategorie_ids']); $i++) {
+                if (isset($article['kategorie_ids'][$i]) && isset($article['kategorie_nazvy'][$i]) && isset($article['kategorie_urls'][$i])) {
+                    $article['kategorie'][] = [
+                        'id' => $article['kategorie_ids'][$i],
+                        'nazev_kategorie' => $article['kategorie_nazvy'][$i],
+                        'url' => $article['kategorie_urls'][$i]
+                    ];
+                }
+            }
+            
+            // Odstranění pomocných polí
+            unset($article['kategorie_nazvy']);
+            unset($article['kategorie_ids']);
+            unset($article['kategorie_urls']);
+        }
+        
+        return $articles;
     }
 
     public function getCategoriesWithArticlesSorted()
