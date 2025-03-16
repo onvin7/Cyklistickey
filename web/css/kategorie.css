@@ -130,14 +130,22 @@ body .nadpis h2 {
 .container-clanky .card .card-body {
   padding: 20px 25px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-grow: 1;
-  justify-content: flex-start;
+  justify-content: space-between;
   overflow: hidden;
-  position: relative;
+  gap: 25px;
 }
 
-.container-clanky .card h5 {
+/* Levá část karty - nadpis, datum, excerpt */
+.container-clanky .card .card-content-left {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0; /* Umožní zkrácení textu */
+}
+
+.container-clanky .card .card-content-left h5 {
   font-size: 24px;
   line-height: 1.3;
   font-weight: 400;
@@ -147,7 +155,7 @@ body .nadpis h2 {
   color: #ffffff;
 }
 
-.container-clanky .card .datum {
+.container-clanky .card .card-content-left .datum {
   color: rgba(255, 255, 255, 0.6);
   font-size: 14px;
   font-weight: 300;
@@ -155,28 +163,45 @@ body .nadpis h2 {
   display: block;
 }
 
-.container-clanky .card .card-body .kategorie {
-  display: flex;  
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 15px;
-  margin-top: 5px;
-}
-
-.container-clanky .card .card-body .kategorie .tag-kategorie {
-  cursor: pointer;
-}
-
-.container-clanky .card .clanek-excerpt {
+.container-clanky .card .card-content-left .clanek-excerpt {
   color: rgba(255, 255, 255, 0.7);
   font-size: 14px;
   line-height: 1.5;
-  margin-bottom: 20px;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
+}
+
+/* Pravá část karty - kategorie a tlačítko */
+.container-clanky .card .card-content-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.container-clanky .card .card-content-right .kategorie {
+  display: flex;  
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+}
+
+.container-clanky .card .card-content-right .kategorie .tag-kategorie {
+  cursor: pointer;
+}
+
+.container-clanky .card .card-content-right .kategorie .tag-kategorie:hover p {
+  background-color: transparent;
+  color: #f1008d;
+  border-color: #f1008d;
+  font-weight: 700;
 }
 
 .container-clanky .card p {
@@ -202,8 +227,9 @@ body .nadpis h2 {
 
 /* Tlačítko Číst více */
 .container-clanky .card .read-more {
-  display: inline-block;
-  padding: 10px 26px;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 20px;
   background: transparent;
   color: #1e7bd8;
   border: 2px solid #1e7bd8;
@@ -213,10 +239,10 @@ body .nadpis h2 {
   text-transform: uppercase;
   transition: all 0.3s ease;
   letter-spacing: 0.5px;
-  position: absolute;
-  bottom: 20px;
-  right: 25px;
   box-shadow: 0 2px 8px rgba(30, 123, 216, 0.2);
+  white-space: nowrap;
+  align-self: flex-end;
+  margin-top: auto;
 }
 
 .container-clanky .card .read-more:hover {
@@ -224,6 +250,29 @@ body .nadpis h2 {
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(30, 123, 216, 0.3);
+}
+
+/* Responzivní layout pro mobilní zařízení */
+@media screen and (max-width: 768px) {
+  .container-clanky .card .card-body {
+    flex-direction: column;
+    padding: 18px;
+    padding-bottom: 25px;
+    gap: 20px;
+  }
+  
+  .container-clanky .card .card-content-right {
+    width: 100%;
+    align-items: flex-start;
+  }
+  
+  .container-clanky .card .card-content-right .kategorie {
+    justify-content: flex-start;
+  }
+  
+  .container-clanky .card .read-more {
+    align-self: flex-start;
+  }
 }
 
 @media screen and (max-width: 930px) {
@@ -423,6 +472,84 @@ body .nadpis h2 {
   transition: 0.2s;
   color: #f1008d;
 }
+/* Styly pro seznam kategorií na stránce kategorií */
+.container-clanky.kategorie {
+  max-width: 1200px;
+  margin: 5vh auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 50px 100px;
+  padding: 0 50px;
+}
+
+.container-clanky.kategorie a {
+  height: 100%;
+  text-decoration: none;
+  color: white;
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #101121;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(30, 123, 216, 0.3);
+  display: block;
+}
+
+.container-clanky.kategorie a:hover {
+  box-shadow: 0 15px 30px rgba(241, 0, 141, 0.25);
+  border: 1px solid rgba(241, 0, 141, 0.6);
+}
+
+.container-clanky.kategorie .card {
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.container-clanky.kategorie .card .card-body {
+  padding: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container-clanky.kategorie .card h5 {
+  font-size: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.container-clanky.kategorie .card p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  line-height: 1.5;
+  display: block;
+  background: none;
+  padding: 0;
+  text-transform: none;
+  font-weight: normal;
+  letter-spacing: normal;
+  border-radius: 0;
+  border: none;
+  margin: 0;
+}
+
+@media screen and (max-width: 900px) {
+  .container-clanky.kategorie {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .container-clanky.kategorie {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 @media screen and (max-width: 1000px) {
   .container-kategorie {

@@ -1,9 +1,9 @@
 <div class="nadpis">
     <h1>Kategorie</h1>
-    <h2>Všechny kategorie</h2>
+    <h2>Kategorie</h2>
 </div>
 
-<div class="container-clanky">
+<div class="container-clanky kategorie">
     <?php if (!empty($categories)): ?>
         <?php foreach ($categories as $category): ?>
             <a href="/category/<?php echo htmlspecialchars($category['url']); ?>">

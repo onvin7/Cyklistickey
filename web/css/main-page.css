@@ -105,17 +105,16 @@ body {
 .container-clanky .card .card-body {
     overflow: hidden;
     padding: 0;
-    padding-top: 10px;
+    padding-top: 5px;
     height: 100%;
 }
-
 
 
 .container-clanky .card .card-body .kategorie {
 
     display: flex;
 
-    margin-left: -3px;
+    margin-left: -5px;
 
     margin-top: 5px;
 
@@ -164,6 +163,8 @@ body {
     border: 3px solid transparent;
 
     transition: 0.2s;
+    margin-bottom: 5px;
+
 
 }
 
@@ -429,7 +430,7 @@ body {
 }
 
 /* Přidáme třídu pro datum */
-.container-clanky-kategorie .card .card-body .datum {
+.container-clanky-kategorie .card .card-body .datum, .container-clanky .card .card-body .datum  {
     color: rgba(255, 255, 255, 0.6);
     font-size: 13px;
     font-weight: 300;
@@ -685,7 +686,7 @@ body {
 
     width: 100%;
 
-    padding-block: 100px;
+    padding-block: 50px;
 
     background-color: #171925;
 
@@ -726,6 +727,14 @@ body {
 
 }
 
+.podkategorie-container .text p {
+
+    color: rgb(180, 180, 180);
+
+    font-weight: 200;
+
+}
+
 
 
 .podkategorie-container .podkategorie {
@@ -740,6 +749,10 @@ body {
 
     justify-content: right;
 
+}
+
+.podkategorie-container .podkategorie .prvek {
+    margin-right: 50px;
 }
 
 
@@ -758,7 +771,7 @@ body {
 
     background-color: #3eb7e7;
 
-    border-radius: 25px;
+    border-radius: 30px;
 
     border: 3px solid transparent;
 
@@ -770,17 +783,18 @@ body {
 
     padding: 10px 20px;
 
-    font-size: 20px;
+    font-size: 22px;
 
     font-weight: 400;
 
     transition: 0.2s;
-
+    display: flex;
+    align-items: center;
 }
 
-
-
-
+.podkategorie-container .podkategorie .prvek h2 a i {
+    margin-left: 15px;
+}
 
 .podkategorie-container .podkategorie .prvek h2 a:hover {
 

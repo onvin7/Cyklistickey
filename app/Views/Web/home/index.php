@@ -4,26 +4,13 @@
 use App\Helpers\TextHelper;
 use App\Helpers\FileHelper;
 
-for ($i = 0; $i < 1; $i++) {
-    $row = $articles[$i];
-
-    if ($row['kategorie']) {
-        // Rozdělí řetězec na pole podle ', '
-        $articleCategories = explode(', ', $row["kategorie"]);
-
-        // Vybere náhodný klíč z pole kategorií
-        $randomKey = array_rand($articleCategories);
-
-        // Získá náhodně vybranou kategorii pomocí náhodného klíče
-        $kategorie = $articleCategories[$randomKey];
-    } else {
-        $kategorie = "Magazín";
-    }
-
+// První článek - banner
+if (!empty($articles) && count($articles) > 0) {
+    $row = $articles[0];
 ?>
     <div class="pinned">
         <div class="image" style="background-image: linear-gradient(to top, rgba(0, 0, 15, 1) 0%, rgba(0, 0, 15, 0) 50%), 
-                        url('/uploads/thumbnails/velke/<?php echo htmlspecialchars($row["nahled_foto"]); ?>');">
+                        url('/uploads/thumbnails/velke/<?php echo !empty($row["nahled_foto"]) ? htmlspecialchars($row["nahled_foto"]) : 'noimage.png'; ?>');">
             <div class="pinned-body">
                 <h5><?php echo htmlspecialchars($row["nazev"]); ?></h5>
                 <div class="cist-clanek">
@@ -32,39 +19,47 @@ for ($i = 0; $i < 1; $i++) {
             </div>
         </div>
     </div>
-<?php } ?>
+<?php 
+}
 
+// Další články
+if (!empty($articles) && count($articles) > 1) { 
+?>
 <div class="container-clanky">
-    <?php for ($i = 1; $i < count($articles); $i++) {
+    <?php 
+    for ($i = 1; $i < count($articles); $i++) {
         $row = $articles[$i];
-
-        if ($row['kategorie']) {
-            // Rozdělí řetězec na pole podle ', '
-            $articleCategories = explode(', ', $row["kategorie"]);
-
-            // Vybere náhodný klíč z pole kategorií
-            $randomKey = array_rand($articleCategories);
-
-            // Získá náhodně vybranou kategorii pomocí náhodného klíče
-            $kategorie = $articleCategories[$randomKey];
-        } else {
-            $kategorie = "Magazín";
-        }
     ?>
         <a href="/article/<?php echo htmlspecialchars($row['url']); ?>/">
             <div class="card">
                 <img loading="lazy" src="/uploads/thumbnails/male/<?php echo !empty($row["nahled_foto"]) ? htmlspecialchars($row["nahled_foto"]) : 'noimage.png'; ?>" alt="Náhled">
                 <div class="card-body">
                     <div class="kategorie">
+                        <?php 
+                        // Zpracování kategorií - kontrola jestli existují v novém nebo starém formátu
+                        if (!empty($row['kategorie']) && is_array($row['kategorie'])) {
+                            // Nový formát - pole objektů
+                            foreach ($row['kategorie'] as $kategorie) {
+                        ?>
+                            <a href='/category/<?php echo htmlspecialchars($kategorie['url']); ?>/'>
+                                <p><?php echo htmlspecialchars($kategorie['nazev_kategorie']); ?></p>
+                            </a>
                         <?php
-                        if ($row['kategorie']) {
-                            $articleCategories = explode(', ', $row["kategorie"]);
-                            foreach ($articleCategories as $category) {
-                                echo "<a href='/category/" . htmlspecialchars($category) . "/'><p>" . htmlspecialchars($category) . "</p></a>";
+                            }
+                        } elseif (!empty($row['kategorie']) && is_string($row['kategorie'])) {
+                            // Starý formát - řetězec oddělený čárkami
+                            $kategorieArray = explode(', ', $row['kategorie']);
+                            foreach ($kategorieArray as $kat) {
+                        ?>
+                            <a href='/category/<?php echo htmlspecialchars(strtolower($kat)); ?>/'>
+                                <p><?php echo htmlspecialchars($kat); ?></p>
+                            </a>
+                        <?php
                             }
                         }
                         ?>
                     </div>
+                    <span class="datum"><?php echo \App\Helpers\TimeHelper::getRelativeTime($row['datum']); ?></span>
                     <a href="/article/<?php echo htmlspecialchars($row['url']); ?>/">
                         <h5 class="truncated-text"><?php echo htmlspecialchars($row["nazev"]); ?></h5>
                     </a>
@@ -73,6 +68,7 @@ for ($i = 0; $i < 1; $i++) {
         </a>
     <?php } ?>
 </div>
+<?php } ?>
 
 <?php include '../app/Views/Web/templates/yt.php'; ?>
 
@@ -80,12 +76,12 @@ for ($i = 0; $i < 1; $i++) {
     <?php foreach ($categories as $category): ?>
         <div class="container-clanky-kategorie">
             <div class="card text">
-                <h2><?php echo htmlspecialchars($category['nazev_kategorie']); ?></h3>
-                    <div class="cist-clanek">
-                        <a href="/category/<?php echo htmlspecialchars($category['url']); ?>/">
-                            ZOBRAZIT KATEGORII <i class="fa-solid fa-angle-right"></i>
-                        </a>
-                    </div>
+                <h2><?php echo htmlspecialchars($category['nazev_kategorie']); ?></h2>
+                <div class="cist-clanek">
+                    <a href="/category/<?php echo htmlspecialchars($category['url']); ?>/">
+                        ZOBRAZIT KATEGORII <i class="fa-solid fa-angle-right"></i>
+                    </a>
+                </div>
             </div>
 
             <?php if (!empty($category['articles']) && is_array($category['articles'])): ?>
@@ -96,11 +92,7 @@ for ($i = 0; $i < 1; $i++) {
                         </a>
                         <div class="card-body">
                             <div class="gradient"></div>
-                            <?php if (!empty($clanek['datum'])): ?>
-                                <span class="datum"><?php echo date("d. m. Y", strtotime($clanek['datum'])); ?></span>
-                            <?php else: ?>
-                                <span class="datum"><?php echo date("d. m. Y"); ?></span>
-                            <?php endif; ?>
+                                <span class="datum"><?php echo \App\Helpers\TimeHelper::getRelativeTime($clanek['datum']); ?></span>
                             <a href="/article/<?php echo htmlspecialchars($clanek['url']); ?>/">
                                 <h5 class="truncated-text"><?php echo htmlspecialchars(TextHelper::truncate($clanek['nazev'], 100)); ?></h5>
                             </a>
@@ -116,16 +108,14 @@ for ($i = 0; $i < 1; $i++) {
     <p>Nebyly nalezeny žádné kategorie.</p>
 <?php endif; ?>
 
-
-
 <div class="podkategorie-container">
     <div class="text">
-        <h1>Zajímá tě<br> nějaká konkrétní disciplína?</h1>
+        <h1>Poznejte náš tým!</h1>
+        <p>Z instagramového meme profilu jsme se rozrostli v přední online destinaci pro cyklisty všech disciplín. Náš tým nadšenců vytváří obsah napříč všemi platformami, pořádá závody a spolupracuje s předními značkami v oboru. Od silničních kol až po MTB, spojujeme komunitu cyklistů a přinášíme jim to nejlepší z cyklistického světa.</p>
     </div>
     <div class="podkategorie">
-
         <div class="prvek">
-            <h2><a href="#">test</a></h2>
+            <h2><a href="/kontakt">O NÁS <i class="fa-solid fa-angle-right"></i></a></h2>
         </div>
     </div>
 </div>
