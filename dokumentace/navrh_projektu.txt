@@ -1,0 +1,559 @@
+# 2 NÁVRH PROJEKTU
+
+## 2.1 CÍLOVÉ SKUPINY
+
+Redakční systém pro cyklistický magazín je navržen s cílem uspokojit informační potřeby různorodé komunity cyklistů a současně poskytnout efektivní nástroje pro tvorbu a správu obsahu. Při analýze potenciálních uživatelů byly identifikovány následující klíčové cílové skupiny:
+
+### 2.1.1 Čtenáři magazínu
+
+**Demografický profil primárních čtenářů:**
+- Věkové rozpětí: 16-60 let (s nejvyšší koncentrací ve věkové skupině 25-45 let)
+- Vzdělání: převážně středoškolské a vysokoškolské
+- Pohlaví: přibližně 70% mužů, 30% žen (podle analýzy podobných platforem)
+- Příjmová skupina: střední až vyšší příjmová skupina
+- Geografické rozložení: primárně městské a příměstské oblasti
+
+**Segmentace podle zájmu o cyklistiku:**
+
+1. **Rekreační cyklisté (40% cílové skupiny)**
+   - Charakteristika: Jezdí především pro radost a fitness
+   - Informační potřeby: Tipy na cyklotrasy, základní údržba kol, recenze dostupného vybavení, informace o cyklostezkách, začátečnické návody
+   - Frekvence návštěv: 1-3x týdně
+   - Typické vyhledávané sekce: Cyklotrasy, Tipy pro začátečníky, Základní údržba kol
+
+2. **Sportovní cyklisté (30% cílové skupiny)**
+   - Charakteristika: Cyklistika jako pravidelná sportovní aktivita, účast na amatérských závodech
+   - Informační potřeby: Tréninkové plány, výživa, středně pokročilé a pokročilé techniky jízdy, výkonnostní testy, recenze sportovního vybavení
+   - Frekvence návštěv: 3-5x týdně
+   - Typické vyhledávané sekce: Trénink, Výživa, Závody, Recenze kol střední třídy
+
+3. **Profesionální a poloprofesionální cyklisté (10% cílové skupiny)**
+   - Charakteristika: Závodní jezdci, trenéři, profesionálové v oboru
+   - Informační potřeby: Pokročilé tréninkové metody, profesionální závody, špičkové vybavení, nejnovější technologie
+   - Frekvence návštěv: Téměř denně
+   - Typické vyhledávané sekce: Profesionální závody, High-end vybavení, Rozhovory s profesionály
+
+4. **Technicky zaměření cyklisté (15% cílové skupiny)**
+   - Charakteristika: Nadšenci do technologií a mechaniky kol
+   - Informační potřeby: Detailní technické recenze, DIY návody na údržbu a vylepšení, nové technologie v cyklistice
+   - Frekvence návštěv: 2-4x týdně
+   - Typické vyhledávané sekce: Technické recenze, Workshopy, Vybavení a komponenty
+
+5. **Specializované segmenty (5% cílové skupiny)**
+   - Charakteristika: Specifické zájmové skupiny (BMX, downhill, cyklokros, bikepacking, atd.)
+   - Informační potřeby: Specializovaný obsah zaměřený na konkrétní disciplínu
+   - Frekvence návštěv: Variabilní, často sezónní
+   - Typické vyhledávané sekce: Specializované sekce podle disciplíny
+
+**Typické uživatelské cesty:**
+
+1. **Rekreační cyklista hledající víkendový výlet:**
+   - Vstupní bod: Domovská stránka → Sekce Cyklotrasy
+   - Interakce: Prohlížení tras dle regionu, filtrace podle obtížnosti, čtení zkušeností jiných cyklistů
+   - Očekávaný výstup: Stažení GPX souboru s trasou, vytištění mapy nebo uložení do oblíbených
+
+2. **Sportovní cyklista připravující se na závod:**
+   - Vstupní bod: Přímý přístup do sekce Trénink nebo Závody
+   - Interakce: Čtení odborných článků, sledování instruktážních videí, kontrola termínů závodů
+   - Očekávaný výstup: Přizpůsobení tréninkového plánu, registrace na závod
+
+3. **Technický nadšenec zvažující nákup vybavení:**
+   - Vstupní bod: Vyhledávání konkrétního modelu kola nebo komponenty
+   - Interakce: Čtení podrobných recenzí, porovnávání specifikací, prohlížení fotografií a videí
+   - Očekávaný výstup: Rozhodnutí o nákupu, přechod na e-shop partnera (pokud existuje)
+
+### 2.1.2 Tvůrci obsahu
+
+Druhou významnou cílovou skupinou jsou uživatelé, kteří budou s redakčním systémem aktivně pracovat a vytvářet obsah:
+
+1. **Redaktoři (hlavní tvůrci obsahu)**
+   - Charakteristika: Profesionální nebo poloprofesionální pisatelé se znalostí cyklistiky
+   - Potřeby: Intuitivní editor pro tvorbu článků, nástroje pro správu multimediálního obsahu, přehled o čtenosti vlastních článků
+   - Klíčové funkce: WYSIWYG editor, správce souborů, základní statistiky
+
+2. **Editoři (správci kvality obsahu)**
+   - Charakteristika: Zkušení redaktoři s editorskými dovednostmi
+   - Potřeby: Schvalovací workflow, nástroje pro kontrolu a úpravu obsahu, organizace kategorií
+   - Klíčové funkce: Schvalovací systém, hromadné úpravy, správa kategorií a tagů
+
+3. **Administrátoři (technická správa)**
+   - Charakteristika: Techničtí správci systému
+   - Potřeby: Správa uživatelů, monitorování systému, technická konfigurace
+   - Klíčové funkce: Uživatelská správa, systémové nastavení, monitoring a statistiky
+
+4. **Specialisté na multimediální obsah**
+   - Charakteristika: Fotografové, kameramani a zvukaři
+   - Potřeby: Nástroje pro nahrávání a správu multimediálního obsahu
+   - Klíčové funkce: Hromadné nahrávání souborů, základní úpravy obrázků, správa galerie
+
+### 2.1.3 Obchodní partneři a inzerenti
+
+Třetí významnou skupinou jsou subjekty s obchodním zájmem:
+
+1. **Výrobci a prodejci cyklistického vybavení**
+   - Charakteristika: Značky a obchody s cyklistickým vybavením
+   - Potřeby: Prezentace produktů, dosah na cílovou skupinu, měřitelné výsledky
+   - Klíčové funkce: Reklamní bannery, sponzorované články, affiliate odkazy
+
+2. **Organizátoři cyklistických akcí**
+   - Charakteristika: Pořadatelé závodů, veletrhů a jiných cyklistických událostí
+   - Potřeby: Propagace událostí, registrační systém, zpětná vazba
+   - Klíčové funkce: Kalendář událostí, propagační bannery, integrovaný registrační formulář
+
+3. **Turistické regiony a destinace**
+   - Charakteristika: Města, regiony a turistické oblasti propagující cykloturistiku
+   - Potřeby: Propagace cyklotras a turistických zajímavostí
+   - Klíčové funkce: Mapa regionů, prezentace cyklotras, redakční spolupráce
+
+*[Zde by měl být vložen obrázek znázorňující segmentaci cílových skupin ve formě grafického rozdělení - viz Příloha 1, Obrázek 1: Segmentace cílových skupin]*
+
+Na základě analýzy cílových skupin byly stanoveny následující metriky úspěšnosti:
+- Minimálně 60% návštěvníků by mělo strávit na webu více než 2 minuty
+- Průměrně by měl každý návštěvník přečíst alespoň 1,5 článku za návštěvu
+- Míra okamžitého opuštění stránky by měla být pod 40%
+- 20% čtenářů by se mělo na web pravidelně vracet (alespoň 1x týdně)
+
+## 2.2 ADMINISTRACE WEBU
+
+Redakční systém pro cyklistický magazín vyžaduje komplexní, ale zároveň intuitivní administrační rozhraní, které umožní efektivní správu obsahu, uživatelů a multimediálních materiálů. Na základě analýzy požadavků byl navržen systém správy obsahu založený na jasně definovaných uživatelských rolích a workflow procesech.
+
+### 2.2.1 Uživatelské role a oprávnění
+
+V systému byly definovány následující uživatelské role s odstupňovanými oprávněními:
+
+1. **Superadministrátor**
+   - *Popis*: Nejvyšší úroveň přístupu, typicky provozovatel webu
+   - *Oprávnění*:
+     - Veškerá oprávnění ostatních rolí
+     - Správa systémových nastavení (konfigurace databáze, cache, emailů)
+     - Přístup k logovacím souborům a diagnostickým nástrojům
+     - Možnost vytváření a správy administrátorských účtů
+     - Nastavení globálních parametrů webu
+
+2. **Administrátor**
+   - *Popis*: Správce obsahu s rozšířenými technickými možnostmi
+   - *Oprávnění*:
+     - Správa všech uživatelských účtů (kromě superadministrátorů)
+     - Přidělování rolí uživatelům
+     - Kompletní přístup ke všem článkům a multimediálnímu obsahu
+     - Správa kategorií, tagů a taxonomie
+     - Přístup ke všem statistikám a analytickým nástrojům
+     - Moderování komentářů
+     - Správa reklamních ploch a propagovaného obsahu
+
+3. **Šéfredaktor**
+   - *Popis*: Vedoucí redakčního týmu s rozhodovací pravomocí nad obsahem
+   - *Oprávnění*:
+     - Plánování a koordinace obsahu (redakční kalendář)
+     - Schvalování článků k publikaci
+     - Přidělování úkolů redaktorům
+     - Editace všech článků
+     - Správa významných kategorií
+     - Propagace článků na hlavní stránce
+     - Přístup k agregovaným statistikám obsahu
+
+4. **Editor**
+   - *Popis*: Správce obsahu zajišťující jeho kvalitu a konzistenci
+   - *Oprávnění*:
+     - Schvalování článků k publikaci ve svěřených kategoriích
+     - Editace článků všech redaktorů
+     - Správa kategorií a tagů v rámci svěřených oblastí
+     - Omezený přístup k statistikám (vlastní kategorie)
+     - Moderování komentářů v rámci svěřených kategorií
+
+5. **Redaktor**
+   - *Popis*: Tvůrce obsahu magazínu
+   - *Oprávnění*:
+     - Vytváření nových článků
+     - Editace vlastních článků (do jejich publikace nebo při vrácení k úpravám)
+     - Nahrávání multimediálního obsahu k vlastním článkům
+     - Přístup k statistikám vlastních článků
+     - Odpovídání na komentáře u vlastních článků
+
+6. **Fotograf/Kameraman**
+   - *Popis*: Tvůrce vizuálního obsahu
+   - *Oprávnění*:
+     - Nahrávání a správa fotografií a videí
+     - Přiřazování multimediálního obsahu k článkům
+     - Základní úpravy nahraných materiálů
+     - Správa vlastní mediální knihovny
+
+7. **Audio specialista**
+   - *Popis*: Tvůrce zvukového obsahu a podcast materiálů
+   - *Oprávnění*:
+     - Nahrávání a správa zvukových stop
+     - Přiřazování audio obsahu k článkům
+     - Základní úpravy zvukových materiálů
+     - Správa podcastových epizod
+
+8. **Registrovaný uživatel**
+   - *Popis*: Čtenář s uživatelským účtem
+   - *Oprávnění*:
+     - Přidávání komentářů
+     - Hodnocení článků
+     - Ukládání oblíbených článků
+     - Odběr newsletteru
+     - Přizpůsobení zobrazovaného obsahu
+
+*[Zde by měla být vložena tabulka přehledně zobrazující role a jejich oprávnění - viz Příloha 1, Tabulka 1: Matice oprávnění uživatelských rolí]*
+
+### 2.2.2 Workflow publikačního procesu
+
+Publikační proces je navržen tak, aby zajistil konzistentní kvalitu obsahu a efektivní spolupráci mezi různými rolemi:
+
+1. **Návrh článku**
+   - Redaktor vytvoří koncept článku s pracovním názvem a základní strukturou
+   - Článek je uložen ve stavu "Koncept"
+   - V této fázi je viditelný pouze pro autora a administrátory
+
+2. **Tvorba článku**
+   - Redaktor vytvoří kompletní obsah článku včetně textu, obrázků a dalších materiálů
+   - Článek přechází do stavu "Připraveno k revizi"
+   - Systém automaticky notifikuje příslušného editora
+
+3. **Revize a editace**
+   - Editor zkontroluje článek po obsahové a formální stránce
+   - Může provést přímé úpravy nebo vrátit článek autorovi s komentáři
+   - Pokud je článek vrácen, přechází do stavu "K přepracování"
+   - Po schválení editorem přechází článek do stavu "Schváleno k publikaci"
+
+4. **Finální schválení**
+   - U významných článků může být vyžadováno schválení šéfredaktorem
+   - Šéfredaktor může článek publikovat okamžitě nebo naplánovat publikaci
+   - Článek přechází do stavu "Schváleno" nebo "Naplánováno"
+
+5. **Publikace**
+   - Článek je automaticky publikován v naplánovaný čas nebo manuálně
+   - Přechází do stavu "Publikováno"
+   - Systém může automaticky sdílet článek na sociálních sítích
+
+6. **Po publikaci**
+   - Sledování statistik a komentářů
+   - Možné aktualizace obsahu (se zachováním historie verzí)
+   - Případná propagace na hlavní stránce
+
+*[Zde by měl být vložen diagram znázorňující workflow publikačního procesu - viz Příloha 1, Obrázek 2: Diagram publikačního workflow]*
+
+### 2.2.3 Use Case Diagram a klíčové případy užití
+
+Use Case diagram zobrazuje hlavní interakce mezi aktéry (uživatelskými rolemi) a systémem:
+
+*[Zde by měl být vložen odkaz na use case diagram - viz Příloha 1, Obrázek 3: Use Case diagram redakčního systému]*
+
+Klíčové případy užití:
+
+1. **Správa článků**
+   - *Aktéři*: Redaktor, Editor, Šéfredaktor, Administrátor
+   - *Popis*: Vytvoření, editace, publikace a archivace článků
+   - *Typický scénář*:
+     1. Redaktor se přihlásí do administrace
+     2. Vybere možnost "Vytvořit nový článek"
+     3. Vyplní titulek, perex, hlavní text, přiřadí kategorii a tagy
+     4. Nahraje ilustrační obrázek
+     5. Uloží článek jako koncept nebo odešle k revizi
+     6. Editor článek reviduje a schválí k publikaci
+     7. Článek je publikován podle nastaveného časového plánu
+
+2. **Správa multimediálního obsahu**
+   - *Aktéři*: Redaktor, Fotograf, Audio specialista, Editor
+   - *Popis*: Nahrávání, organizace a použití obrázků, videí a zvukových stop
+   - *Typický scénář*:
+     1. Fotograf se přihlásí do administrace
+     2. Vybere možnost "Správa médií"
+     3. Nahraje sadu fotografií z cyklistické akce
+     4. Vyplní metadata (popis, tagy, autor, datum)
+     5. Propojí fotografie s konkrétním článkem
+
+3. **Moderování komentářů**
+   - *Aktéři*: Editor, Administrátor
+   - *Popis*: Schvalování, editace nebo mazání komentářů
+   - *Typický scénář*:
+     1. Editor obdrží notifikaci o novém komentáři
+     2. Přejde do sekce "Správa komentářů"
+     3. Zkontroluje obsah komentáře
+     4. Schválí komentář, edituje ho, nebo ho smaže v případě porušení pravidel
+
+4. **Správa uživatelů**
+   - *Aktéři*: Administrátor, Superadministrátor
+   - *Popis*: Vytváření účtů, přidělování rolí, deaktivace účtů
+   - *Typický scénář*:
+     1. Administrátor přejde do sekce "Správa uživatelů"
+     2. Vytvoří nový účet pro redaktora
+     3. Vyplní základní údaje a přiřadí roli
+     4. Systém odešle pozvánku k dokončení registrace
+
+5. **Sledování statistik**
+   - *Aktéři*: Redaktor, Editor, Šéfredaktor, Administrátor
+   - *Popis*: Přístup k analytickým datům o čtenosti článků
+   - *Typický scénář*:
+     1. Šéfredaktor přejde do sekce "Statistiky"
+     2. Vybere časové období a kategorii
+     3. Prohlíží data o nejčtenějších článcích, průměrné době čtení, konverzích
+
+### 2.2.4 Administrační rozhraní
+
+Administrační rozhraní je navrženo s důrazem na přehlednost, efektivitu a intuitivnost. Hlavní komponenty:
+
+1. **Dashboard (nástěnka)**
+   - Personalizovaný přehled pro každou roli
+   - Zobrazení aktuálních úkolů a notifikací
+   - Rychlý přístup k často používaným funkcím
+   - Základní statistiky a grafy (podle oprávnění uživatele)
+
+2. **Editor článků**
+   - WYSIWYG editor s rozšířenými možnostmi
+   - Podpora vkládání a úpravy multimediálního obsahu
+   - Náhled článku na různých zařízeních
+   - Automatické ukládání a správa verzí
+   - SEO nástroje (analýza klíčových slov, meta tagy)
+
+3. **Správce médií**
+   - Přehledná galerie všech nahraných souborů
+   - Filtrování podle typu, data, autora, tagů
+   - Základní úpravy obrázků (ořez, rotace, změna velikosti)
+   - Správa metadat a autorských práv
+
+4. **Systém schvalování**
+   - Přehled článků čekajících na schválení
+   - Možnost přidávání komentářů k jednotlivým částem
+   - Historie revizí a změn
+   - Notifikační systém (email, in-app)
+
+5. **Analytické nástroje**
+   - Statistiky čtenosti jednotlivých článků
+   - Demografické údaje o čtenářích
+   - Analýza chování uživatelů
+   - Reporty a exporty dat
+
+*[Zde by měly být vloženy screenshoty klíčových obrazovek administrace - viz Příloha 1, Obrázky 4-7: Ukázky administračního rozhraní]*
+
+## 2.3 DATABÁZE
+
+Datová vrstva je klíčovou součástí celého redakčního systému a byla navržena s ohledem na specifické požadavky cyklistického magazínu, efektivitu, škálovatelnost a udržitelnost. Databázový model je implementován v relačním databázovém systému MySQL.
+
+### 2.3.1 Konceptuální model (E-R diagram)
+
+Konceptuální model databáze zachycuje hlavní entity a jejich vzájemné vztahy v systému:
+
+*[Zde by měl být vložen odkaz na E-R diagram s viditelnou strukturou tabulek a vyznačenými spojnicemi relací - viz Příloha 2, Obrázek 1: E-R diagram databáze]*
+
+### 2.3.2 Detailní popis hlavních entit
+
+#### Users (Uživatelé)
+Entita spravující údaje o všech uživatelích systému.
+
+| Atribut | Datový typ | Popis | Omezení |
+|---------|------------|-------|---------|
+| id | INT | Primární klíč | AUTO_INCREMENT, UNSIGNED |
+| username | VARCHAR(50) | Uživatelské jméno | UNIQUE, NOT NULL |
+| email | VARCHAR(100) | Emailová adresa | UNIQUE, NOT NULL |
+| password_hash | VARCHAR(255) | Hash hesla | NOT NULL |
+| first_name | VARCHAR(50) | Jméno | NULL |
+| last_name | VARCHAR(50) | Příjmení | NULL |
+| role | ENUM | Role uživatele | ['admin', 'editor', 'author', 'photographer', 'audio', 'user'] |
+| bio | TEXT | Profil autora | NULL |
+| avatar | VARCHAR(255) | Cesta k profilovému obrázku | NULL |
+| status | ENUM | Stav účtu | ['active', 'inactive', 'banned', 'pending'] |
+| created_at | DATETIME | Datum vytvoření | DEFAULT CURRENT_TIMESTAMP |
+| updated_at | DATETIME | Datum aktualizace | DEFAULT CURRENT_TIMESTAMP ON UPDATE |
+| last_login | DATETIME | Poslední přihlášení | NULL |
+| auth_token | VARCHAR(100) | Token pro autentizaci | NULL |
+| password_reset_token | VARCHAR(100) | Token pro reset hesla | NULL |
+| password_reset_expires | DATETIME | Platnost tokenu | NULL |
+
+#### Articles (Články)
+Hlavní entita obsahující údaje o článcích.
+
+| Atribut | Datový typ | Popis | Omezení |
+|---------|------------|-------|---------|
+| id | INT | Primární klíč | AUTO_INCREMENT, UNSIGNED |
+| title | VARCHAR(255) | Titulek článku | NOT NULL |
+| slug | VARCHAR(255) | URL segment (SEO) | UNIQUE, NOT NULL |
+| content | LONGTEXT | Obsah článku | NOT NULL |
+| excerpt | VARCHAR(500) | Perex / úvodní odstavec | NULL |
+| category_id | INT | ID kategorie | FOREIGN KEY |
+| user_id | INT | ID autora | FOREIGN KEY, NOT NULL |
+| featured_image | VARCHAR(255) | Hlavní obrázek | NULL |
+| status | ENUM | Stav článku | ['draft', 'review', 'revision', 'approved', 'scheduled', 'published', 'archived'] |
+| is_featured | TINYINT(1) | Propagovaný článek | DEFAULT 0 |
+| is_premium | TINYINT(1) | Premium obsah | DEFAULT 0 |
+| published_at | DATETIME | Datum publikace | NULL |
+| created_at | DATETIME | Datum vytvoření | DEFAULT CURRENT_TIMESTAMP |
+| updated_at | DATETIME | Datum aktualizace | DEFAULT CURRENT_TIMESTAMP ON UPDATE |
+| view_count | INT | Počet zobrazení | DEFAULT 0 |
+| reading_time | INT | Čas čtení (minuty) | NULL |
+| meta_title | VARCHAR(255) | SEO titulek | NULL |
+| meta_description | VARCHAR(255) | SEO popis | NULL |
+| meta_keywords | VARCHAR(255) | SEO klíčová slova | NULL |
+
+#### Categories (Kategorie)
+Entita pro organizaci článků do tematických kategorií.
+
+| Atribut | Datový typ | Popis | Omezení |
+|---------|------------|-------|---------|
+| id | INT | Primární klíč | AUTO_INCREMENT, UNSIGNED |
+| name | VARCHAR(50) | Název kategorie | NOT NULL |
+| slug | VARCHAR(50) | URL segment | UNIQUE, NOT NULL |
+| description | TEXT | Popis kategorie | NULL |
+| parent_id | INT | Nadřazená kategorie | FOREIGN KEY, NULL |
+| featured_image | VARCHAR(255) | Obrázek kategorie | NULL |
+| position | INT | Pořadí zobrazení | DEFAULT 0 |
+| is_active | TINYINT(1) | Aktivní zobrazení | DEFAULT 1 |
+| created_at | DATETIME | Datum vytvoření | DEFAULT CURRENT_TIMESTAMP |
+| updated_at | DATETIME | Datum aktualizace | DEFAULT CURRENT_TIMESTAMP ON UPDATE |
+
+#### Tags (Tagy)
+Entita pro flexibilní označování obsahu.
+
+| Atribut | Datový typ | Popis | Omezení |
+|---------|------------|-------|---------|
+| id | INT | Primární klíč | AUTO_INCREMENT, UNSIGNED |
+| name | VARCHAR(50) | Název tagu | NOT NULL |
+| slug | VARCHAR(50) | URL segment | UNIQUE, NOT NULL |
+| description | TEXT | Popis tagu | NULL |
+| created_at | DATETIME | Datum vytvoření | DEFAULT CURRENT_TIMESTAMP |
+| updated_at | DATETIME | Datum aktualizace | DEFAULT CURRENT_TIMESTAMP ON UPDATE |
+
+#### Article_Tags (Vazební tabulka Článek-Tag)
+Vazební tabulka pro vztah M:N mezi články a tagy.
+
+| Atribut | Datový typ | Popis | Omezení |
+|---------|------------|-------|---------|
+| article_id | INT | ID článku | FOREIGN KEY, NOT NULL |
+| tag_id | INT | ID tagu | FOREIGN KEY, NOT NULL |
+| PRIMARY KEY | | Složený primární klíč | (article_id, tag_id) |
+
+#### Media (Média)
+Entita spravující multimediální obsah.
+
+| Atribut | Datový typ | Popis | Omezení |
+|---------|------------|-------|---------|
+| id | INT | Primární klíč | AUTO_INCREMENT, UNSIGNED |
+| file_name | VARCHAR(255) | Název souboru | NOT NULL |
+| file_path | VARCHAR(255) | Cesta k souboru | NOT NULL |
+| file_type | VARCHAR(50) | MIME typ souboru | NOT NULL |
+| file_size | INT | Velikost v bytech | NOT NULL |
+| file_extension | VARCHAR(10) | Přípona souboru | NOT NULL |
+| title | VARCHAR(255) | Titulek média | NULL |
+| description | TEXT | Popis média | NULL |
+| alt_text | VARCHAR(255) | Alternativní text | NULL |
+| dimensions | VARCHAR(20) | Rozměry (pro obrázky) | NULL |
+| user_id | INT | ID uživatele | FOREIGN KEY, NOT NULL |
+| created_at | DATETIME | Datum vytvoření | DEFAULT CURRENT_TIMESTAMP |
+| updated_at | DATETIME | Datum aktualizace | DEFAULT CURRENT_TIMESTAMP ON UPDATE |
+
+#### Article_Media (Vazební tabulka Článek-Médium)
+Vazební tabulka pro vztah M:N mezi články a médii.
+
+| Atribut | Datový typ | Popis | Omezení |
+|---------|------------|-------|---------|
+| article_id | INT | ID článku | FOREIGN KEY, NOT NULL |
+| media_id | INT | ID média | FOREIGN KEY, NOT NULL |
+| position | INT | Pořadí zobrazení | DEFAULT 0 |
+| is_featured | TINYINT(1) | Hlavní médium | DEFAULT 0 |
+| PRIMARY KEY | | Složený primární klíč | (article_id, media_id) |
+
+#### Comments (Komentáře)
+Entita pro správu komentářů k článkům.
+
+| Atribut | Datový typ | Popis | Omezení |
+|---------|------------|-------|---------|
+| id | INT | Primární klíč | AUTO_INCREMENT, UNSIGNED |
+| article_id | INT | ID článku | FOREIGN KEY, NOT NULL |
+| user_id | INT | ID uživatele | FOREIGN KEY, NULL |
+| parent_id | INT | Nadřazený komentář | FOREIGN KEY, NULL |
+| author_name | VARCHAR(100) | Jméno autora (neregistrovaný) | NULL |
+| author_email | VARCHAR(100) | Email autora (neregistrovaný) | NULL |
+| content | TEXT | Obsah komentáře | NOT NULL |
+| status | ENUM | Stav komentáře | ['pending', 'approved', 'spam', 'rejected'] |
+| ip_address | VARCHAR(45) | IP adresa | NULL |
+| user_agent | VARCHAR(255) | User agent | NULL |
+| created_at | DATETIME | Datum vytvoření | DEFAULT CURRENT_TIMESTAMP |
+| updated_at | DATETIME | Datum aktualizace | DEFAULT CURRENT_TIMESTAMP ON UPDATE |
+
+#### Audio (Zvukové stopy)
+Entita pro správu zvukových stop k článkům.
+
+| Atribut | Datový typ | Popis | Omezení |
+|---------|------------|-------|---------|
+| id | INT | Primární klíč | AUTO_INCREMENT, UNSIGNED |
+| article_id | INT | ID článku | FOREIGN KEY, NOT NULL |
+| title | VARCHAR(255) | Název zvukové stopy | NOT NULL |
+| file_path | VARCHAR(255) | Cesta k souboru | NOT NULL |
+| file_size | INT | Velikost v bytech | NOT NULL |
+| duration | INT | Délka v sekundách | NOT NULL |
+| format | VARCHAR(20) | Formát souboru | NOT NULL |
+| user_id | INT | ID autora | FOREIGN KEY, NOT NULL |
+| description | TEXT | Popis zvukové stopy | NULL |
+| is_podcast | TINYINT(1) | Příznak podcastu | DEFAULT 0 |
+| created_at | DATETIME | Datum vytvoření | DEFAULT CURRENT_TIMESTAMP |
+| updated_at | DATETIME | Datum aktualizace | DEFAULT CURRENT_TIMESTAMP ON UPDATE |
+
+#### Views (Zobrazení)
+Entita sledující zobrazení článků.
+
+| Atribut | Datový typ | Popis | Omezení |
+|---------|------------|-------|---------|
+| id | INT | Primární klíč | AUTO_INCREMENT, UNSIGNED |
+| article_id | INT | ID článku | FOREIGN KEY, NOT NULL |
+| user_id | INT | ID uživatele | FOREIGN KEY, NULL |
+| ip_address | VARCHAR(45) | IP adresa | NOT NULL |
+| user_agent | VARCHAR(255) | User agent | NOT NULL |
+| referer | VARCHAR(255) | Referenční URL | NULL |
+| viewed_at | DATETIME | Čas zobrazení | DEFAULT CURRENT_TIMESTAMP |
+| session_id | VARCHAR(100) | ID relace | NULL |
+| view_duration | INT | Doba zobrazení (s) | NULL |
+
+### 2.3.3 Klíčové relace mezi entitami
+
+1. **Users (1:N) Articles**
+   - Jeden uživatel může vytvořit více článků
+   - Cizí klíč `user_id` v tabulce `Articles` odkazuje na primární klíč `id` v tabulce `Users`
+   - ON DELETE: RESTRICT (zabránění smazání uživatele s existujícími články)
+
+2. **Categories (1:N) Articles**
+   - Kategorie může obsahovat více článků
+   - Cizí klíč `category_id` v tabulce `Articles` odkazuje na primární klíč `id` v tabulce `Categories`
+   - ON DELETE: SET NULL (při smazání kategorie zůstanou články bez kategorie)
+
+3. **Categories (1:N) Categories**
+   - Rekurzivní vztah pro hierarchickou strukturu kategorií
+   - Cizí klíč `parent_id` v tabulce `Categories` odkazuje na primární klíč `id` v téže tabulce
+   - ON DELETE: SET NULL (při smazání rodičovské kategorie se potomci stanou kořenovými)
+
+4. **Articles (N:M) Tags**
+   - Článek může mít více tagů, tag může být přiřazen k více článkům
+   - Vazební tabulka `Article_Tags` s cizími klíči `article_id` a `tag_id`
+   - ON DELETE: CASCADE (při smazání článku nebo tagu se smažou příslušné vazby)
+
+5. **Articles (1:N) Comments**
+   - Článek může mít více komentářů
+   - Cizí klíč `article_id` v tabulce `Comments` odkazuje na primární klíč `id` v tabulce `Articles`
+   - ON DELETE: CASCADE (při smazání článku se smažou i všechny jeho komentáře)
+
+6. **Users (1:N) Comments**
+   - Uživatel může napsat více komentářů
+   - Cizí klíč `user_id` v tabulce `Comments` odkazuje na primární klíč `id` v tabulce `Users`
+   - ON DELETE: SET NULL (při smazání uživatele zůstanou komentáře jako anonymní)
+
+7. **Comments (1:N) Comments**
+   - Rekurzivní vztah pro hierarchickou strukturu komentářů (odpovědi)
+   - Cizí klíč `parent_id` v tabulce `Comments` odkazuje na primární klíč `id` v téže tabulce
+   - ON DELETE: CASCADE (při smazání komentáře se smažou i všechny odpovědi)
+
+8. **Articles (1:1) Audio**
+   - Článek může mít přiřazenou jednu zvukovou stopu
+   - Cizí klíč `article_id` v tabulce `Audio` odkazuje na primární klíč `id` v tabulce `Articles`
+   - ON DELETE: CASCADE (při smazání článku se smaže i přiřazená zvuková stopa)
+
+9. **Articles (1:N) Views**
+   - Článek může mít zaznamenáno více zobrazení
+   - Cizí klíč `article_id` v tabulce `Views` odkazuje na primární klíč `id` v tabulce `Articles`
+   - ON DELETE: CASCADE (při smazání článku se smažou i všechny záznamy o zobrazeních)
+
+10. **Articles (N:M) Media**
+    - Článek může mít více multimediálních souborů, soubor může být použit ve více článcích
+    - Vazební tabulka `Article_Media` s cizími klíči `article_id` a `media_id`
+    - ON DELETE: CASCADE pro vazby (při smazání článku nebo média se smažou příslušné vazby)
+
+### 2.3.4 Index

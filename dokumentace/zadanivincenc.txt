@@ -1,0 +1,941 @@
+Střední průmyslová škola elektrotechnická
+a Vyšší odborná škola Pardubice
+
+STŘEDNÍ PRŮMYSLOVÁ ŠKOLA ELEKTROTECHNICKÁ
+
+MATURITNÍ PRÁCE – WEBOVÉ STRÁNKY
+
+NÁZEV MATURITNÍ PRÁCE
+
+březen 2025
+
+Ondřej Vincenc 4.E
+
+„Prohlašuji, že jsem maturitní práci vypracoval(a) samostatně a použil(a) jsem literárních
+pramenů, informací a obrázků, které cituji a uvádím v seznamu použité literatury a zdrojů
+informací a v seznamu použitých obrázků a neporušil jsem autorská práva.
+Souhlasím s umístěním kompletní maturitní práce nebo její části na školní internetové
+stránky a s použitím jejích ukázek pro výuku.“
+V Pardubicích dne ...........................
+
+................................................
+podpis
+
+VLOŽENÉ ZADÁNÍ V ELEKTRONICKÉ PODOBĚ
+
+Anotace
+Vytvořte redakční systém zaměřený na správu článků pro cyklistický magazín. Systém bude
+umožňovat tvorbu, úpravy, mazání a publikaci článků s různými úrovněmi přístupu pro
+uživatele s různými rolemi (např. redaktor, editor, administrátor). Systém bude rovněž
+zahrnovat správu kategorií článků, sledování počtu zobrazení článků, možnost přidání
+zvukové stopy k článku a funkce pro propagaci vybraných článků na první pozice na webu.
+Klíčová slova: Zapište klíčová slova (keywords)
+
+Annotation
+Insert a translation of the description.
+Keywords:
+
+Obsah
+ÚVOD .................................................................................................................................... 8
+1
+
+ANALÝZA OBDOBNÝCH WEBOVÝCH STRÁNEK ..................................... 11
+1.1 ZAPIŠTE NÁZEV PRVNÍHO WEBU ................................................................ 11
+1.1.1 Kladné stránky .......................................................................................................................... 11
+1.1.2 Záporné stránky......................................................................................................................... 11
+
+2
+
+NÁVRH PROJEKTU ............................................................................................ 12
+2.1 CÍLOVÉ SKUPINY ............................................................................................... 12
+2.2 ADMINISTRACE WEBU............... CHYBA! ZÁLOŽKA NENÍ DEFINOVÁNA.
+2.3 DATABÁZE ..................................... CHYBA! ZÁLOŽKA NENÍ DEFINOVÁNA.
+2.4 DESIGN A RESPONZIVITA ......... CHYBA! ZÁLOŽKA NENÍ DEFINOVÁNA.
+
+3
+
+POPIS PROJEKTU ............................................................................................... 19
+3.1 FRONTEND ........................................................................................................... 19
+3.2 BACKEND.............................................................................................................. 19
+
+ZÁVĚR ............................................................................................................................... 26
+SEZNAM PŘÍSTUPOVÝCH ÚDAJŮ ............................................................................. 29
+SEZNAM POUŽITÉ LITERATURY A ZDROJŮ OBRÁZKŮ ................................... 30
+SEZNAM OBRÁZKŮ ....................................................................................................... 31
+PŘÍLOHY ........................................................................................................................... 32
+
+Úvod
+Tato maturitní práce se zabývá vývojem webového redakčního systému pro
+cyklistický magazín. Hlavním cílem projektu je vytvořit specializovanou webovou aplikaci,
+která umožní redakci cyklistického magazínu efektivně spravovat a publikovat obsah online.
+Systém je navržen tak, aby podporoval týmovou spolupráci několika úrovní uživatelů (např.
+redaktorů, editorů a administrátorů) a usnadnil každodenní práci redakce při tvorbě článků
+o cyklistice. Výsledkem je komplexní platforma pro správu obsahu, která splňuje
+specifické potřeby internetového magazínu zaměřeného na cyklistiku.
+Motivace a účel projektu: Impulsem k realizaci tohoto projektu byla potřeba
+jednoduchého a přizpůsobeného řešení pro správu článků v prostředí cyklistického
+magazínu. Ačkoli existují obecné redakční systémy a CMS platformy, často bývají příliš
+obecné nebo složité pro menší tematické magazíny. Vytvoření vlastního řešení umožňuje
+plnou kontrolu nad funkcemi a přizpůsobení systému specifickým požadavkům
+cyklistického webu. Zvolený projekt zároveň poskytuje příležitost k rozvoji dovedností v
+oblasti webového programování, databázových systémů a návrhu uživatelského rozhraní,
+což je pro studenta cenná praktická zkušenost. Výsledný systém může usnadnit práci
+redaktorům a zvýšit efektivitu publikačního procesu, protože je navržen přesně podle
+potřeb dané redakce.
+Hlavní funkce systému: Vyvinutý redakční systém nabízí klíčové funkce, které
+pokrývají všechny důležité aspekty správy obsahu cyklistického magazínu:
+•
+
+Správa uživatelských účtů a rolí: Systém umožňuje vytváření uživatelských účtů s
+rozdílnými rolemi (např. redaktor, editor, administrátor). Každá role má
+definovaná práva a přístup k určitým funkcím, což zajišťuje bezpečnou a přehlednou
+správu obsahu i uživatelů. Administrátor může spravovat všechny uživatele a jejich
+role, zatímco redaktoři a editoři mají oprávnění související s tvorbou a úpravou
+článků.
+
+•
+
+Tvorba a správa článků: Redaktoři mohou vytvářet nové články, editovat jejich
+obsah, ukládat koncepty a po schválení editorem je publikovat. Systém podporuje i
+mazání či archivaci nepotřebných článků. Každý článek obsahuje titulky, text,
+obrázky a další média podle potřeby magazínu.
+–8–
+
+•
+
+Správa kategorií a zvýraznění článků: Pro lepší organizaci obsahu je k dispozici
+správa kategorií, která umožňuje řadit články do tematických sekcí (např. silniční
+cyklistika, horská cyklistika, recenze vybavení). Redakce může také vybrané články
+propagovat na přední pozice webu (například na úvodní stránce magazínu), aby se
+zvýraznil nejdůležitější nebo nejzajímavější obsah pro čtenáře.
+
+•
+
+Sledování návštěvnosti a statistiky: Systém automaticky sleduje počet zobrazení
+jednotlivých článků a poskytuje základní statistiky o návštěvnosti. Díky tomu může
+redakce monitorovat zájem čtenářů o konkrétní témata a vyhodnocovat úspěšnost
+publikovaného obsahu. Tyto údaje pomohou při rozhodování o dalším obsahu a
+zaměření magazínu.
+
+•
+
+Integrace audio obsahu: Kromě textových a obrazových materiálů umožňuje
+redakční systém také integraci audio souborů přímo do článků. Tato funkce je
+využitelná například pro publikování podcastů, rozhovorů nebo zvukových záznamů
+z terénu. Čtenáři magazínu si tak mohou k článkům přehrát doprovodné audio (např.
+komentář k závodu či rozhovor s cyklistou), což zvyšuje atraktivitu obsahu a
+rozšiřuje možnosti prezentace informací.
+Přínos a praktické využití: Připravený redakční systém má významný přínos pro
+
+provozovatele cyklistického magazínu i jeho redaktory. Umožňuje centralizovanou a
+přehlednou správu veškerého obsahu na jednom místě, čímž zefektivňuje publikační
+proces. Redaktoři mohou snadno spolupracovat při tvorbě článků a díky definovaným rolím
+je zajištěno, že publikování obsahu podléhá potřebné kontrole (například editor kontroluje
+články před zveřejněním). Sledování návštěvnosti přináší cennou zpětnou vazbu o čtenosti
+článků a pomáhá redakci zaměřit se na oblíbená témata. Možnost integrace audio stop
+rozšiřuje formáty, ve kterých lze čtenářům přinášet obsah – magazín tak může kromě
+klasických textů nabízet i audio reportáže či podcasty, což zvyšuje jeho atraktivitu a dosah.
+Díky modulárnímu návrhu a přizpůsobení na míru oboru cyklistiky může být systém nasazen
+v praxi jako interní nástroj konkrétního online magazínu nebo dále rozvíjen pro širší využití
+v dalších specializovaných webech.
+Struktura dokumentace: Tato písemná dokumentace nejprve popisuje analýzu
+požadavků a existujících řešení v oblasti redakčních systémů, se zvláštním zřetelem na
+potřeby cyklistického magazínu. Následně se věnuje návrhu architektury a implementaci
+–9–
+
+vyvinutého systému – zahrnuje popis použitých technologií, datového modelu a klíčových
+částí aplikace (uživatelské rozhraní, serverová logika, databázová struktura). V další části
+jsou představeny výsledky testování a ověření funkčnosti systému včetně ukázek
+obrazovek a vyhodnocení, jak systém splňuje stanovené požadavky. Závěrečná kapitola
+Závěr shrnuje dosažené cíle projektu, zhodnocuje přínosy vytvořeného redakčního systému
+a navrhuje možnosti budoucího rozšíření či nasazení projektu do reálného provozu.
+
+– 10 –
+
+1
+
+Analýza obdobných webových stránek
+Zapište důvod, proč je vhodné provést analýzu obdobných stránek…
+
+1.1 Zapište název prvního webu
+Adresa: http:// …
+Popište web …
+1.1.1 Kladné stránky
+
+1.1.2 Záporné stránky
+
+– 11 –
+
+2
+
+Návrh projektu
+
+2.1 Cílové skupiny
+Redakční systém bude primárně určen pro redakční tým cyklistického magazínu –
+tedy pro osoby, které tvoří a spravují obsah webu (autoři článků, editoři a administrátoři).
+Tito uživatelé potřebují intuitivní nástroje pro psaní a editaci článků, správu kategorií a
+multimédií (obrázků či audio záznamů) a možnost publikovat obsah širokému publiku.
+Systém musí splňovat požadavky redaktorů na jednoduché vložení textů, formátování,
+přidávání fotografií a případně audio stopy k článkům. Editoři požadují funkce pro kontrolu
+a schvalování článků před publikací, možnost zvýraznit vybrané články na hlavní stránce a
+přehled o statistikách čtenosti. Administrátor (typicky vedoucí magazínu nebo správce
+systému) potřebuje nástroje pro správu uživatelů a jejich rolí, globální nastavení webu a
+dohled nad celkovým chodem systému.
+Sekundární cílovou skupinou jsou čtenáři cyklistického magazínu (veřejnost).
+Ačkoli tito koncoví uživatelé nepracují přímo s administrátorským rozhraním, systém pro
+ně nepřímo vytváří přidanou hodnotu – umožní pravidelné publikování kvalitního obsahu.
+Čtenáři očekávají přehledné webové stránky magazínu, kde mohou snadno nalézt články
+podle kategorií (např. závody, trénink, recenze vybavení), číst si je na různých zařízeních
+(mobil, tablet, PC) a případně poslouchat přiložené audio (např. podcast nebo namluvenou
+verzi článku).
+
+2.2 Funkční specifikace
+Systém bude plnit veškeré klíčové funkce typické pro redakční (CMS) systémy,
+přizpůsobené potřebám cyklistického magazínu. Mezi hlavní funkční požadavky patří
+zejména:
+•
+
+Správa článků: Uživatelé s rolí redaktora či vyšší budou moci vytvářet nové články,
+upravovat jejich obsah a případně nechtěné články mazat. K dispozici bude
+plnohodnotný textový WYSIWYG editor pro formátování textu (nadpisy, odstavce,
+seznamy, citace), vkládání odkazů a nahrávání obrázků přímo do obsahu článku.
+Každý rozpracovaný článek půjde uložit jako koncept (draft), aby na něm šlo
+pracovat postupně.
+
+•
+
+Publikace článků: Systém umožní publikovat článek ve zvoleném termínu. Editor
+(nebo administrátor) může článek po finálních úpravách zveřejnit ihned, případně
+naplánovat publikaci na konkrétní datum a čas. Publikovaný článek se objeví na
+webu magazínu v příslušné kategorii a na úvodní stránce (pokud je označen jako
+propagovaný). Bude také možné článek z publikace stáhnout (dočasně skrýt nebo
+archivovat).
+– 12 –
+
+•
+
+Správa kategorií: Články budou organizovány do tematických kategorií (např.
+Trénink, Závody, Technika kola, Recenze). Administrátor nebo editor může
+kategorie vytvářet, přejmenovávat či rušit podle potřeby. Každý článek musí být
+přiřazen k jedné hlavní kategorii; systém nabídne výběr existující kategorie při tvorbě
+článku. Seznam kategorií bude využit pro menu na webu, aby si čtenáři mohli
+filtrovat články podle témat.
+
+•
+
+Uživatelské účty a role: Systém bude podporovat více uživatelských rolí s odlišnými
+oprávněními (viz níže Uživatelské role a oprávnění). Bude implementována správa
+uživatelů – přidávání nových uživatelských účtů (zejména redaktorů), úprava jejich
+údajů a přiřazení rolí. Každý uživatel se bude do systému přihlašovat zabezpečeným
+způsobem (jméno/heslo, případně další ověření). Neautentizovaným uživatelům
+nebude umožněn přístup do administrace.
+
+•
+
+Sledování zobrazení článků: Redakční systém automaticky počítá počet zobrazení
+(čtenost) u každého článku. Při každém načtení publikovaného článku na webu se
+zvýší jeho čítač zhlédnutí. Tyto statistiky budou viditelné v administraci u seznamu
+článků (např. sloupec „Počet zobrazení“) a mohou být využity editory k vyhodnocení
+popularity obsahu. Do budoucna lze na základě těchto dat implementovat také řazení
+článků podle oblíbenosti nebo statistické přehledy návštěvnosti.
+
+•
+
+Audio stopa k článku: Jednou z požadovaných funkcí je možnost připojit k článku
+zvukovou stopu. V systému bude tedy možné k vytvořenému článku nahrát audio
+soubor (např. formát MP3) – může jít o podcast související s článkem nebo
+namluvenou verzi článku pro posluchače. V administraci bude u článku pole pro
+vložení audio souboru; na veřejném webu se pak u daného článku zobrazí audio
+přehrávač, aby si čtenář mohl nahrávku přehrát. Systém zajistí uložení souboru na
+server a kontrolu velikosti či formátu (povoleny budou standardní audio formáty do
+určité velikosti).
+
+•
+
+Propagace vybraných článků: Administrátor či editor může označit některé
+publikované články jako „doporučené“ či „propagované“, které se mají zobrazit na
+předních pozicích webu. Systém pro to poskytne příznak (checkbox „Propagovat na
+úvodní straně“) u každého článku. Na titulní stránce magazínu pak budou takto
+označené články zvýrazněny – například se zobrazí v sekci „Doporučujeme“ nebo
+na prvních místech seznamu novinek. Tento mechanismus umožní redakci promo
+vybraného obsahu, např. nejdůležitějších zpráv nebo nejkvalitnějších článků, pro
+větší upoutání pozornosti čtenářů.
+
+(Vedle výše uvedených klíčových funkcí bude systém obsahovat i běžné doplňkové
+funkce jako je fulltextové vyhledávání článků, stránkování seznamů, potvrzovací dialogy při
+mazání obsahu, apod., pro kompletnost a lepší uživatelský zážitek.)
+
+– 13 –
+
+2.3 Technologický stack
+Programovací jazyky a frameworky: Pro implementaci systému zvolíme moderní
+webový stack. Na backendu poslouží např. jazyk PHP v kombinaci s frameworkem Laravel
+(popř. Nette) – to zajistí strukturovanou MVC architekturu a urychlí vývoj běžných funkcí.
+Alternativně by šlo využít i JavaScript/TypeScript na serveru (Node.js s frameworkem
+Express) v případě orientace na REST API, nebo Python (framework Django); pro potřeby
+této práce však PHP/Laravel představuje osvědčené řešení s nižší vstupní složitostí. Backend
+bude tvořit aplikační logiku, bude obsluhovat požadavky z klienta a komunikovat s databází.
+Na frontendu se využije HTML5, CSS3 a JavaScript. Pro responzivní a pohledný
+design zvolíme CSS framework Bootstrap 5, který poskytne předdefinované responzivní
+gridy a komponenty (navigační menu, formuláře, tlačítka) a usnadní tak vytváření rozhraní,
+které se přizpůsobí mobilním zařízením. JavaScript zajistí interaktivitu na straně prohlížeče
+– například ovládání menu na mobilu, dynamické načítání dat nebo vylepšení práce s
+formuláři. Pokud bude potřeba bohatší klientská logika v administraci, lze použít i knihovnu
+jQuery (pro jednoduché DOM manipulace) nebo případně implementovat SPA administraci
+pomocí frameworku jako Vue.js či React (to by však znamenalo větší důraz na vývoj REST
+API na backendu). Z hlediska časových možností a přehlednosti se počítá spíše s tradičním
+více-stránkovým webem s prvky AJAX než plnohodnotnou SPA.
+Databázový systém: Pro úložiště dat bude využita relační databáze MySQL
+(potažmo MariaDB). MySQL je osvědčený a výkonově dostačující databázový systém pro
+webové aplikace, dobře podporovaný zvoleným backendovým frameworkem. Databázová
+vrstva bude zajišťovat perzistenci článků, kategorií, uživatelů a dalších údajů. ORM (ObjectRelational Mapping) vrstvy frameworku Laravel umožní snadnou práci s databází přímo v
+kódu (např. definice modelů pro články, uživatele atd. a jejich vztahů). Při použití Node.js
+by analogicky mohla být využita databáze MongoDB (NoSQL) s knihovnou Mongoose,
+avšak pro povahu dat (jasně strukturované entity a vazby) je relační databáze vhodnější.
+Další technologie a nástroje:
+•
+
+Webový server: Aplikace poběží na serveru Apache nebo Nginx (podle hostingu),
+případně integrovaně přes vestavěný server Laravelu během vývoje.
+
+•
+
+Verzionování a vývoj: Projekt bude verzován pomocí Git repozitáře, což usnadní
+případnou spolupráci a udržování historie kódu.
+
+•
+
+Textový editor článků: Pro pohodlí redaktorů integrujeme open-source WYSIWYG
+editor, např. CKEditor 5 nebo TinyMCE, do formuláře pro editaci článku. Ten
+umožní formátování textu a vkládání multimédií bez nutnosti psát HTML kód.
+
+•
+
+Upload souborů: Nahrané obrázky a audio soubory budou ukládány na server do
+strukturovaných složek. Backend zajistí kontrolu typu a velikosti souboru. Pro
+
+– 14 –
+
+implementaci nahrávání se využije buď interní řešení Laravelu (Storage API) nebo
+JavaScript + AJAX volání pro plynulejší nahrání (s ukazatelem průběhu).
+•
+
+Knihovny pro audio/video: Pro přehrávání audio stopy u článku využijeme přímo
+HTML5 <audio> prvek s vlastním ovládáním vzhledu přes CSS, případně lehkou JS
+knihovnu pro customizaci přehrávače.
+
+•
+
+Bezpečnost: Pro ochranu dat a uživatelských účtů bude implementováno hashování
+hesel (např. bcrypt), kontrola vstupů (filtrování XSS v editoru, ochrana proti SQL
+injection přes parametry), a řízení přístupů na základě rolí.
+
+2.4 Architektura systému
+Celkový koncept: Aplikace bude navržena modulárně dle principů MVC
+architektury (Model-View-Controller). Tato struktura oddělí logiku práce s daty (Modely
++ Databáze), řídící logiku aplikace (Controllers) a prezentaci uživatelského rozhraní
+(Views/Šablony). Tím bude zajištěna lepší udržovatelnost kódu a možnost dalšího
+rozšiřování. Systém bude rozdělen na dvě hlavní části: veřejnou webovou prezentaci
+magazínu (frontend) a administrativní rozhraní pro redakci (backend UI). Obě části
+mohou běžet v rámci jedné aplikace, kde administrace je přístupná po přihlášení a veřejná
+část je volně dostupná všem návštěvníkům.
+Návrh databáze a datové modely: Databázové schéma bude obsahovat několik
+vzájemně propojených tabulek reprezentujících základní entity redakčního systému:
+•
+
+Články: Centrální tabulka (např. Article) s atributy jako ID, titulek, perex (krátká
+anotace), hlavní obsah (text článku), datum vytvoření, datum publikace, počet
+zobrazení, audio_soubor (název/cesta k nahrané audio stopě) a stav
+(koncept/publikováno). Dále cizí klíče autor_id (odkaz na uživatele, který článek
+napsal) a kategorie_id (odkaz na kategorii). Příznak featured (boolean) určí, zda je
+článek označen k propagaci na úvodní stránce.
+
+•
+
+Kategorie: Tabulka Category s poli ID, název kategorie a případně popis. Vazba:
+jedna Kategorie může obsahovat více článků (1:M vztah mezi kategorií a články).
+
+•
+
+Uživatelé: Tabulka User zahrnující ID, jméno a příjmení, uživatelské jméno
+(přihlašovací), email, heslo (uložené jako hash) a role_id (cizí klíč či enumerace
+určující roli uživatele). Každý uživatel má právě jednu roli.
+
+•
+
+Role: Tabulka Role s definicí uživatelských rolí – např. záznamy pro Administrátor,
+Editor, Redaktor. Obsahuje ID a název role. Pro jednoduchost bude použit vztah 1:M
+(uživatel má jednu roli, role může náležet více uživatelům). Alternativně by šlo role
+řešit i pevně pomocí enum typu v tabulce uživatelů.
+
+– 15 –
+
+(Pozn.: Případné další tabulky mohou zahrnovat např. Image pro uložené obrázky,
+Article_Tag pokud by se zavedly štítky, či Comments pro komentáře čtenářů – avšak tyto
+nejsou dle zadání nutné, takže je v návrhu vynecháváme.)
+Vazby a integritní pravidla: Mezi tabulkami budou nastaveny odpovídající relace
+(cizí klíče). Například smazání uživatele bude zamezeno, pokud má přiřazené články – místo
+toho by se musely články převést pod jiného uživatele nebo daného uživatele deaktivovat.
+Smazání kategorie buď nebude možné, pokud v ní existují články, anebo systém nabídne
+přesun článků do jiné kategorie. Tím zajistíme referenční integritu dat.
+Řízení přístupu a logika aplikace: Aplikační logika (Controllers) bude zajišťovat,
+že jednotlivé funkce mohou využívat jen oprávnění uživatelé. Například editaci nebo
+smazání článku povolí kontroler pouze autorovi daného článku nebo editorovi/adminovi. Při
+každém HTTP požadavku do administrace proběhne ověření přihlášení a role; pokud
+nevyhovuje, server vrátí chybovou hlášku nebo přesměruje na přihlášení. Tyto kontroly
+budou implementovány buď pomocí middleware vrstvy frameworku (tj. záchytné body,
+které ověřují stav uživatele před obsluhou požadavku)
+file-ljpw5ik7bndhbd91ut617n
+, nebo přímo v kontrolerech, kde se porovnají role. Například middleware zajistí, že
+URL začínající /admin jsou přístupné jen uživatelům s rolí editor či admin; dalším krokem
+kontroler ověří, zda např. redaktor přistupující k článku je shodný s autorem článku, pokud
+chce článek upravit.
+Zpracování požadavků (MVC tok): Po obdržení požadavku od uživatele (např.
+GET požadavek na zobrazení formuláře nového článku, nebo POST požadavek na uložení
+článku) router aplikace předá řízení odpovídajícímu kontroleru. Kontroler si vyžádá či uloží
+data skrze modely (např. načte seznam kategorií z DB, uloží nový článek do DB) a poté vrátí
+výsledek uživateli. V případě administrativního rozhraní půjde většinou o renderování
+HTML šablony (view) s vloženými daty – například načtený článek se předá do šablony
+editace článku. Na veřejném webu analogicky kontroler získá např. všechny publikované
+články dané kategorie a předá je do šablony stránky kategorie, která je zobrazí
+návštěvníkovi.
+API komunikace: Systém bude navržen tak, aby podporoval i komunikaci přes
+REST API tam, kde je to efektivní. Ačkoli primární způsob generování stránek bude
+serverové renderování (kvůli jednoduchosti a SEO), některé funkce mohou využívat AJAX
+volání. Například načítání počtu zobrazení článků může probíhat asynchronně – při
+zobrazení stránky článku frontendu zavolá jednoduché API endpoint (např.
+/api/article/123/viewed metodou POST), který zvýší čítač zhlédnutí v databázi.
+Administrátorské rozhraní může využít API pro rychlé akce, jako je publikace článku přímo
+ze seznamu (kliknutím na tlačítko „Publikovat“ se přes AJAX zavolá endpoint, který změní
+stav článku na publikovaný bez nutnosti znovu načítat celou stránku). Do budoucna také
+architektura s odděleným API umožní snadné vytvoření např. mobilní aplikace nebo
+– 16 –
+
+samostatného frontendového SPA, které by komunikovaly se stejným serverem. Bezpečnost
+API bude zajištěna stejnými principy jako u webového rozhraní – požadavky budou muset
+obsahovat platný token či session ID autentizovaného uživatele a projdou stejnou kontrolou
+oprávnění.
+Front-end rozhraní magazínu: Veřejná část webu (magazín) bude zahrnovat
+homepage s výpisem nejnovějších článků a zvýrazněním těch propagovaných, stránky
+kategorií (seznam článků v dané kategorii) a detail článku. Detail článku zobrazí titulku,
+autora a datum, plný text článku (případně rozdělený do odstavců a obrázků), audio
+přehrávač pokud je k dispozici zvuková stopa, a metainformace jako počet zobrazení.
+Navigace webu umožní přechod mezi kategoriemi, hledání článků (pokud implementujeme
+vyhledávání) a přístup na případné statické stránky (o nás, kontakt – ty lze spravovat
+podobně jako články nebo přímo v kódu). Tato veřejná část bude optimalizována pro rychlé
+načítání – např. náhledové obrázky budou předem zmenšené, audio se nebude automaticky
+načítat, atd. Z pohledu architektury je frontend úzce propojen s backendem (při použití blade
+šablon Laravelu se generuje přímo z serveru). V případě použití odděleného frontendu by
+ten získával data o článcích přes API (JSON). Pro rozsah této práce však počítáme s
+integrovaným přístupem.
+
+2.5 Uživatelské role a oprávnění
+Systém rozlišuje několik rolí uživatelů, z nichž každá má definována práva k vykonávání
+určitých akcí. Návrh počítá alespoň s těmito rolemi: Redaktor, Editor a Administrátor (dle
+zadání například právě tyto tři role). Níže je popsáno, kdo tyto uživatele představuje a jaké
+mají v systému oprávnění:
+•
+
+Redaktor: Tato role odpovídá běžnému autorovi článků. Redaktor má právo vytvářet
+nové články a editovat své vlastní rozpracované články. Může články ukládat jako
+koncepty a následně je navrhnout k publikaci. Redaktor typicky nemůže sám
+publikovat článek (nemá tlačítko „Zveřejnit“ bez schválení), aby obsah prošel
+kontrolou editora – toto však lze upravit dle interních pravidel redakce. Redaktoři
+nevidí administrátorské sekce jako je správa uživatelů. Mohou si prohlížet své
+články, upravovat je, nahrávat k nim obrázky a audio. Nemají však možnost mazat
+či upravovat cizí články a nemohou měnit systémová nastavení.
+
+•
+
+Editor: Editor zastává roli moderátora či vedoucího obsahu. Má všechna práva jako
+redaktor a navíc schvaluje a publikuje články. Editor vidí v administraci také
+koncepty ostatních redaktorů, může je po dohodě upravit (např. opravit chyby) a
+následně publikovat na web. Dále má editor možnost spravovat kategorie (přidávat
+nové tematické okruhy či upravovat názvy kategorií podle potřeby obsahu). Editor
+může také označovat vybrané články příznakem „propagované“ pro zviditelnění na
+– 17 –
+
+hlavní stránce. V hierarchii práv editor obvykle nemůže vytvářet nové uživatele či
+měnit jejich role (to je vyhrazeno administrátorovi), avšak může navrhnout změny.
+•
+
+Administrátor: Administrátor je nejvyšší role, která má plný přístup ke všem funkcím
+systému. Administrátor spravuje uživatelské účty a role – může zakládat nové
+redaktory, udělovat či odebírat práva editorům, případně deaktivovat účty. Kromě
+toho
+disponuje
+veškerými
+právy
+editora
+i
+redaktora:
+může
+vytvářet/upravovat/publikovat libovolné články, mazat obsah (např. nevhodné
+články či komentáře, pokud by byly), spravovat kategorie a měnit globální nastavení
+webu (logo, popisy, konfigurace). Administrátor také dohlíží na technický chod
+systému – má přístup k statistikám zobrazení, logům a případně může zasahovat do
+databáze (například opravovat chybná data). Z hlediska bezpečnosti bude v systému
+minimální počet administrátorů.
+
+(Pozn.: Případně lze uvažovat i rozšíření rolí – např. role Šéfredaktor jako mezistupeň mezi
+editorem a administrátorem, nebo naopak Externí přispěvatel s velmi omezenými právy. Pro
+základní návrh ale vystačíme se třemi uvedenými rolemi.)
+Oprávnění: Systém bude uplatňovat řízení oprávnění na úrovni uživatelského
+rozhraní i serveru. Například redaktor neuvidí v menu položky pro správu uživatelů nebo
+úpravu cizích článků. Pokud by se pokusil manuálně zadat URL administrátorské sekce,
+server akci odmítne. Editoři uvidí všechny články a mohou je editovat, ale u uživatelských
+účtů jim bude zobrazeno jen ke čtení (read-only) nebo vůbec. Administrátor vidí vše. Tyto
+scénáře budou popsány i v use-case diagramu (viz přílohy) pro názorné znázornění, kdo jaké
+akce provádí.
+
+2.6
+
+Wireframe nebo návrh uživatelského rozhraní
+
+Ukázka drátového modelu (wireframe) uživatelského rozhraní redakčního systému.
+Obrázek výše znázorňuje možný návrh administračního dashboardu se základním
+rozvržením prvků. Levé boční menu poskytuje navigaci mezi moduly (např. Články,
+Kategorie, Uživatelé, Nastavení), zatímco hlavní obsahová plocha vpravo zobrazuje
+konkrétní sekci – na horní řadě vidíme např. obrazovku s náhledy příspěvků (ve formě
+dlaždic) a vedle ní formulář Add New Post (Přidat nový článek) s editačními poli. V našem
+systému bude rozhraní obdobné: v levém panelu uživatel zvolí, co chce spravovat, a v pravé
+části se načte buď seznam existujících záznamů (článků, kategorií, uživatelů) nebo formulář
+pro vytvoření/úpravu. Design rozhraní bude jednoduchý a přehledný – využije prvky
+Bootstrapu pro jednotný vzhled tlačítek a formulářů. Barevné schéma lze ladit do odstínů
+spojených s cyklistikou (např. zelená pro přírodu, nebo oranžová jako energie), ale primární
+je funkčnost a čitelnost.
+
+– 18 –
+
+Rozhraní bude navrženo jako responzivní, aby jej bylo možné používat i na tabletu či
+mobilu. Při zúžení obrazovky se například boční menu může schovat do tzv. “hamburger”
+ikonky a vysouvat se přes obsah. Karty s náhledy článků se na úzkém displeji poskládají pod
+sebe v jednom sloupci místo mřížky. Formuláře se přizpůsobí šířce zařízení tak, aby ovládací
+prvky byly dostatečně velké pro dotykové ovládání. Důraz bude kladen na to, aby základní
+akce (jako editace článku) byly proveditelné i z mobilu v terénu, ačkoliv primární použití
+administrace bude nejspíše na desktopu.
+Uživatelské rozhraní pro čtenáře webu (frontendu) bude navrženo ve stylu online
+magazínu. Hlavní stránka zobrazí výběr nejnovějších článků s náhledovým obrázkem a
+titulkem, případně sekci Doporučené články. Navigační menu umožní přechod do
+jednotlivých kategorií. Podstránka kategorie pak vypíše články chronologicky. Stránka
+detailu článku bude klást důraz na čitelnost – dostatečně velké písmo, dobrý kontrast,
+možnost snadno sdílet článek na sociální sítě. Pokud je u článku audio stopa, bude přímo
+pod titulkem umístěn přehrávač s ovládáním (play/pause, posun). Celý web bude graficky
+sladěn – například použitím stejného fontu a barev v administraci i na veřejné části, aby bylo
+zřejmé, že jde o jeden systém, i když každá část má jiný účel.
+Závěrem, navržený redakční systém splňuje všechny požadavky maturitního projektu.
+Je cíleně vyvíjen pro potřeby cyklistického magazínu, ale díky obecné koncepci by jej bylo
+možné snadno adaptovat i pro jiné online magazíny či blogy. Návrh dbá na bezpečnost,
+přehlednost a rozšiřitelnost – což jsou klíčové atributy úspěšné webové aplikace. S takto
+zpracovaným návrhem lze přistoupit k samotné implementaci systému.
+
+3
+
+Popis projektu
+
+Redakční systém pro cyklistický magazín představuje komplexní webovou aplikaci,
+která umožňuje pohodlnou tvorbu, správu, publikaci a propagaci článků zaměřených na
+cyklistiku. Cílem projektu je poskytnout redakčnímu týmu magazínu nástroj pro efektivní
+správu obsahu, umožnit redaktorům jednoduché vkládání textů, obrázků a audio záznamů
+k článkům a zároveň přinést čtenářům příjemné uživatelské prostředí pro čtení článků.
+Celý projekt je rozdělen do dvou hlavních částí – Frontend a Backend
+
+3.1 Frontend
+Úvodní stránka (homepage) – Domovská stránka magazínu nabízí návštěvníkovi
+přehled nejnovějšího a nejzajímavějšího obsahu. V horní části je výrazný header s logem
+magazínu a hlavní navigační nabídkou (menu) odkazující na jednotlivé kategorie článků.
+Hlavní část úvodní stránky typicky obsahuje sekci „Doporučené články“ – zde jsou
+– 19 –
+
+zvýrazněny vybrané články, které administrátor nebo editor označil jako propagované (např.
+nejdůležitější novinky nebo nejzajímavější témata). Tyto propagované články jsou
+zobrazeny jako první – například formou většího nadpisu s úvodní fotografií nebo perexem
+– aby upoutaly pozornost čtenáře. Následuje výpis nejnovějších článků napříč kategoriemi
+v chronologickém pořadí (od nejnovějšího). Každý článek je zde prezentován v náhledové
+kartě – obsahuje titul článku, stručný perex (několik úvodních vět) a případně náhledový
+obrázek. Kliknutím na titulek nebo tlačítko „Číst dál“ se uživatel dostane na detail daného
+článku. Postranní panel (sidebar) úvodní stránky může obsahovat doplňkové informace,
+např. seznam nejčtenějších článků nebo odkazy na jednotlivé kategorie pro rychlý přístup.
+Patička (footer) webu zobrazuje kontaktní informace magazínu, případně odkazy na sociální
+sítě. Návrh rozložení prvků úvodní stránky je znázorněn na drátěném modelu v Obrázku 1.
+Stránka kategorie (výpis článků) – Pro každou tematickou kategorii magazínu existuje
+stránka, která zobrazuje seznam všech publikovaných článků spadajících do dané kategorie.
+Stránka má v horní části nadpis obsahující název kategorie (např. Silniční cyklistika, Horská
+kola apod.), případně doplněný krátkým popisem kategorie. Pod ním je výpis článků
+obdobný jako na úvodní stránce, ovšem filtrovaný pouze na zvolenou kategorii. Uživatel zde
+vidí seznam článků s titulkem, perexem a případně malým náhledovým obrázkem u každého
+z nich. Články jsou řazeny obvykle od nejnovějších; pokud je v kategorii označen nějaký
+článek jako propagovaný (top), může být zobrazen na začátku seznamu zvýrazněně. Dlouhý
+seznam článků je stránkovaný – na konci stránky mohou být ovládací prvky stránkování
+nebo tlačítko „Načíst další“, umožňující uživateli zobrazit starší články. Boční menu či
+breadcrumb navigace umožňuje přechod do nadřazené sekce (např. zpět na Úvodní stránku
+nebo do jiné kategorie). Vzhled a rozvržení stránky s výpisem článků v kategorii ilustruje
+drátěný model na Obrázku 2.
+Stránka detailu článku – Tato stránka zobrazuje celý obsah konkrétního článku
+magazínu. V horní části se nachází nadpis článku, pod ním jsou metadata: typicky jméno
+autora (redaktora), datum publikace a název kategorie, do níž článek patří. Může zde být
+uveden také počet zobrazení článku (např. „X× přečteno“), jelikož systém sleduje, kolikrát
+byl článek zhlédnut. Hlavní obsah tvoří text článku formátovaný do odstavců, nadpisů a
+případně doplněný obrázky či videi podle potřeby autora. Pokud k článku existuje připojená
+zvuková stopa (audio nahrávka) – což je jedna z funkcionalit systému – je na stránce k
+dispozici audio přehrávač (ovládací prvek s tlačítkem play, posuvníkem času apod.), který
+umožňuje návštěvníkovi přehrát si tuto nahrávku (například audioverzi článku či
+doprovodný komentář). U článku se mohou nacházet i ilustrační fotografie; pokud je systém
+podporuje, zobrazují se buď na začátku článku (hlavní obrázek), nebo přímo v textu na
+příslušných místech. Na konci článku může být uvedena informace o autorovi nebo odkazy
+na související články (např. další články stejného autora či ve stejné kategorii), což
+usnadňuje čtenáři pokračovat ve čtení magazínu. Nechybí ani navigační prvky pro návrat
+zpět na seznam článků v kategorii nebo na úvodní stránku. Drátěný model detailní stránky
+článku s vyznaěnými uvedenými prvky je zobrazen na Obrázku 3.
+
+– 20 –
+
+Navigace a přechody mezi stránkami – Celý frontend je navržen tak, aby pohyb
+návštěvníka po magazínu byl intuitivní. Hlavní menu (umístěné v hlavičce na každé stránce)
+umožňuje kdykoli přejít do jiné kategorie nebo na úvodní stránku kliknutím na logo.
+Kategorie jsou dostupné přímo z menu jako položky; alternativně, pokud je použit
+breadcrumb, může návštěvník přejít do nadřazené sekce. Z úvodní stránky vede odkaz na
+plný článek (detail) každého uvedeného článku. Ze stránky detailu článku se lze vrátit zpět
+do příslušné kategorie (typicky kliknutím na název kategorie u metadata článku nebo pomocí
+tlačítka „Zpět na výpis“). V patičce případně mohou být doplňkové odkazy (např. O
+magazínu, Kontakt – pokud byly tyto statické stránky vytvořeny). Pro uživatele s
+oprávněními (redaktoři, editoři, administrátor) je v rozhraní také odkaz Přihlásit se do
+administrační sekce – ten může být umístěn nenápadně v hlavičce či patičce, jelikož není
+určen běžným čtenářům. Po přihlášení se pak tito uživatelé dostanou do backendového
+rozhraní (administrace). Celý web je vytvořen responzivně, takže na mobilních zařízeních
+se menu může měnit na rozbalovací (hamburger menu) a obsah článků se přizpůsobuje šířce
+obrazovky (např. víceřádkové rozvržení karet na úvodní stránce se změní na jedn sloupec).
+Vizuální styl frontendové části je konzistentní – použitá barevná paleta a typografie
+odpovídají zaměření na cyklistický magazín (např. dynamické barvy spojené se sportem) a
+design je přehledný, aby vynikl obsah článků.
+
+3.2 Backend
+Administrátorská sekce webu – Backend představuje zabezpečenou část webové
+aplikace, která slouží pro správu obsahu magazínu a uživatelských účtů redakce. Do
+administrace se uživatel dostane přes přihlašovací stránku (login screen), kde zadá své
+přihlašovací jméno a heslo. Autentizace je realizována formulářovým přihlášením; po
+ověření zadaných údajů proti databázi (hesla jsou uložena v zahashované podobě pro
+bezpečnost) je uživateli vytvořena relace (session) a přidělena odpovídající práva dle role.
+Autorizace pak zajišťuje, že každému přihlášenému uživateli se zobrazí pouze ty funkce a
+části administrace, ke kterým má oprávnění. Například redaktor s omezenou rolí neuvidí
+administrační nabídku pro správu uživatelů nebo kategorií. Pokud nepřihlášený uživatel
+(nebo uživatel bez potřebných práv) zkusí přistoupit na administrační URL, systém přístup
+odmítne (např. přesměruje na login nebo zobrazí chybové hlášení 403 Forbidden). Po
+úspěšném přihlášení je uživatel přesměrován na hlavní panel administrace (dashboard).
+Tento dashboard může obsahovat shrnutí – například počet publikovaných článků, počet
+nepřečtených konceptů, statistiky zhlédnutí apod., pro rychlý přehled. Zároveň se zobrazí
+navigační menu administrace, které umožňuje přechod do jednotlivých modulů správy:
+Články, Kategorie, Uživatelé (případně další, jako např. Nastavení pokud existuje).
+Rozhraní administrace je navrženo tak, aby bylo přehledné – typicky má podobu stránky s
+tabulkami, formuláři a ovládacími prvky pro správu obsahu. Níže jsou popsány hlavní
+funkce administrace a možnosti uživatelů s různými rolemi.
+Správa článků – Nejzásadnější část administrace umožňuje plnou správu obsahu
+magazínu. Uživatelé s patřičnými právy (redaktoři, editoři, administrátor) zde mohou
+– 21 –
+
+vytvářet nové články, upravovat existující a měnit jejich stav. Po zvolení modulu Články se
+zobrazí přehled všech článků v systému (redaktor uvidí typicky jen své vlastní články, editor
+a admin vidí všechny). Přehled je prezentován tabulkou obsahující sloupce jako Název
+článku, Autor, Kategorie, Datum vytvoření (či publikace) a Stav. Stav článku indikuje, zda
+je publikovaný (viditelný na webu pro čtenáře) nebo je ve stavu konceptu
+(rozpracovaný/nepublikovaný). U každého článku je také evidován počet zobrazení – v
+administraci může být viditelný ve sloupci (což umožňuje editorům rychle identifikovat
+populární články podle čtenosti). Administrátor či editor mají možnost článek otevřít k
+editaci nebo odstranit.
+Vytvoření nového článku: Po kliknutí na tlačítko Přidat nový článek se zobrazí
+formulář pro vytvoření článku. Formulář obsahuje pole pro titulek, perex, hlavní obsah
+článku (větší textové pole, ideálně s WYSIWYG editorem pro formátování textu – nadpisy,
+tučné písmo, odkazy atd.), výběr kategorie (rozbalovací seznam existujících kategorií),
+případně možnost nahrát hlavní obrázek článku. Dále je zde možnost připojit k článku audio
+soubor – např. tlačítko Nahrát zvukovou stopu umožní nahrát MP3 soubor, který se pak uloží
+na server a sváže s daným článkem. Pro publikaci článku formulář poskytuje přepínač nebo
+zaškrtávátko Publikovat (článek může být ihned publikován, nebo ponechán jako koncept).
+Uživatel s rolí redaktora může mít toto pole nepřístupné (aby nemohl sám publikovat bez
+schválení). Po odeslání formuláře dojde k uložení článku do databáze; pokud je nastaveno
+publikování a uživatel má právo publikovat, článek se ihned objeví na veřejném webu, jinak
+zůstane jako koncept.
+Editace článku: U každého existujícího článku (v seznamu) je akce Upravit. Po jejím
+zvolení se otevře formulář obdobný jako při tvorbě, předvyplněný aktuálními daty článku.
+Zde lze změnit titulek, obsah, přiřazenou kategorii, nahrát či změnit audio stopu nebo
+obrázek. Důležitou funkcí je možnost změnit stav publikace – editor může například převzít
+článek od redaktora a přepnout ho z konceptu do publikovaného stavu (čímž se stane
+viditelným na webu). Součástí editace může být i volba „Propagovat na úvodní stránce“ –
+tj. označit článek jako top. Tato volba (např. formou checkboxu Top článek) zajistí, že článek
+bude zařazen mezi doporučené na úvodu. Uložením změn v článku se aktualizují data v
+databázi a případně i obsah na webu (u publikovaných článků okamžitě, u konceptů až po
+publikaci).
+Mazání článku: Administrátor (případně editor) může nepotřebný nebo nevhodný
+článek smazat pomocí akce Smazat v přehledu článků. Systém obvykle vyžádá potvrzení
+akce (dialog „Opravdu chcete smazat tento článek?“) z důvodu nevratnosti. Po potvrzení je
+článek odstraněn z databáze, včetně případné navázané audio stopy a dalšího obsahu. (Pozn.:
+Redaktor by typicky mohl mazat jen své vlastní nepublikované články – např. omylem
+založené koncepty – aby nemohl odstranit cizí publikovaný obsah.)
+Správa kategorií – Tento modul administrace je dostupný primárně administrátorovi
+(případně i editorovi, pokud mu to práva dovolují – podle nastavení role). Umožňuje přehled
+a údržbu všech tematických kategorií, do nichž se články zařazují. Po vstupu do Správy
+kategorií se zobrazuje seznam existujících kategorií, typicky s údaji Název kategorie a
+– 22 –
+
+případně Popis či Počet článků v ní. Administrátor může vytvářet novou kategorii – zadá
+název nové rubriky (např. Technika, Trénink) a volitelně její popis. Po uložení se nová
+kategorie objeví v seznamu i v nabídce na webu pro řazení článků. Dále lze u existující
+kategorie provést přejmenování (např. pokud se změní terminologie či dojde ke sloučení
+rubrik) – to se provede opět přes editační formulář kategorie. Kategorie, které již nejsou
+potřeba, může administrátor smazat, ovšem systém ošetří, aby nedošlo k osiření článků:
+obvykle není dovoleno smazat kategorii, která obsahuje nějaké články, dokud tyto články
+nepřesune do jiné kategorie nebo neodstraní. Tím je zajištěna konzistence – každý článek
+musí mít platnou kategorii. Správa kategorií tak dává administrátorovi kontrolu nad
+strukturováním obsahu magazínu.
+Správa uživatelů – Tato část administrace je přístupná pouze uživatelům s rolí
+administrátora. Slouží k řízení redakčního týmu a jejich účtů. Administrátor zde vidí seznam
+všech registrovaných uživatelských účtů, s informacemi jako Uživatelské jméno (login),
+Jméno a příjmení (pokud se eviduje), Role (redaktor/editor/admin) a stav účtu
+(aktivní/blokovaný). Hlavní funkce v této sekci zahrnují:
+Přidání nového uživatele: Administrátor může založit účet novému členovi redakce.
+Vyplní se přihlašovací jméno, dočasné heslo (které si uživatel po prvním přihlášení změní),
+případně jméno a příjmení nebo kontakt, a hlavně se přiřadí uživatelská role. Po vytvoření
+účtu může nový uživatel získat přístup do systému s přidělenými právy.
+Úprava uživatele: U existujícího uživatelského účtu může administrátor změnit údaje
+– například změnit roli (povýšit redaktora na editora nebo naopak), resetovat heslo, upravit
+jméno apod. Změna role je okamžitě platná – uživatel při dalším přihlášení (nebo aktuálním,
+pokud je přihlášen, tak po refreshi práv) uvidí jiné možnosti v administraci.
+Deaktivace/aktivace či smazání uživatele: V případě potřeby může administrátor
+uživatelský účet znepřístupnit, např. dočasně blokovat (uživatel se nemůže přihlásit) nebo
+trvale odstranit z databáze. Odstranění účtu je obvykle možné jen, pokud uživatel nemá
+zásadní vazby (např. u autora článků by se mohlo vyřešit převedením článků na jiného
+uživatele, aby v databázi nezůstaly články bez autora).
+Správa uživatelů zajišťuje, že do systému mají přístup jen povolané osoby a že jejich
+oprávnění odpovídá jejich roli v redakci.
+Uživatelské role a jejich oprávnění – Systém definuje několik rolí s odstupňovanými
+právy, aby reflektoval hierarchii redakce:
+Redaktor: Tato role je určena pro běžné autory článků. Redaktor se po přihlášení
+dostane do administrace, kde vidí správu článků omezenou na své vlastní články. Může
+vytvářet nové články a editovat či mazat své koncepty. Nemá však právo publikovat článek
+přímo na web – nové články uloží jako koncept (návrh). Pole pro publikaci nebo volba stavu
+Publikovaný pro něj může být uzamčená. Také obvykle nevidí cizí články (případně je vidí
+
+– 23 –
+
+jen ke čtení, bez možnosti editace). Redaktor nevidí sekce pro správu kategorií a uživatelů.
+Jeho možnosti shrnuty: tvorba a úprava vlastních článků, ukládání konceptů.
+Editor: Editor má širší pravomoci nad obsahem. Kromě všech schopností redaktora
+(může sám psát články) má navíc přístup ke všem článkům v systému bez ohledu na autora.
+Slouží jako „správce obsahu“ – může editovat a publikovat články redaktorů. Typický
+workflow: editor zkontroluje články od redaktorů a pokud jsou v pořádku, přepne jejich stav
+na publikováno, čímž je zveřejní. Editor může také články upravovat (opravit chyby, doplnit
+tagy, obrázky apod.) a mazat nevhodné či staré články. Dále má editor zpravidla právo
+označovat články jako „top“ pro propagaci na úvodní straně. Ohledně dalších sekcí: právo
+spravovat kategorie může či nemusí mít – podle nastavení. V mnoha případech tuto roli
+zastává administrátor, ale pokud je to delegováno, editor může přidávat nové kategorie pro
+články (např. když vznikne nová rubrika) a základně je udržovat. Editor však nemá přístup
+ke správě uživatelů – nemůže vytvářet ani upravovat účty; soustředí se čistě na obsah.
+Shrnutí: úplná správa článků (vytváření, editace, publikace, mazání, feature), případně
+správa kategorií.
+Administrátor: Nejvyšší role s plným oprávněním ke všem funkcím systému.
+Administrátor má přístup ke všemu – spravuje články (stejně jako editor, plus navíc často
+řeší technické nastavení, ale v kontextu obsahu má stejné či vyšší pravomoci), dále spravuje
+kategorie (může vytvářet, mazat rubriky) a spravuje uživatele. Administrátor může zakládat
+nové redaktory/editory, měnit role uživatelů, případně nastavovat globální konfigurace
+systému (pokud existují nějaké nastavení webu, jako titulek stránky, logo, atd. – tyto by
+spadaly pod administrátorskou roli). Administrátor také dohlíží na chod systému – má
+přístup k statistikám zhlédnutí článků celkově, může vidět administrátorský dashboard s
+přehledy. V podstatě není omezen žádnou částí administrace. V reálném nasazení by
+administrátor mohl být například zároveň webmaster, který projekt technicky spravuje.
+Způsob autorizace v rozhraní – Po přihlášení systém na základě role zobrazuje
+odpovídající nabídku. Například redaktor uvidí v menu jen položku Články (a možná svůj
+profil), editor uvidí Články (všechny) a případně Kategorie, administrátor uvidí Články,
+Kategorie, Uživatelé a případně Nastavení. Ověření práv probíhá i na úrovni akcí – např.
+pokud by redaktor zkusil ručně zadat URL stránky pro správu uživatelů, systém to rozpozná
+a odepře mu přístup. Implementačně jsou role svázány s uživatelským účtem v databázi
+(atribut role) a v aplikaci jsou definovány tzv. middleware nebo podmínky, které kontrolují
+roli před vykonáním citlivých operací. Tím je zaručeno, že každý uživatel může provádět
+jen povolené akce.
+Celkově backend redakčního systému pro cyklistický magazín umožňuje pohodlnou
+správu obsahu webu: od psaní článků, přes jejich kategorizaci a publikaci, až po administraci
+uživatelských účtů redakce. Díky rozdělení rolí lze efektivně organizovat práci – běžní
+redaktoři přispívají články, editoři dohlížejí na kvalitu a publikují je navenek a administrátor
+zastřešuje technickou správu a uživatelské zázemí systému. Tento oddělený backend
+zajišťuje, že veřejná část webu (frontend) zůstává bezpečná a obsah se na ní objeví jen tehdy,
+je-li připraven a schválen, což je pro provoz online magazínu nezbytné.
+– 24 –
+
+– 25 –
+
+Závěr
+Význam projektu
+Cílem projektu Redakční systém pro cyklistický magazín bylo vytvořit webovou
+aplikaci, která usnadní a zpřehlední správu článků v online magazínu zaměřeném na
+cyklistiku. Tento cíl se podařilo naplnit – výsledný systém umožňuje tvorbu, úpravy,
+publikaci a mazání článků v přehledném rozhraní. Díky podpoře uživatelských rolí je
+zajištěna kontrola obsahu a bezpečnost: běžní autoři mohou přidávat či upravovat své
+články, zatímco administrátor má úplnou kontrolu nad publikováním a správou uživatelů.
+Implementace kategorií a počítání zobrazení článků přináší lepší organizaci obsahu a
+možnost sledovat zájem čtenářů o jednotlivé články. Projekt má významný přínos nejen
+pro samotný magazín (zefektivnění redakční práce a konzistentní publikování obsahu), ale
+i pro autora, který si realizací prohloubil znalosti vývoje webových aplikací a integrace
+různých technologií do jednoho funkčního celku.
+
+Problémy při řešení a jejich překonání
+Během řešení projektu se objevilo několik technických výzev, které bylo nutné
+překonat, například:
+•
+
+Návrh databáze: Bylo potřeba navrhnout databázovou strukturu tak, aby efektivně
+podporovala články, kategorie, uživatele a jejich role. Řešením bylo vytvoření
+přehledného ER diagramu a normalizace databáze, díky čemuž systém správně
+zajišťuje vazby mezi články, autory, kategoriemi a počítadly zhlédnutí.
+
+•
+
+Správa uživatelských rolí: Zajistit různé úrovně přístupu (autor/redaktor vs.
+administrátor) představovalo výzvu z hlediska bezpečnosti a logiky aplikace.
+Překonáno to bylo implementací role-based access control – v aplikaci jsou na
+klíčových místech kontroly oprávnění, které zamezí neoprávněným uživatelům
+přístup k administrátorským funkcím. Důkladným testováním se ověřilo, že každý
+uživatel vidí a ovládá pouze funkce odpovídající jeho roli.
+
+•
+
+Integrace audia k článkům: Přidání zvukové stopy k článku bylo technicky
+náročnější kvůli nutnosti ukládání a přehrávání audio souborů. Tento problém byl
+vyřešen nasazením HTML5 audio přehrávače přímo do stránky článku a
+umožněním nahrání audio souboru při editaci článku. Bylo tak dosaženo, že
+redaktoři mohou k článkům připojit například audio komentář nebo rozhovor, který
+si pak návštěvníci webu mohou přehrát.
+
+Odchylky od původního zadání
+Výsledná podoba systému ve většině aspektů odpovídá původnímu zadání, avšak v
+průběhu vývoje došlo k několika drobným úpravám a rozšířením:
+– 26 –
+
+•
+
+Uživatelské role: Původně zamýšlené role redaktor a editor byly sloučeny do
+jedné role (redaktor) pro zjednodušení workflow. Toto sloučení nemá negativní vliv
+na funkčnost – systém stále splňuje požadavek různých úrovní přístupu, avšak
+administrátor nyní přímo schvaluje a publikuje obsah bez mezičlánku editora. Tato
+odchylka byla zvolena s ohledem na menší tým potenciálních uživatelů a jasnější
+správu práv.
+
+•
+
+Multimediální obsah: Nad rámec zadání byla rozšířena práce s obsahem článků –
+systém podporuje nejen zvukové stopy, ale také nahrávání obrázků k článkům.
+Přestože zadání explicitně práci s obrázky nezmiňovalo, v kontextu magazínu je
+tato funkcionalita velmi užitečná pro obohacení článků. Implementace proběhla
+formou možnosti uploadu obrázků na server a jejich vložení přímo do textu článku.
+
+•
+
+Propagace článků na úvodní stránce: Funkce pro zvýraznění vybraných článků
+byla realizována formou označení článku příznakem „top“. To znamená, že
+administrátor může označit libovolný článek jako doporučený a systém jej
+automaticky zobrazí na předních pozicích hlavní stránky magazínu. Tento přístup
+mírně upravuje původní představu, ale výsledný efekt – zviditelnění klíčových
+článků – zůstává zachován a správa je pro uživatele jednodušší.
+
+Využití maturitní práce
+Vytvořený redakční systém je navržen tak, aby byl prakticky využitelný. Po
+doplnění reálného obsahu a grafického designu magazínu by mohl být nasazen jako
+publikační platforma skutečného cyklistického magazínu nebo zpravodajského webu.
+Systém by umožnil redaktorům v praxi efektivně spravovat články, aktuality z cyklistiky,
+výsledky závodů či rozhovory, a to bez nutnosti odborných znalostí programování. Díky
+modulární architektuře a konfigurovatelným parametrům lze aplikaci přizpůsobit i pro jiné
+tematické weby – maturitní práce tak může posloužit jako základ pro další projekty nebo
+jako ukázka schopností autora při hledání zaměstnání. Tím pádem má výsledné dílo
+hodnotu přesahující rámec školního projektu a může najít uplatnění v reálném prostředí.
+
+Plány do budoucna
+Během vývoje vzniklo několik námětů na další rozšíření a vylepšení systému,
+které by bylo možné realizovat v budoucnu:
+•
+
+Interakce čtenářů: Zavedení možnosti přidávat komentáře k článkům a systém
+hodnocení nebo sdílení na sociální sítě. Tím by se zvýšila míra zapojení čtenářů a
+zpětná vazba pro redakci.
+
+•
+
+Pokročilé vyhledávání a archív: Implementace fulltextového vyhledávání pro
+snadné nalezení článků podle klíčových slov a vytvoření archívu starších článků.
+To by uživatelům umožnilo rychle vyhledat dřívější obsah a redakci lépe spravovat
+rozsáhlou knihovnu článků.
+– 27 –
+
+•
+
+Rozšíření analytických funkcí: Doplnění podrobnějších statistik čtenosti a
+chování uživatelů (např. unikátní návštěvy, průměrná doba čtení článku).
+Administrátor by tak získal cenné informace pro řízení obsahu a marketingové
+účely.
+
+•
+
+Optimalizace a mobilní podpora: Vylepšení responzivního designu pro mobilní
+zařízení a případná tvorba mobilní aplikace pro správu obsahu. To by zajistilo, že
+redaktoři i čtenáři mohou pohodlně pracovat se systémem na různých platformách a
+zařízeních.
+
+•
+
+Další média a funkce: Integrace podpory pro video obsah nebo podcasty vedle
+stávajícího audia, aby magazín mohl nabízet ještě bohatší multimediální zážitek.
+Zvážit lze také zavedení dalších uživatelských rolí (např. moderátor komentářů) či
+automatizaci některých procesů (např. plánované publikování článků v určitý čas).
+
+Navržené inovace by dále zvýšily užitnou hodnotu systému a udržely krok s moderními
+trendy v oblasti online publikování. Celkově lze projekt považovat za úspěšný základ, na
+němž je možné stavět a který lze nadále rozvíjet podle potřeb reálného nasazení.
+
+– 28 –
+
+Seznam přístupových údajů
+URL adresa webu: https://vincenon21.mp.spse-net.cz/
+Úroveň oprávnění
+
+Přihlašovací jméno
+
+Administrátor
+Redaktor
+Editor
+
+– 29 –
+
+Heslo
+
+Seznam použité literatury a zdrojů obrázků
+Vložte seznam literatury a on-line stránek, které jste použili pro vyhledávání
+informací a studium.
+Do seznamu zahrňte zdroje obrázků použité v písemné práci i v samotném webu
+(uveďte práva k použití – používejte pouze obrázky zdarma použitelné pro komerční i
+nekomerční využití). Pokud jste některé obrázky vytvořili sami (vlastní grafika či vlastní
+fotografie), uveďte jejich seznam nebo popis a zdroj vlastní.
+Seznam můžete vygenerovat na www.citace.com
+
+– 30 –
+
+Seznam obrázků
+Vygenerujte seznam obrázků použitých v dokumentaci (obrázky musí mít zapsané
+titulky) včetně čísel stránek (stránky menší než polovina stránky mohou být vloženy ve
+stránce, bez obtékání textu, velké obrázky budou v příloze).
+
+– 31 –
+
+Přílohy
+Use case diagram
+
+– 32 –
+
+E-R diagram
+
+– 33 –
+
+Responzivita – vložte obrázek webu na počítači, na mobilu, příp. na tabletu.
+
+– 34 –
+
+Obrázky dalších stránek webu – vložte screenshoty všech hlavních stránek webu
+včetně ukázek administrace.
+
+– 35 –
+
