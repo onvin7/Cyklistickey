@@ -1,0 +1,307 @@
+DOKUMENTACE MATURITNÍHO PROJEKTU
+
+NÁZEV PROJEKTU: Redakční systém pro cyklistický magazín
+AUTOR: [Vaše jméno]
+TŘÍDA: [Vaše třída]
+ŠKOLNÍ ROK: 2023/2024
+VEDOUCÍ PRÁCE: [Jméno vedoucího práce]
+KONZULTANT: [Jméno konzultanta, pokud existuje]
+
+OBSAH:
+1. ZADÁNÍ
+2. ANALÝZA
+   2.1 Analýza problému
+   2.2 Funkční požadavky
+   2.3 Nefunkční požadavky
+   2.4 Datová analýza
+   2.5 Procesní analýza
+3. NÁVRH IMPLEMENTACE
+   3.1 Architektura systému
+   3.2 Databázový model
+   3.3 Návrh uživatelského rozhraní
+   3.4 Bezpečnostní aspekty
+4. IMPLEMENTACE
+   4.1 Použité technologie
+   4.2 Struktura projektu
+   4.3 Databáze
+   4.4 Backend
+   4.5 Frontend
+   4.6 Klíčové algoritmy a postupy
+5. TESTOVÁNÍ
+   5.1 Metody testování
+   5.2 Výsledky testů
+   5.3 Řešení nalezených problémů
+6. UŽIVATELSKÁ DOKUMENTACE
+   6.1 Systémové požadavky
+   6.2 Instalace
+   6.3 Popis uživatelského rozhraní
+   6.4 Návody k použití
+7. ZÁVĚR
+   7.1 Zhodnocení projektu
+   7.2 Možnosti dalšího rozvoje
+8. SEZNAM POUŽITÉ LITERATURY A ZDROJŮ
+9. PŘÍLOHY
+
+1. ZADÁNÍ
+---------
+Cílem projektu bylo vytvořit redakční systém zaměřený na správu článků pro cyklistický magazín. Systém umožňuje tvorbu, úpravy, mazání a publikaci článků s různými úrovněmi přístupu pro uživatele s různými rolemi (redaktor, editor, administrátor). Dále zahrnuje správu kategorií článků, sledování počtu zobrazení článků, možnost přidání zvukové stopy k článku a funkce pro propagaci vybraných článků na první pozice na webu.
+
+Hlavní požadované funkcionality:
+- Uživatelské účty a role
+- Správa článků
+- Publikace článků
+- Správa kategorií
+- Počítání zobrazení článků
+- Správa uživatelů
+
+2. ANALÝZA
+----------
+2.1 Analýza problému
+Správa obsahu pro online cyklistický magazín představuje komplexní úkol, který zahrnuje organizaci článků, jejich kategorizaci, řízení přístupu různých uživatelů a sledování čtenosti. Současné řešení často vyžaduje ruční úpravy HTML kódu nebo používání obecných redakčních systémů, které nejsou přizpůsobeny specifickým potřebám cyklistického magazínu. Cílem projektu je vytvořit specializovaný redakční systém, který zefektivní práci redaktorů a editorů a zároveň poskytne čtenářům přehledné a uživatelsky přívětivé rozhraní.
+
+2.2 Funkční požadavky
+- Správa uživatelů s různými rolemi (administrátor, editor, redaktor)
+- Tvorba, úprava, mazání a publikace článků
+- Správa kategorií článků
+- Sledování počtu zobrazení článků
+- Možnost přidání zvukové stopy k článku
+- Propagace vybraných článků na první pozice na webu
+- Vyhledávání článků podle různých kritérií
+- Správa multimediálního obsahu (obrázky, videa, zvukové stopy)
+- Náhled článků před publikací
+- Systém schvalování článků editory před publikací
+
+2.3 Nefunkční požadavky
+- Responzivní design pro mobilní zařízení
+- Bezpečná správa uživatelských účtů a hesel
+- Rychlé načítání stránek a optimalizace pro vyhledávače
+- Intuitivní uživatelské rozhraní pro redaktory a čtenáře
+- Kompatibilita s moderními webovými prohlížeči
+- Škálovatelnost pro rostoucí počet článků a uživatelů
+- Spolehlivost a odolnost proti výpadkům
+
+2.4 Datová analýza
+Hlavními entitami v systému jsou:
+- Uživatelé (administrátoři, editoři, redaktoři)
+- Články
+- Kategorie článků
+- Multimediální obsah (obrázky, videa, zvukové stopy)
+- Komentáře
+- Statistiky zobrazení
+
+2.5 Procesní analýza
+Hlavní procesy v systému:
+- Registrace a správa uživatelů
+- Vytvoření a editace článku
+- Schvalovací proces článku před publikací
+- Kategorizace článků
+- Správa multimediálního obsahu
+- Sledování statistik čtenosti
+- Vyhledávání a filtrování článků
+
+3. NÁVRH IMPLEMENTACE
+---------------------
+3.1 Architektura systému
+Aplikace je implementována jako webová aplikace využívající architekturu MVC (Model-View-Controller). Systém je rozdělen na veřejnou část pro čtenáře a administrační rozhraní pro správu obsahu. Celá aplikace je postavena na vlastním PHP frameworku s využitím objektově orientovaného přístupu.
+
+3.2 Databázový model
+Databáze je navržena v MySQL a zahrnuje následující hlavní tabulky:
+- users - správa uživatelů a jejich rolí
+- articles - informace o článcích
+- categories - kategorie článků
+- media - multimediální soubory
+- comments - komentáře k článkům
+- views - statistiky zobrazení článků
+- audio - zvukové stopy k článkům
+
+3.3 Návrh uživatelského rozhraní
+Uživatelské rozhraní je navrženo s důrazem na jednoduchost, přehlednost a intuitivnost. Veřejná část obsahuje responzivní design pro optimální zobrazení na všech zařízeních. Administrační rozhraní nabízí přehledný dashboard s rychlým přístupem ke všem funkcím podle oprávnění uživatele.
+
+Veřejná část:
+- Hlavní stránka s propagovanými články
+- Přehled kategorií a článků
+- Detailní zobrazení článku s multimediálním obsahem
+- Přehrávač zvukových stop
+- Vyhledávací pole
+
+Administrační část:
+- Dashboard s přehledem a statistikami
+- Editor článků s nástrojovou lištou
+- Správce souborů pro nahrávání multimédií
+- Správa kategorií
+- Správa uživatelů
+- Přehled statistik zobrazení
+
+3.4 Bezpečnostní aspekty
+V aplikaci jsou implementovány následující bezpečnostní mechanismy:
+- Bezpečné ukládání hesel pomocí hashování
+- Ochrana proti SQL injection
+- Validace vstupních dat
+- Řízení přístupu na základě uživatelských rolí
+- CSRF ochrana pro formuláře
+- Bezpečné nakládání s nahranými soubory
+- Omezení velikosti a typu nahrávaných souborů
+
+4. IMPLEMENTACE
+---------------
+4.1 Použité technologie
+- PHP 8.x - backend programovací jazyk
+- MySQL - relační databáze
+- HTML5, CSS3, JavaScript - frontend technologie
+- Bootstrap - CSS framework pro responzivní design
+- jQuery - JavaScript knihovna pro zjednodušení práce s DOM
+- TinyMCE - WYSIWYG editor pro tvorbu článků
+- AJAX - asynchronní načítání dat
+- Git - verzovací systém pro správu kódu
+
+4.2 Struktura projektu
+Projekt má následující strukturu složek:
+- app/ - aplikační kód (modely, kontrolery, pohledy)
+- config/ - konfigurační soubory
+- system/ - jádro frameworku
+- web/ - veřejně dostupné soubory (CSS, JavaScript, obrázky)
+- admin/ - administrátorské rozhraní
+- dokumentace/ - dokumentace projektu
+- uploads/ - složka pro nahrané soubory (obrázky, videa, zvuk)
+
+4.3 Databáze
+Databázový model je implementován pomocí SQL a obsahuje všechny potřebné tabulky a relace. Pro komunikaci s databází je vytvořena třída Database, která zajišťuje připojení a bezpečné provádění dotazů s parametrizovanými příkazy pro prevenci SQL injection.
+
+4.4 Backend
+Backend je implementován v PHP s využitím objektově orientovaného programování. Hlavní komponenty:
+- Autoloader - automatické načítání tříd
+- Router - směrování HTTP požadavků
+- Controllers - řízení aplikační logiky
+- Models - práce s daty a databází
+- Middlewares - filtry pro zpracování požadavků
+- Services - oddělení business logiky
+- FileManager - správa nahraných souborů
+
+4.5 Frontend
+Frontend využívá moderní webové technologie pro vytvoření uživatelsky přívětivého rozhraní:
+- Responzivní design pomocí Bootstrap
+- JavaScript a jQuery pro interaktivní prvky
+- TinyMCE pro WYSIWYG editaci článků
+- AJAX pro asynchronní načítání dat bez nutnosti obnovení stránky
+- CSS pro stylování a vizuální prvky
+- HTML5 audio player pro přehrávání zvukových stop
+
+4.6 Klíčové algoritmy a postupy
+- Algoritmus pro počítání zobrazení článků
+- Systém pro filtrování a řazení článků podle různých kritérií
+- Algoritmus pro propagaci vybraných článků na hlavní stránce
+- Implementace schvalovacího workflow pro publikaci článků
+- Zpracování a optimalizace nahrávaných obrázků
+- Systém správy zvukových stop a jejich připojení k článkům
+
+5. TESTOVÁNÍ
+------------
+5.1 Metody testování
+Aplikace byla testována pomocí následujících metod:
+- Manuální testování funkcionality
+- Validace HTML a CSS kódu
+- Testování responzivity na různých zařízeních
+- Testování zabezpečení (penetrační testy)
+- Testování výkonu a rychlosti načítání
+
+5.2 Výsledky testů
+Během testování byly odhaleny a následně opraveny různé chyby a nedostatky v aplikaci. Hlavní zjištěné problémy:
+- Neoptimalizované SQL dotazy způsobující zpomalení při velkém počtu článků
+- Nekonzistence v uživatelském rozhraní mezi různými sekcemi
+- Problémy s nahráváním větších multimediálních souborů
+- Chyby v zobrazení na některých mobilních zařízeních
+- Nesprávné počítání zobrazení při opakovaných návštěvách
+
+5.3 Řešení nalezených problémů
+- Optimalizace SQL dotazů přidáním indexů a přepracováním některých částí
+- Sjednocení designu v celé aplikaci
+- Implementace chunked uploadu pro větší soubory
+- Úprava CSS pro lepší zobrazení na mobilních zařízeních
+- Zavedení cookies pro správné počítání unikátních zobrazení
+
+6. UŽIVATELSKÁ DOKUMENTACE
+--------------------------
+6.1 Systémové požadavky
+- Webový server s podporou PHP 8.x
+- MySQL databáze 5.7 nebo vyšší
+- Moderní webový prohlížeč (Chrome, Firefox, Edge, Safari)
+- Minimální rozlišení obrazovky 320px (pro mobilní zařízení)
+- Dostatečný diskový prostor pro ukládání multimediálních souborů
+
+6.2 Instalace
+1. Nahrání souborů na webový server
+2. Vytvoření MySQL databáze
+3. Import databázové struktury pomocí db.sql
+4. Konfigurace připojení k databázi v souboru config/db.php
+5. Nastavení oprávnění pro složky s nahrávanými soubory (uploads/)
+6. Vytvoření administrátorského účtu pomocí instalačního skriptu
+
+6.3 Popis uživatelského rozhraní
+Popis hlavních částí uživatelského rozhraní:
+- Veřejná část
+  - Hlavní stránka s propagovanými články
+  - Seznam článků podle kategorií
+  - Detailní stránka článku s multimediálním obsahem
+  - Přehrávač zvukových stop
+  - Vyhledávací pole
+- Administrátorská část
+  - Dashboard s přehledem a statistikami
+  - Editor článků s nástrojovou lištou
+  - Správce souborů pro nahrávání multimédií
+  - Správa kategorií
+  - Správa uživatelů
+  - Přehled statistik zobrazení
+
+6.4 Návody k použití
+Návody pro různé uživatelské role:
+- Pro redaktory:
+  - Vytvoření nového článku
+  - Přidání multimediálního obsahu
+  - Kategorizace článku
+  - Přidání zvukové stopy
+- Pro editory:
+  - Schválení článku k publikaci
+  - Propagace článku na hlavní stranu
+  - Správa kategorií
+- Pro administrátory:
+  - Správa uživatelských účtů
+  - Nastavení systému
+  - Sledování statistik
+
+7. ZÁVĚR
+--------
+7.1 Zhodnocení projektu
+Projekt splnil stanovené cíle a výsledkem je funkční redakční systém pro cyklistický magazín, který efektivně řeší správu článků, kategorií a multimediálního obsahu. Systém poskytuje intuitivní rozhraní pro redaktory a editory, stejně jako přehledné zobrazení článků pro čtenáře. Implementované funkce jako počítání zobrazení, správa zvukových stop a propagace vybraných článků zvyšují hodnotu systému pro provozovatele magazínu.
+
+Během vývoje byly překonány různé technické výzvy, zejména v oblasti správy multimediálního obsahu, optimalizace databáze pro efektivní vyhledávání a implementace komplexního systému oprávnění. Tyto zkušenosti byly cenným přínosem pro můj profesní rozvoj.
+
+7.2 Možnosti dalšího rozvoje
+V budoucnu by bylo možné systém rozšířit o následující funkce:
+- Pokročilá SEO optimalizace článků
+- Integrace se sociálními sítěmi pro automatické sdílení nových článků
+- Systém pro plánování publikace článků v budoucnu
+- Mobilní aplikace pro čtení článků offline
+- Systém notifikací pro redaktory a čtenáře
+- Implementace pokročilých analytických nástrojů
+- Podpora pro vícejazyčný obsah
+- Rozšíření o diskuzní fórum pro čtenáře
+
+8. SEZNAM POUŽITÉ LITERATURY A ZDROJŮ
+-------------------------------------
+1. GILMORE, W. Jason. Velká kniha PHP a MySQL 5: kompendium znalostí pro začátečníky i profesionály. Brno: Zoner Press, 2007. ISBN 978-80-86815-53-4.
+2. NIXON, Robin. Learning PHP, MySQL & JavaScript: With jQuery, CSS & HTML5. 5th Edition. O'Reilly Media, 2018. ISBN 978-1491978917.
+3. DUCKETT, Jon. HTML and CSS: Design and Build Websites. John Wiley & Sons, 2011. ISBN 978-1118008188.
+4. Bootstrap dokumentace: https://getbootstrap.com/docs/
+5. PHP dokumentace: https://www.php.net/manual/en/
+6. MySQL dokumentace: https://dev.mysql.com/doc/
+7. TinyMCE dokumentace: https://www.tiny.cloud/docs/
+8. W3Schools Online Web Tutorials: https://www.w3schools.com/
+
+9. PŘÍLOHY
+----------
+- SQL skripty pro vytvoření databáze
+- Snímky obrazovek z aplikace
+- Zdrojové kódy klíčových částí aplikace
+- Ukázka datového modelu
+- Diagram případů užití
+- Diagram entit a vztahů
