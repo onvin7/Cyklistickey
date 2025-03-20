@@ -1,5 +1,3 @@
-<!-- Obsah dashboardu -->
-<div class="container">
     <h1 class="dashboard-title text-center">Admin Dashboard</h1>
 
     <section class="content-section">
@@ -69,7 +67,6 @@
         </div>
         <div id="topArticlesChart" style="width: 100%; height: 500px;"></div>
     </section>
-</div>
 
 <!-- ApexCharts knihovna -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
@@ -184,57 +181,22 @@
             },
             yaxis: {
                 title: {
-                    text: 'Počet zobrazení',
-                    style: {
-                        fontSize: '14px',
-                        fontFamily: 'Inter, sans-serif'
-                    }
+                    text: 'Počet zobrazení'
                 },
-                min: 0,
-                max: 1,
-                tickAmount: 1,
-                forceNiceScale: false,
-                decimalsInFloat: 0,
                 labels: {
                     formatter: function(val) {
                         return Math.round(val);
-                    },
-                    style: {
-                        colors: '#7E8299',
-                        fontSize: '13px',
-                        fontFamily: 'Inter, sans-serif'
                     }
                 }
             },
             legend: {
                 position: 'top',
-                horizontalAlign: 'right',
-                floating: false,
-                fontSize: '13px',
-                fontFamily: 'Inter, sans-serif',
-                formatter: function(seriesName, opts) {
-                    return seriesName.length > 30 ? seriesName.substring(0, 27) + '...' : seriesName;
-                },
-                itemMargin: {
-                    horizontal: 10,
-                    vertical: 5
-                },
-                markers: {
-                    width: 12,
-                    height: 12,
-                    strokeWidth: 0,
-                    radius: 12,
-                    offsetX: 0,
-                    offsetY: 0
-                }
+                horizontalAlign: 'right'
             },
             tooltip: {
                 theme: 'light',
                 marker: {
-                    show: true,
-                },
-                x: {
-                    show: true,
+                    show: true
                 },
                 y: {
                     formatter: function (val) {
