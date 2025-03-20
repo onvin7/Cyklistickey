@@ -21,8 +21,9 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #00000F;
+  background-color: rgb(18, 18, 18);
   color: white;
+  overflow: hidden;
 }
 
 .container-login {
@@ -93,17 +94,7 @@ button:active {
   transform: scale(0.98);
 }
 
-@media screen and (max-width: 768px) {
-  .container-login {
-    width: 90%;
-  }
-}
 
-@media screen and (min-width: 769px) and (max-width: 1200px) {
-  .container-login {
-    width: 70%;
-  }
-}
 
 .container {
   display: flex;
@@ -111,7 +102,8 @@ button:active {
   justify-content: center;
   align-items: center;
   height: 100vh;
-}
+  width: 100vw;
+  overflow: hidden;}
 
 .container .ohraniceni {
   background-color: #212121;
@@ -169,7 +161,9 @@ button:active {
   display: flex;
   justify-content: center;
   align-items: center;
-
+}
+.container .ohraniceni .logo.register {
+  height: auto;
 }
 
 .container .ohraniceni .logo img {
@@ -256,5 +250,62 @@ button:active {
     left: 3em;
     top: -0.28em;
     background: #000;
+  }
+}
+
+.container .ohraniceni.new {
+  height: auto;
+  background-color: #212121;
+  display: flex;    
+  border-radius: 20px;
+}
+
+
+
+.prvek span.form-title {
+  display: block;
+  color: white;
+  font-size: 28px;
+  font-weight: 300;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+  text-align: center;
+  background: linear-gradient(to left, rgb(229, 7, 126), rgb(4, 142, 206));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@media screen and (max-width: 768px) {
+  .container-login {
+    width: 90%;
+  }
+
+  .container .ohraniceni,
+  .container .ohraniceni.new {
+    width: 90%;
+    flex-flow: column;
+    align-items: center;
+    height: auto; 
+  }
+
+  .container .ohraniceni .logo img {
+    width: 300px;
+  }
+}
+
+@media screen and (max-height: 700px) {
+  .container .ohraniceni.new {
+    margin: 20px 0;
+  }
+
+  .container {
+    height: auto;
+    min-height: 100vh;
+    padding: 0;
+  }
+  body {
+        overflow-y: auto;
   }
 }

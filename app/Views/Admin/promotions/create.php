@@ -1,25 +1,37 @@
-<div class="container mt-4">
-    <h2 class="mb-4">➕ Přidat propagaci článku</h2>
+<section class="content-section">
+    <div class="section-header">
+        <h2>Přidat propagaci článku</h2>
+        <div>
+            <a href="/admin/promotions" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Zpět na propagace
+            </a>
+        </div>
+    </div>
 
-    <!-- Navigace mezi stránkami propagace -->
-    <nav class="nav nav-pills mb-4">
-        <a class="nav-link" href="/admin/promotions">📢 Aktuální propagace</a>
-        <a class="nav-link" href="/admin/promotions/upcoming">📅 Budoucí propagace</a>
-        <a class="nav-link" href="/admin/promotions/history">📜 Historie propagací</a>
-        <a class="nav-link active btn btn-success text-white" href="/admin/promotions/create">➕ Přidat propagaci</a>
-    </nav>
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link" href="/admin/promotions">Aktuální propagace</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/admin/promotions/upcoming">Budoucí propagace</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/admin/promotions/history">Historie propagací</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/admin/promotions/create">Přidat propagaci</a>
+        </li>
+    </ul>
 
-    <div class="card">
-        <div class="card-header">📌 Vyber článek a nastav propagaci</div>
-        <div class="card-body">
-            <!-- Filtr pro vyhledávání článků -->
-            <div class="mb-3">
-                <label class="form-label">🔍 Hledat článek:</label>
-                <input type="text" class="form-control" id="articleFilter" placeholder="Začněte psát název článku...">
-            </div>
-
+    <div class="row">
+        <div class="col-md-8">
             <form action="/admin/promotions/store" method="POST">
-                <div class="mb-3">
+                <div class="mb-4">
+                    <label class="form-label">Hledat článek:</label>
+                    <input type="text" class="form-control" id="articleFilter" placeholder="Začněte psát název článku...">
+                </div>
+
+                <div class="mb-4">
                     <label class="form-label">Vyber článek:</label>
                     <select class="form-select" name="id_clanku" id="articleSelect" required>
                         <option value="null">Nevybráno</option>
@@ -29,21 +41,47 @@
                     </select>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">📆 Od kdy:</label>
-                    <input type="datetime-local" class="form-control" name="zacatek" required>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <label class="form-label">Datum začátku:</label>
+                            <input type="datetime-local" class="form-control" name="zacatek" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <label class="form-label">Datum konce:</label>
+                            <input type="datetime-local" class="form-control" name="konec" required>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">📆 Do kdy:</label>
-                    <input type="datetime-local" class="form-control" name="konec" required>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-action">
+                        <i class="fas fa-save me-1"></i> Uložit propagaci
+                    </button>
+                    <a href="/admin/promotions" class="btn btn-secondary">Zrušit</a>
                 </div>
-
-                <button type="submit" class="btn btn-primary">✅ Přidat propagaci</button>
             </form>
         </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Nápověda</div>
+                <div class="card-body">
+                    <p>
+                        <strong>Výběr článku:</strong> Vyberte článek, který chcete propagovat z dostupných článků.
+                    </p>
+                    <p>
+                        <strong>Datum začátku:</strong> Datum a čas, od kdy se má článek začít propagovat.
+                    </p>
+                    <p>
+                        <strong>Datum konce:</strong> Datum a čas, kdy propagace skončí.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</section>
 
 <script>
     document.getElementById('articleFilter').addEventListener('keyup', function() {

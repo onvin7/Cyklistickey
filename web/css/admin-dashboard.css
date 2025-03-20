@@ -1,0 +1,425 @@
+:root {
+  --primary-color: #4d5aea;
+  --secondary-color: #f25c78;
+  --accent-color: #1bd4cd;
+  --light-gray: #f4f6f9;
+  --dark-gray: #3f4254;
+  --border-radius: 12px;
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  --transition-standard: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  background-color: #f8f9fd;
+  color: var(--dark-gray);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+}
+
+.container {
+  padding: 1.5rem;
+  max-width: 1320px;
+}
+
+h1.dashboard-title {
+  position: relative;
+  font-weight: 800;
+  font-size: 2.2rem;
+  margin-bottom: 2.5rem;
+  display: inline-block;
+  color: var(--dark-gray);
+}
+
+h1.dashboard-title::after {
+  content: "";
+  position: absolute;
+  width: 50%;
+  height: 5px;
+  background: linear-gradient(
+    90deg,
+    var(--primary-color) 0%,
+    var(--secondary-color) 100%
+  );
+  bottom: -10px;
+  left: 0;
+  border-radius: 50px;
+}
+
+section.content-section {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  box-shadow: var(--card-shadow);
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-standard);
+}
+
+section.content-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    var(--primary-color),
+    var(--accent-color)
+  );
+  border-radius: var(--border-radius) 0 0 var(--border-radius);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-left: 10px;
+}
+
+.section-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0;
+  color: var(--dark-gray);
+}
+
+.latest-articles-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.article-item {
+  border: none !important;
+  background-color: var(--light-gray);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  transition: var(--transition-standard);
+}
+
+.article-item:hover {
+  background-color: rgba(77, 90, 234, 0.05);
+}
+
+.article-item strong {
+  font-weight: 600;
+  color: var(--dark-gray);
+  font-size: 1.05rem;
+}
+
+.article-item small {
+  color: #7e8299;
+}
+
+.btn-action {
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: var(--transition-standard);
+  color: var(--light-gray);
+}
+
+.btn-action:hover {
+  background-color: var(--primary-color);
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.table thead th {
+  background-color: var(--light-gray);
+  color: var(--dark-gray);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  padding: 1rem;
+  border: none;
+}
+
+.table tbody td {
+  padding: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(77, 90, 234, 0.03);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(244, 246, 249, 0.5);
+}
+
+.table thead tr th:first-child {
+  border-top-left-radius: var(--border-radius);
+}
+
+.table thead tr th:last-child {
+  border-top-right-radius: var(--border-radius);
+}
+
+#topArticlesChart {
+  margin-top: 1rem;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+/* Vlastní barevný styl pro tmavou hlavičku tabulky */
+.table-dark {
+  background: linear-gradient(
+    90deg,
+    var(--primary-color),
+    rgba(77, 90, 234, 0.85)
+  ) !important;
+  color: white;
+}
+
+/* Přidání responzivního přizpůsobení pro mobilní zařízení */
+@media (max-width: 768px) {
+  h1.dashboard-title {
+    font-size: 1.8rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.2rem;
+  }
+
+  section.content-section {
+    padding: 1.5rem;
+  }
+}
+
+/* Styly pro navbar */
+.navbar {
+  background: linear-gradient(
+    90deg,
+    #343a40 0%,
+    var(--dark-gray) 100%
+  ) !important;
+  padding: 0.8rem 1.5rem;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: white;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.navbar-brand::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(27, 212, 205, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(27, 212, 205, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(27, 212, 205, 0);
+  }
+}
+
+.navbar-nav .nav-item {
+  margin: 0 2px;
+}
+
+.navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.85);
+  padding: 0.6rem 1rem;
+  border-radius: var(--border-radius);
+  transition: var(--transition-standard);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-nav .nav-link.active {
+  color: white;
+  background-color: var(--primary-color);
+}
+
+/* Dropdown styly */
+.dropdown-menu {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  padding: 0.7rem 0;
+  margin-top: 0.5rem;
+}
+
+.dropdown-item {
+  padding: 0.6rem 1.2rem;
+  font-weight: 500;
+  transition: var(--transition-standard);
+}
+
+.dropdown-item:hover {
+  background-color: var(--light-gray);
+}
+
+.dropdown-item.text-danger:hover {
+  background-color: rgba(242, 92, 120, 0.1);
+}
+
+.dropdown-toggle {
+  white-space: nowrap;
+}
+
+/* Profil uživatele */
+.user-profile-nav {
+  display: flex;
+  align-items: center;
+}
+
+.avatar-container {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: var(--transition-standard);
+}
+
+.avatar-container:hover {
+  border-color: var(--accent-color);
+}
+
+.avatar-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-emoji {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-right: 10px;
+}
+
+/* Responsivní navbar */
+@media (max-width: 992px) {
+  .navbar-collapse {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .navbar-nav .nav-item {
+    margin: 2px 0;
+  }
+
+  .navbar-nav.ms-auto {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Styly pro tabulku článků */
+.table-responsive {
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+}
+
+/* Vlastní styly pro tmavou hlavičku tabulky článků */
+.artikly-thead {
+  background-color: var(--light-gray);
+  color: var(--dark-gray);
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-bottom: 2px solid rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.artikly-thead th {
+  vertical-align: middle;
+  padding: 8px;
+  position: relative;
+  color: var(--dark-gray);
+}
+
+.artikly-thead th a {
+  display: block;
+  padding: 10px 8px;
+  transition: all 0.2s ease;
+  color: var(--dark-gray) !important;
+  text-decoration: none !important;
+  border-radius: 4px;
+  position: relative;
+}
+
+.artikly-thead th a:hover {
+  background-color: rgba(0,0,0,0.1);
+  text-shadow: none;
+}
+
+.artikly-thead th a span {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.artikly-thead th a span:last-child {
+  margin-left: 5px;
+  font-weight: bold;
+}
+
+/* Styl pro odznaky a štítky */
+.badge {
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.4em 0.7em;
+}
+
+/* Mobilní zobrazení pro tabulky */
+@media (max-width: 768px) {
+  .table-responsive {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .artikly-thead th {
+    padding: 5px;
+  }
+
+  .artikly-thead th a {
+    padding: 8px 5px;
+  }
+}

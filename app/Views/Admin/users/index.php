@@ -1,54 +1,56 @@
-<div class="container mt-4">
-    <h1 class="mb-4 text-center">Správa uživatelů</h1>
+<section class="content-section">
+    <div class="section-header">
+        <h1 class="mb-4 text-center"><i class="fas fa-users me-2"></i>Správa uživatelů</h1>
+    </div>
 
-    <div class="d-flex flex-row mb-4 flex-flow justify-content-between">
-        <div></div>
-        <div class="col-md-6">
-            <form action="/admin/users" method="GET">
+    <div class="mb-4">
+        <form action="/admin/users" method="GET" class="card">
+            <div class="card-body">
                 <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
                     <input type="text" name="filter" class="form-control" placeholder="Hledat uživatele..." value="<?= htmlspecialchars($_GET['filter'] ?? '') ?>">
-                    <button type="submit" class="btn btn-primary">Filtrovat</button>
+                    <button type="submit" class="btn btn-action">Filtrovat</button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 
     <!-- Výpis uživatelů -->
     <div class="table-responsive">
         <table class="table table-bordered table-striped table-hover">
-            <thead class="table-dark text-center">
+            <thead class="artikly-thead text-center">
                 <tr>
                     <th>
                         <a href="?sort_by=id&amp;order=<?= ($sortBy === 'id' && $order === 'ASC') ? 'DESC' : 'ASC' ?>" class="text-white text-decoration-none">
-                            ID
+                            <i class="fas fa-hashtag me-1"></i>ID
                             <span><?= ($sortBy === 'id') ? ($order === 'ASC' ? '⬆' : '⬇') : '' ?></span>
                         </a>
                     </th>
                     <th>
                         <a href="?sort_by=name&amp;order=<?= ($sortBy === 'name' && $order === 'ASC') ? 'DESC' : 'ASC' ?>" class="text-white text-decoration-none">
-                            Jméno
+                            <i class="fas fa-user me-1"></i>Jméno
                             <span><?= ($sortBy === 'name') ? ($order === 'ASC' ? '⬆' : '⬇') : '' ?></span>
                         </a>
                     </th>
                     <th>
                         <a href="?sort_by=surname&amp;order=<?= ($sortBy === 'surname' && $order === 'ASC') ? 'DESC' : 'ASC' ?>" class="text-white text-decoration-none">
-                            Příjmení
+                            <i class="fas fa-user me-1"></i>Příjmení
                             <span><?= ($sortBy === 'surname') ? ($order === 'ASC' ? '⬆' : '⬇') : '' ?></span>
                         </a>
                     </th>
                     <th>
                         <a href="?sort_by=email&amp;order=<?= ($sortBy === 'email' && $order === 'ASC') ? 'DESC' : 'ASC' ?>" class="text-white text-decoration-none">
-                            E-mail
+                            <i class="fas fa-envelope me-1"></i>E-mail
                             <span><?= ($sortBy === 'email') ? ($order === 'ASC' ? '⬆' : '⬇') : '' ?></span>
                         </a>
                     </th>
                     <th>
                         <a href="?sort_by=role&amp;order=<?= ($sortBy === 'role' && $order === 'ASC') ? 'DESC' : 'ASC' ?>" class="text-white text-decoration-none">
-                            Role
+                            <i class="fas fa-user-tag me-1"></i>Role
                             <span><?= ($sortBy === 'role') ? ($order === 'ASC' ? '⬆' : '⬇') : '' ?></span>
                         </a>
                     </th>
-                    <th>Akce</th>
+                    <th><i class="fas fa-cogs me-1"></i>Akce</th>
                 </tr>
             </thead>
             <tbody class="text-center">
@@ -61,27 +63,34 @@
                         <td>
                             <?php
                             switch ($user['role']) {
+                                case 0:
+                                    echo '<span class="badge bg-success"><i class="fas fa-user me-1"></i>Uživatel</span>';
+                                    break;
                                 case 1:
-                                    echo '<span class="badge bg-info text-dark">Moderátor</span>';
+                                    echo '<span class="badge bg-info text-dark"><i class="fas fa-user-shield me-1"></i>Moderátor</span>';
                                     break;
                                 case 2:
-                                    echo '<span class="badge bg-warning text-dark">Admin</span>';
+                                    echo '<span class="badge bg-warning text-dark"><i class="fas fa-user-edit me-1"></i>Editor</span>';
                                     break;
                                 case 3:
-                                    echo '<span class="badge bg-danger">Superadmin</span>';
+                                    echo '<span class="badge bg-danger"><i class="fas fa-user-tie me-1"></i>Administrátor</span>';
                                     break;
                                 default:
-                                    echo '<span class="badge bg-secondary">Uživatel</span>';
+                                    echo '<span class="badge bg-secondary"><i class="fas fa-user-slash me-1"></i>Neznámá role</span>';
                             }
                             ?>
                         </td>
                         <td>
-                            <a href="/admin/users/edit/<?= htmlspecialchars($user['id']) ?>" class="btn btn-sm btn-primary me-1">Upravit</a>
-                            <a href="/admin/users/delete/<?= htmlspecialchars($user['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete smazat tohoto uživatele?')">Smazat</a>
+                            <a href="/admin/users/edit/<?= htmlspecialchars($user['id']) ?>" class="btn btn-sm btn-primary me-1">
+                                <i class="fas fa-edit me-1"></i>Upravit
+                            </a>
+                            <a href="/admin/users/delete/<?= htmlspecialchars($user['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete smazat tohoto uživatele?')">
+                                <i class="fas fa-trash-alt me-1"></i>Smazat
+                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
-</div>
+</section>

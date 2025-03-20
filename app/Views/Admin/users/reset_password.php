@@ -1,23 +1,22 @@
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header text-center">
-                    <h3>Reset hesla</h3>
+    <div class="ohraniceni">
+        <div class="logo">
+            <img src="/assets/graphics/logo_text_cyklistickey.png">
+        </div>
+        <div class="inputy">
+            <form method="POST" action="/reset-password/submit" class="input-wrapper">
+                <div class="prvek">
+                    <span class="form-title">Reset hesla</span>
                 </div>
-                <div class="card-body">
-                    <form action="/reset-password" method="POST">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">E-mail</label>
-                            <input type="email" name="email" id="email" class="form-control" placeholder="Zadejte váš e-mail" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Resetovat heslo</button>
-                    </form>
-                    <div class="text-center mt-3 d-flex justify-content-center align-items-center">
-                        <a href="/login" class="btn btn-link">Zpět na přihlášení</a>
+                <div class="prvek">
+                    <div class="input-group validator-msg-holder js-validated-element-wrapper">
+                        <label class="input-group__label" for="email">Email</label>
+                        <input id="email" class="form-control input-group__input" name="email" required="" type="email" placeholder="jsem@cyklistickey.cz" />
                     </div>
                 </div>
-            </div>
+                <input type="submit" value="Resetovat heslo">
+                <div class="prvek">
+                    <a href="/login">Zpět na přihlášení</a>
+                </div>
+            </form>
         </div>
     </div>
-</div>

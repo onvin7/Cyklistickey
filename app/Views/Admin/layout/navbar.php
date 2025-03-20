@@ -5,21 +5,17 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $isLoggedIn = isset($_SESSION['user_id']);
 
-// Pokud uživatel má fotku, použije se. Jinak se zobrazí Font Awesome ikona.
 $hasProfilePhoto = isset($_SESSION['profil_foto']) && !empty($_SESSION['profil_foto']);
 $profilePhoto = $hasProfilePhoto ? "/uploads/users/thumbnails/" . $_SESSION['profil_foto'] : null;
 
-// Výchozí pohlaví (pokud není nastaveno)
 $gender = $_SESSION['gender'] ?? 'male';
 
-// Emoji a popisy podle role a pohlaví
 $roleData = [
-    1 => ['male' => ["🧑‍💼", "Redaktor"], 'female' => ["👩‍💼", "Redaktorka"]],
-    2 => ['male' => ["👨‍🏫", "Vydavatel"], 'female' => ["👩‍🏫", "Vydavatelka"]],
-    3 => ['male' => ["👨‍💻", "Admin"], 'female' => ["👩‍💻", "Admin"]]
+    1 => ['male' => ["🧑‍💼", "Moderátor"], 'female' => ["👩‍💼", "Moderátorka"]],
+    2 => ['male' => ["👨‍🏫", "Editor"], 'female' => ["👩‍🏫", "Editorka"]],
+    3 => ['male' => ["👑", "Administrátor"], 'female' => ["👑", "Administrátorka"]]
 ];
 
-// Výběr emoji a popisu role
 if (isset($roleData[$_SESSION['role']])) {
     $userEmoji = $roleData[$_SESSION['role']][$gender][0];
     $userRoleText = $roleData[$_SESSION['role']][$gender][1];
@@ -28,9 +24,20 @@ if (isset($roleData[$_SESSION['role']])) {
     $userRoleText = "Neznámá role";
 }
 
+// Určení aktivní stránky
+$currentUri = $_SERVER['REQUEST_URI'];
+$activeLinks = [
+    'articles' => strpos($currentUri, '/admin/articles') !== false,
+    'categories' => strpos($currentUri, '/admin/categories') !== false,
+    'statistics' => strpos($currentUri, '/admin/statistics') !== false,
+    'promotions' => strpos($currentUri, '/admin/promotions') !== false,
+    'users' => strpos($currentUri, '/admin/users') !== false,
+    'access-control' => strpos($currentUri, '/admin/access-control') !== false,
+];
+
 ?>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="/admin">Admin Panel</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -40,29 +47,44 @@ if (isset($roleData[$_SESSION['role']])) {
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <?php if ($isLoggedIn): ?>
-                    <li class="nav-item"><a class="nav-link" href="/admin/articles">Články</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/admin/categories">Kategorie</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/admin/statistics">Statistiky</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/admin/promotions">Propagace</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/admin/users">Uživatelé</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/admin/access-control">Správa přístupů</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $activeLinks['articles'] ? 'active' : '' ?>" href="/admin/articles">Články</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $activeLinks['categories'] ? 'active' : '' ?>" href="/admin/categories">Kategorie</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $activeLinks['statistics'] ? 'active' : '' ?>" href="/admin/statistics">Statistiky</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $activeLinks['promotions'] ? 'active' : '' ?>" href="/admin/promotions">Propagace</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $activeLinks['users'] ? 'active' : '' ?>" href="/admin/users">Uživatelé</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $activeLinks['access-control'] ? 'active' : '' ?>" href="/admin/access-control">Správa přístupů</a>
+                    </li>
                 <?php endif; ?>
             </ul>
 
             <ul class="navbar-nav ms-auto">
                 <?php if ($isLoggedIn && isset($_SESSION['email'])): ?>
-                    <!-- Dropdown menu s profilovou fotkou nebo ikonou -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
+                        <a class="nav-link dropdown-toggle user-profile-nav" href="#" id="userDropdown"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <?php if ($hasProfilePhoto): ?>
-                                <img src="<?= htmlspecialchars($profilePhoto) ?>" class="rounded-circle" width="40" height="40" alt="Profilová fotka">
+                                <div class="avatar-container">
+                                    <img src="<?= htmlspecialchars($profilePhoto) ?>" alt="Profilová fotka">
+                                </div>
                             <?php else: ?>
-                                <span style="font-size: 30px;"><?= $userEmoji ?></span>
+                                <div class="user-emoji"><?= $userEmoji ?></div>
                             <?php endif; ?>
-                            <span class="ms-2"><?= htmlspecialchars($_SESSION['email']) ?></span>
+                            <span><?= htmlspecialchars($_SESSION['email']) ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><span class="dropdown-item-text text-muted small px-3 py-2"><?= $userRoleText ?></span></li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="/admin/settings">⚙ Nastavení účtu</a></li>
                             <li><a class="dropdown-item text-danger" href="/admin/logout">🚪 Odhlásit se</a></li>
                         </ul>

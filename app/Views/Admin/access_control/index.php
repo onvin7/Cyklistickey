@@ -8,7 +8,7 @@
             <thead class="table-dark text-center">
                 <tr>
                     <th>Stránka</th>
-                    <th>Redaktor</th>
+                    <th>Moderátor</th>
                     <th>Editor</th>
                 </tr>
             </thead>

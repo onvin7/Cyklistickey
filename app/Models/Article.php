@@ -207,6 +207,24 @@ class Article
     // Zvýšení počtu zobrazení článku
     public function incrementViews($articleId)
     {
+        // Kontrola, zda je session aktivní, případně ji spustíme
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Vytvoříme unikátní klíč pro kontrolu návštěvy článku v daný den
+        $today = date('Y-m-d');
+        $sessionKey = 'article_view_' . $articleId . '_' . $today;
+
+        // Pokud uživatel již článek dnes navštívil, nepočítáme zobrazení
+        if (isset($_SESSION[$sessionKey])) {
+            return true; // Článek byl již zobrazen dnešní den
+        }
+
+        // Uživatel navštívil článek poprvé v daný den, uložíme do session
+        $_SESSION[$sessionKey] = true;
+
+        // Zvýšíme počet zobrazení v databázi
         $query = "INSERT INTO views_clanku (id_clanku, pocet, datum) 
                   VALUES (:articleId, 1, CURDATE()) 
                   ON DUPLICATE KEY UPDATE pocet = pocet + 1";
@@ -561,5 +579,20 @@ class Article
         $stmt->execute();
         
         return $stmt->fetchAll();
+    }
+
+    // Získání článků z posledních 7 dnů
+    public function getLastWeekArticles()
+    {
+        $query = "SELECT clanky.*, users.name AS autor_jmeno, users.surname AS autor_prijmeni
+                  FROM clanky
+                  LEFT JOIN users ON clanky.user_id = users.id
+                  WHERE clanky.datum >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                  AND clanky.viditelnost = 1
+                  ORDER BY clanky.datum DESC";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }
