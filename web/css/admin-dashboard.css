@@ -423,3 +423,99 @@ section.content-section::before {
     padding: 8px 5px;
   }
 }
+
+/* Styly pro správu přístupů */
+.group-header {
+    background: var(--light-gray);
+    font-weight: 700;
+    color: var(--dark-gray);
+    padding: 12px 15px !important;
+}
+
+.group-header i {
+    margin-right: 8px;
+    color: var(--primary-color);
+}
+
+.page-item {
+    padding-left: 35px !important;
+}
+
+.page-item i {
+    margin-right: 8px;
+    color: var(--dark-gray);
+    opacity: 0.6;
+}
+
+tr:not(.group-header) td:first-child i {
+    color: var(--dark-gray);
+    opacity: 0.6;
+}
+
+.group-header i {
+    margin-right: 8px;
+    color: var(--primary-color);
+}
+
+tr:not(.group-header) td:first-child i {
+    color: var(--dark-gray);
+    opacity: 0.6;
+}
+
+.custom-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.custom-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 24px;
+    width: 24px;
+    background-color: #fff;
+    border: 2px solid var(--dark-gray);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.custom-checkbox:hover input ~ .checkmark {
+    border-color: var(--primary-color);
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.custom-checkbox .checkmark:after {
+    left: 8px;
+    top: 4px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}

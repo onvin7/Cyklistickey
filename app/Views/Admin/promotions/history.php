@@ -1,9 +1,9 @@
 <section class="content-section">
     <div class="section-header">
-        <h2>Správa propagace článků</h2>
+        <h2><i class="fa-solid fa-bullhorn"></i> Správa propagace článků</h2>
         <div>
             <a href="/admin/promotions/create" class="btn btn-action">
-                <i class="fas fa-plus-circle me-1"></i> Přidat propagaci
+                <i class="fa-solid fa-plus"></i> Přidat propagaci
             </a>
         </div>
     </div>

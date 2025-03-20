@@ -8,17 +8,15 @@ $isLoggedIn = isset($_SESSION['user_id']);
 $hasProfilePhoto = isset($_SESSION['profil_foto']) && !empty($_SESSION['profil_foto']);
 $profilePhoto = $hasProfilePhoto ? "/uploads/users/thumbnails/" . $_SESSION['profil_foto'] : null;
 
-$gender = $_SESSION['gender'] ?? 'male';
-
 $roleData = [
-    1 => ['male' => ["🧑‍💼", "Moderátor"], 'female' => ["👩‍💼", "Moderátorka"]],
-    2 => ['male' => ["👨‍🏫", "Editor"], 'female' => ["👩‍🏫", "Editorka"]],
-    3 => ['male' => ["👑", "Administrátor"], 'female' => ["👑", "Administrátorka"]]
+    1 =>  ["🧑‍💼", "Moderátor"],
+    2 =>  ["👨‍🏫", "Editor"],
+    3 =>  ["👑", "Administrátor"]
 ];
 
 if (isset($roleData[$_SESSION['role']])) {
-    $userEmoji = $roleData[$_SESSION['role']][$gender][0];
-    $userRoleText = $roleData[$_SESSION['role']][$gender][1];
+    $userEmoji = $roleData[$_SESSION['role']][0];
+    $userRoleText = $roleData[$_SESSION['role']][1];
 } else {
     $userEmoji = "👤";
     $userRoleText = "Neznámá role";
