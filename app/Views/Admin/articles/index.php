@@ -1,8 +1,8 @@
 <section class="content-section">
     <div class="section-header">
-        <h2>Správa článků</h2>
+        <h2><i class="fa-solid fa-newspaper"></i> Správa článků</h2>
         <a href="/admin/articles/create" class="btn btn-action">
-            <i class="fas fa-plus-circle me-1"></i> Vytvořit nový článek</a>
+            <i class="fa-solid fa-plus"></i> Vytvořit nový článek</a>
     </div>
 
     <div class="card mb-4">
@@ -11,7 +11,7 @@
                 <div class="input-group">
                     <input type="text" name="filter" class="form-control" placeholder="Hledat články..." value="<?= htmlspecialchars($_GET['filter'] ?? '') ?>">
                     <button type="submit" class="btn btn-action">
-                        <i class="fas fa-search me-1"></i> Filtrovat
+                        <i class="fa-solid fa-magnifying-glass"></i> Filtrovat
                     </button>
                 </div>
             </form>
@@ -101,8 +101,12 @@
                             </span>
                         </td>
                         <td>
-                            <a href="/admin/articles/edit/<?= htmlspecialchars($article['id']) ?>" class="btn btn-sm btn-primary">Upravit</a>
-                            <a href="/admin/articles/delete/<?= htmlspecialchars($article['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete smazat tento článek?')">Smazat</a>
+                            <a href="/admin/articles/edit/<?= htmlspecialchars($article['id']) ?>" class="btn btn-sm btn-primary">
+                                <i class="fa-solid fa-pen"></i> Upravit
+                            </a>
+                            <a href="/admin/articles/delete/<?= htmlspecialchars($article['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete smazat tento článek?')">
+                                <i class="fa-solid fa-trash"></i> Smazat
+                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

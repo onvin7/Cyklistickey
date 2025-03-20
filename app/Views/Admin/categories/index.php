@@ -1,8 +1,8 @@
 <section class="content-section">
     <div class="section-header">
-        <h2>Správa kategorií</h2>
+        <h2><i class="fa-solid fa-folder"></i> Správa kategorií</h2>
         <a href="/admin/categories/create" class="btn btn-action">
-            <i class="fas fa-plus-circle me-1"></i> Vytvořit novou kategorii</a>
+            <i class="fa-solid fa-plus"></i> Vytvořit novou kategorii</a>
     </div>
 
     <div class="card mb-4">
@@ -11,7 +11,7 @@
                 <div class="input-group">
                     <input type="text" name="filter" class="form-control" placeholder="Hledat kategorie..." value="<?= htmlspecialchars($_GET['filter'] ?? '') ?>">
                     <button type="submit" class="btn btn-action">
-                        <i class="fas fa-search me-1"></i> Filtrovat
+                        <i class="fa-solid fa-magnifying-glass"></i> Filtrovat
                     </button>
                 </div>
             </form>
@@ -43,8 +43,12 @@
                         <td><?= htmlspecialchars($category['id']) ?></td>
                         <td><?= htmlspecialchars($category['nazev_kategorie']) ?></td>
                         <td>
-                            <a href="/admin/categories/edit/<?= htmlspecialchars($category['id']) ?>" class="btn btn-sm btn-primary me-1">Upravit</a>
-                            <a href="/admin/categories/delete/<?= htmlspecialchars($category['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete smazat tuto kategorii?')">Smazat</a>
+                            <a href="/admin/categories/edit/<?= htmlspecialchars($category['id']) ?>" class="btn btn-sm btn-primary me-1">
+                                <i class="fa-solid fa-pen"></i> Upravit
+                            </a>
+                            <a href="/admin/categories/delete/<?= htmlspecialchars($category['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete smazat tuto kategorii?')">
+                                <i class="fa-solid fa-trash"></i> Smazat
+                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

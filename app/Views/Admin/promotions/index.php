@@ -1,9 +1,9 @@
 <section class="content-section">
     <div class="section-header">
-        <h2>Správa propagace článků</h2>
+        <h2><i class="fa-solid fa-bullhorn"></i> Správa propagace článků</h2>
         <div>
             <a href="/admin/promotions/create" class="btn btn-action">
-                <i class="fas fa-plus-circle me-1"></i> Přidat propagaci
+                <i class="fa-solid fa-plus"></i> Přidat propagaci
             </a>
         </div>
     </div>
@@ -39,7 +39,7 @@
                         <td class="text-center">
                             <a href="/admin/promotions/delete/<?= $promo['id'] ?>" class="btn btn-sm btn-danger"
                                onclick="return confirm('Opravdu odstranit tuto propagaci?')">
-                                <i class="fas fa-trash me-1"></i> Odebrat
+                                <i class="fa-solid fa-trash"></i> Odebrat
                             </a>
                         </td>
                     </tr>

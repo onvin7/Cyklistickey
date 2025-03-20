@@ -52,11 +52,16 @@ class LoginController
             exit();
         }
 
+        // Kontrola role - pouze uživatelé s rolí > 0 mají přístup do administrace
+        if ($user['role'] <= 0) {
+            echo "<script>alert('Nemáte oprávnění pro přístup do administrace!'); window.location.href='/login';</script>";
+            exit();
+        }
+
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['profil_foto'] = $user['profil_foto'];
-
 
         echo "<script>window.location.href='/admin';</script>";
         exit();

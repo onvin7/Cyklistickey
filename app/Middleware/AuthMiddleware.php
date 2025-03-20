@@ -17,7 +17,16 @@ class AuthMiddleware
 
         // ✅ **Pokud uživatel není přihlášen, přesměruj na login**
         if (!isset($_SESSION['user_id']) || !isset($_SESSION['role'])) {
-            echo "<script>alert('Musíte se přihlásit.'); window.location.href='/login';</script>";
+            header('Location: /login');
+            exit();
+        }
+
+        // ✅ **Kontrola role - uživatelé s rolí 0 nemají přístup do administrace**
+        if ((int)$_SESSION['role'] <= 0) {
+            session_destroy();
+            $error_message = "Nemáte oprávnění pro přístup do administrace.";
+            $view = '../app/Views/Admin/layout/access_denied.php';
+            include '../app/Views/Admin/layout/base.php';
             exit();
         }
 
@@ -51,7 +60,9 @@ class AuthMiddleware
 
         // ✅ **Pokud stránka není v databázi, přístup je zakázán**
         if (!$pagePermissions) {
-            echo "<script>alert('Stránka nenalezena nebo nemáte oprávnění k přístupu.'); window.location.href='/admin';</script>";
+            $error_message = "Stránka nenalezena nebo nemáte oprávnění k přístupu.";
+            $view = '../app/Views/Admin/layout/access_denied.php';
+            include '../app/Views/Admin/layout/base.php';
             exit();
         }
 
@@ -59,7 +70,8 @@ class AuthMiddleware
         if (($currentRole === 1 && !$pagePermissions['role_1']) ||
             ($currentRole === 2 && !$pagePermissions['role_2'])
         ) {
-            echo "<script>alert('Na tuto stránku nemáte přístup!'); window.location.href='/admin';</script>";
+            $view = '../app/Views/Admin/layout/access_denied.php';
+            include '../app/Views/Admin/layout/base.php';
             exit();
         }
     }

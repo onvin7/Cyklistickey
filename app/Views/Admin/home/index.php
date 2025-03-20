@@ -4,7 +4,7 @@
 
     <section class="content-section">
         <div class="section-header">
-            <h2>📄 Nejnovější články</h2>
+            <h2><i class="fa-solid fa-newspaper"></i> Nejnovější články</h2>
         </div>
         <ul class="latest-articles-list">
             <?php foreach ($latestArticles as $article): ?>
@@ -14,7 +14,9 @@
                         <br>
                         <small class="text-muted">Publikováno: <?= htmlspecialchars($article['datum']) ?></small>
                     </div>
-                    <a href="/admin/articles/edit/<?= htmlspecialchars($article['id']) ?>" class="btn btn-action">Upravit</a>
+                    <a href="/admin/articles/edit/<?= htmlspecialchars($article['id']) ?>" class="btn btn-action">
+                        <i class="fa-solid fa-pen"></i> Upravit
+                    </a>
                 </li>
             <?php endforeach; ?>
         </ul>
@@ -22,7 +24,7 @@
 
     <section class="content-section">
         <div class="section-header">
-            <h2>📆 Články z posledních 7 dnů</h2>
+            <h2><i class="fa-solid fa-calendar-days"></i> Články z posledních 7 dnů</h2>
         </div>
         <div class="table-responsive">
             <table class="table table-hover">
@@ -49,7 +51,9 @@
                                     <?= htmlspecialchars($article['autor_prijmeni'] ?? '') ?>
                                 </td>
                                 <td>
-                                    <a href="/admin/articles/edit/<?= htmlspecialchars($article['id']) ?>" class="btn btn-action btn-sm">Upravit</a>
+                                    <a href="/admin/articles/edit/<?= htmlspecialchars($article['id']) ?>" class="btn btn-action btn-sm">
+                                        <i class="fa-solid fa-pen"></i> Upravit
+                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -61,7 +65,7 @@
 
     <section class="content-section">
         <div class="section-header">
-            <h2>📈 Nejčtenější články za posledních 7 dní</h2>
+            <h2><i class="fa-solid fa-chart-line"></i> Nejčtenější články za posledních 7 dní</h2>
         </div>
         <div id="topArticlesChart" style="width: 100%; height: 500px;"></div>
     </section>
