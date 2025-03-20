@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Počítač: 127.0.0.1
--- Vytvořeno: Sob 15. bře 2025, 20:40
+-- Vytvořeno: Pon 17. bře 2025, 14:06
 -- Verze serveru: 10.4.32-MariaDB
 -- Verze PHP: 8.0.30
 
@@ -31,12 +31,11 @@ USE `cyklistickey`;
 --
 
 DROP TABLE IF EXISTS `admin_access`;
-CREATE TABLE IF NOT EXISTS `admin_access` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `admin_access` (
+  `id` int(11) NOT NULL,
   `page` varchar(255) NOT NULL,
   `role_1` tinyint(1) NOT NULL,
-  `role_2` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`)
+  `role_2` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -46,15 +45,13 @@ CREATE TABLE IF NOT EXISTS `admin_access` (
 --
 
 DROP TABLE IF EXISTS `admin_access_logs`;
-CREATE TABLE IF NOT EXISTS `admin_access_logs` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `admin_access_logs` (
+  `id` int(11) NOT NULL,
   `changed_by` int(11) NOT NULL,
   `change_date` datetime NOT NULL,
   `page` varchar(255) NOT NULL,
   `role_1` tinyint(1) NOT NULL,
-  `role_2` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_admin_access_logs_to_users` (`changed_by`)
+  `role_2` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -64,8 +61,8 @@ CREATE TABLE IF NOT EXISTS `admin_access_logs` (
 --
 
 DROP TABLE IF EXISTS `clanky`;
-CREATE TABLE IF NOT EXISTS `clanky` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `clanky` (
+  `id` int(11) NOT NULL,
   `nazev` varchar(255) NOT NULL,
   `datum` datetime NOT NULL,
   `viditelnost` tinyint(1) NOT NULL,
@@ -73,9 +70,7 @@ CREATE TABLE IF NOT EXISTS `clanky` (
   `obsah` text NOT NULL,
   `user_id` int(10) NOT NULL,
   `autor` tinyint(1) NOT NULL,
-  `url` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_user_id_clanky` (`user_id`)
+  `url` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -85,13 +80,10 @@ CREATE TABLE IF NOT EXISTS `clanky` (
 --
 
 DROP TABLE IF EXISTS `clanky_kategorie`;
-CREATE TABLE IF NOT EXISTS `clanky_kategorie` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `clanky_kategorie` (
+  `id` int(11) NOT NULL,
   `id_clanku` int(11) NOT NULL,
-  `id_kategorie` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_clanky_TO_clanky_kategorie` (`id_clanku`),
-  KEY `idx_id_kategorie_clanky_kategorie` (`id_kategorie`)
+  `id_kategorie` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -101,29 +93,10 @@ CREATE TABLE IF NOT EXISTS `clanky_kategorie` (
 --
 
 DROP TABLE IF EXISTS `kategorie`;
-CREATE TABLE IF NOT EXISTS `kategorie` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `kategorie` (
+  `id` int(11) NOT NULL,
   `nazev_kategorie` varchar(255) NOT NULL,
-  `url` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Struktura tabulky `pageviews`
---
-
-DROP TABLE IF EXISTS `pageviews`;
-CREATE TABLE IF NOT EXISTS `pageviews` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `page` varchar(255) NOT NULL,
-  `view_date` date NOT NULL,
-  `views` int(11) DEFAULT 0,
-  `view_hour` tinyint(2) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UQ_page` (`page`),
-  UNIQUE KEY `UQ_view_date` (`view_date`)
+  `url` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -133,14 +106,12 @@ CREATE TABLE IF NOT EXISTS `pageviews` (
 --
 
 DROP TABLE IF EXISTS `password_resets`;
-CREATE TABLE IF NOT EXISTS `password_resets` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `password_resets` (
+  `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `email` varchar(255) NOT NULL,
   `token` varchar(64) NOT NULL,
-  `expires_at` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_user_id_password_resets` (`user_id`)
+  `expires_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -150,15 +121,12 @@ CREATE TABLE IF NOT EXISTS `password_resets` (
 --
 
 DROP TABLE IF EXISTS `propagace`;
-CREATE TABLE IF NOT EXISTS `propagace` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `propagace` (
+  `id` int(11) NOT NULL,
   `id_clanku` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `zacatek` datetime NOT NULL,
-  `konec` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_users_TO_propagace` (`user_id`),
-  KEY `idx_id_clanku_propagace` (`id_clanku`)
+  `konec` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -168,11 +136,10 @@ CREATE TABLE IF NOT EXISTS `propagace` (
 --
 
 DROP TABLE IF EXISTS `socials`;
-CREATE TABLE IF NOT EXISTS `socials` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `socials` (
+  `id` int(11) NOT NULL,
   `fa_class` varchar(255) NOT NULL,
-  `nazev` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
+  `nazev` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -182,8 +149,8 @@ CREATE TABLE IF NOT EXISTS `socials` (
 --
 
 DROP TABLE IF EXISTS `users`;
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
   `email` varchar(255) NOT NULL,
   `heslo` varchar(255) NOT NULL,
   `role` tinyint(1) NOT NULL,
@@ -192,21 +159,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `profil_foto` varchar(255) NOT NULL,
   `zahlavi_foto` varchar(255) NOT NULL,
   `popis` text NOT NULL,
-  `datum` date DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Struktura tabulky `users_online`
---
-
-DROP TABLE IF EXISTS `users_online`;
-CREATE TABLE IF NOT EXISTS `users_online` (
-  `session` char(128) NOT NULL,
-  `time` int(11) NOT NULL,
-  PRIMARY KEY (`session`)
+  `datum` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -216,13 +169,11 @@ CREATE TABLE IF NOT EXISTS `users_online` (
 --
 
 DROP TABLE IF EXISTS `user_social`;
-CREATE TABLE IF NOT EXISTS `user_social` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `user_social` (
+  `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `social_id` int(11) NOT NULL,
-  `link` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_users_TO_user_social` (`social_id`)
+  `link` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -232,14 +183,161 @@ CREATE TABLE IF NOT EXISTS `user_social` (
 --
 
 DROP TABLE IF EXISTS `views_clanku`;
-CREATE TABLE IF NOT EXISTS `views_clanku` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `views_clanku` (
+  `id` int(11) NOT NULL,
   `id_clanku` int(11) NOT NULL,
   `pocet` int(11) NOT NULL DEFAULT 0,
-  `datum` date NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_fk_clanek_views_clanku` (`id_clanku`)
+  `datum` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Indexy pro exportované tabulky
+--
+
+--
+-- Indexy pro tabulku `admin_access`
+--
+ALTER TABLE `admin_access`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexy pro tabulku `admin_access_logs`
+--
+ALTER TABLE `admin_access_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_admin_access_logs_to_users` (`changed_by`);
+
+--
+-- Indexy pro tabulku `clanky`
+--
+ALTER TABLE `clanky`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_user_id_clanky` (`user_id`);
+
+--
+-- Indexy pro tabulku `clanky_kategorie`
+--
+ALTER TABLE `clanky_kategorie`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_clanky_TO_clanky_kategorie` (`id_clanku`),
+  ADD KEY `idx_id_kategorie_clanky_kategorie` (`id_kategorie`);
+
+--
+-- Indexy pro tabulku `kategorie`
+--
+ALTER TABLE `kategorie`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexy pro tabulku `password_resets`
+--
+ALTER TABLE `password_resets`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_user_id_password_resets` (`user_id`);
+
+--
+-- Indexy pro tabulku `propagace`
+--
+ALTER TABLE `propagace`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_users_TO_propagace` (`user_id`),
+  ADD KEY `idx_id_clanku_propagace` (`id_clanku`);
+
+--
+-- Indexy pro tabulku `socials`
+--
+ALTER TABLE `socials`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexy pro tabulku `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexy pro tabulku `user_social`
+--
+ALTER TABLE `user_social`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_socials_TO_user_social` (`social_id`);
+
+--
+-- Indexy pro tabulku `views_clanku`
+--
+ALTER TABLE `views_clanku`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_fk_clanek_views_clanku` (`id_clanku`);
+
+--
+-- AUTO_INCREMENT pro tabulky
+--
+
+--
+-- AUTO_INCREMENT pro tabulku `admin_access`
+--
+ALTER TABLE `admin_access`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pro tabulku `admin_access_logs`
+--
+ALTER TABLE `admin_access_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pro tabulku `clanky`
+--
+ALTER TABLE `clanky`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pro tabulku `clanky_kategorie`
+--
+ALTER TABLE `clanky_kategorie`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pro tabulku `kategorie`
+--
+ALTER TABLE `kategorie`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pro tabulku `password_resets`
+--
+ALTER TABLE `password_resets`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pro tabulku `propagace`
+--
+ALTER TABLE `propagace`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pro tabulku `socials`
+--
+ALTER TABLE `socials`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pro tabulku `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pro tabulku `user_social`
+--
+ALTER TABLE `user_social`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pro tabulku `views_clanku`
+--
+ALTER TABLE `views_clanku`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Omezení pro exportované tabulky
@@ -281,6 +379,7 @@ ALTER TABLE `propagace`
 -- Omezení pro tabulku `user_social`
 --
 ALTER TABLE `user_social`
+  ADD CONSTRAINT `FK_socials_TO_user_social` FOREIGN KEY (`social_id`) REFERENCES `socials` (`id`),
   ADD CONSTRAINT `FK_users_TO_user_social` FOREIGN KEY (`social_id`) REFERENCES `users` (`id`);
 
 --

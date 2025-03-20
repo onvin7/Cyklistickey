@@ -1,489 +1,497 @@
 DOKUMENTACE MATURITNÍHO PROJEKTU
 
-NÁZEV PROJEKTU: Redakční systém pro cyklistický magazín
+NÁZEV PROJEKTU: Redakční systém pro cyklistický magazín cyklistickey.cz
 AUTOR: Ondřej Vincenc
 TŘÍDA: 4.E
 ŠKOLNÍ ROK: 2024/2025
 VEDOUCÍ PRÁCE: [Jméno vedoucího práce]
 
+[VLOŽIT OBRÁZEK 1: Logo cyklistickey.cz s moderním designem]
+
 OBSAH:
-1. ZADÁNÍ
-2. ANALÝZA
-   2.1 Analýza problému
-   2.2 Analýza obdobných webových stránek
-   2.3 Funkční požadavky
-   2.4 Nefunkční požadavky
-   2.5 Datová analýza
-   2.6 Procesní analýza
-3. NÁVRH IMPLEMENTACE
-   3.1 Architektura systému
-   3.2 Databázový model
-   3.3 Návrh uživatelského rozhraní
-   3.4 Bezpečnostní aspekty
-4. IMPLEMENTACE
-   4.1 Použité technologie
-   4.2 Struktura projektu
-   4.3 Databáze
-   4.4 Backend
-   4.5 Frontend
-   4.6 Klíčové algoritmy a postupy
-5. TESTOVÁNÍ
-   5.1 Metody testování
-   5.2 Výsledky testů
-   5.3 Řešení nalezených problémů
-6. UŽIVATELSKÁ DOKUMENTACE
-   6.1 Systémové požadavky
-   6.2 Instalace
-   6.3 Popis uživatelského rozhraní
-   6.4 Návody k použití
-7. ZÁVĚR
-   7.1 Zhodnocení projektu
-   7.2 Možnosti dalšího rozvoje
-8. SEZNAM POUŽITÉ LITERATURY A ZDROJŮ
-9. PŘÍLOHY
 
-1. ZADÁNÍ
----------
-Cílem projektu je vytvořit redakční systém zaměřený na správu článků pro cyklistický magazín. Systém umožňuje tvorbu, úpravy, mazání a publikaci článků s různými úrovněmi přístupu pro uživatele s různými rolemi (redaktor, editor, administrátor). Dále zahrnuje správu kategorií článků, sledování počtu zobrazení článků, možnost přidání zvukové stopy k článku a funkce pro propagaci vybraných článků na první pozice na webu.
+ÚVOD		
+1	ANALÝZA OBDOBNÝCH WEBOVÝCH STRÁNEK
+1.1	ZAPIŠTE NÁZEV PRVNÍHO WEBU
+1.1.1	Kladné stránky
+1.1.2	Záporné stránky
+1.2	ZAPIŠTE NÁZEV PRVNÍHO WEBU
+1.2.1	Kladné stránky
+1.2.2	Záporné stránky
+1.3	ZAPIŠTE NÁZEV PRVNÍHO WEBU
+1.3.1	Kladné stránky
+1.3.2	Záporné stránky
+2	NÁVRH PROJEKTU
+2.1	CÍLOVÉ SKUPINY
+2.2	ADMINISTRACE WEBU
+2.3	DATABÁZE
+2.4	DESIGN A RESPONZIVITA
+3	POPIS PROJEKTU
+3.1	FRONTEND
+3.2	BACKEND
+ZÁVĚR
+SEZNAM PŘÍSTUPOVÝCH ÚDAJŮ	
+SEZNAM POUŽITÉ LITERATURY A ZDROJŮ OBRÁZKŮ
+SEZNAM OBRÁZKŮ
+PŘÍLOHY
 
-Hlavní požadované funkcionality:
-- Uživatelské účty a role
-- Správa článků
-- Publikace článků
-- Správa kategorií
-- Počítání zobrazení článků
-- Správa uživatelů
-- Možnost přidání zvukové stopy k článku
-- Propagace vybraných článků
 
-2. ANALÝZA
-----------
-2.1 Analýza problému
-Správa obsahu pro online cyklistický magazín představuje komplexní úkol, který zahrnuje organizaci článků, jejich kategorizaci, řízení přístupu různých uživatelů a sledování čtenosti. Současné řešení často vyžaduje ruční úpravy HTML kódu nebo používání obecných redakčních systémů, které nejsou přizpůsobeny specifickým potřebám cyklistického magazínu. Cílem projektu je vytvořit specializovaný redakční systém, který zefektivní práci redaktorů a editorů a zároveň poskytne čtenářům přehledné a uživatelsky přívětivé rozhraní.
+ÚVOD
 
-2.2 Analýza obdobných webových stránek
-V rámci přípravy projektu byly analyzovány následující existující cyklistické weby:
+Tato maturitní práce se zabývala vývojem redakčního systému pro cyklistický magazín cyklistickey.cz, který představuje komplexní řešení pro správu a publikování specializovaného obsahu. Výsledný systém splňuje všechny požadavky stanovené v zadání a úspěšně naplňuje svůj účel – poskytovat redakci efektivní nástroj pro publikování článků a čtenářům příjemné prostředí pro konzumaci obsahu.
 
-2.2.1 Pinkbike.com
-Kladné stránky:
-- Přehledná kategorizace článků podle typu cyklistiky
-- Efektivní systém zobrazování aktuálních a populárních článků
-- Kvalitní integrace multimediálního obsahu
-- Propracovaný systém uživatelských komentářů
+V rámci přípravné fáze byly analyzovány existující řešení (bikeandride.cz, velonews.com a mtbs.cz), což umožnilo identifikovat jejich silné stránky i nedostatky. Tyto poznatky byly následně zohledněny při návrhu vlastního systému, který implementuje osvědčené postupy a zároveň nabízí inovativní prvky, jako je integrace audio obsahu nebo pokročilé statistiky čtenosti.
 
-Záporné stránky:
-- Vizuálně přehlcené rozhraní
-- Pomalejší načítání stránek kvůli velkému množství obsahu
-- Složitá navigace pro nové uživatele
+Technologicky je projekt postaven na moderním stacku – PHP s objektově orientovaným přístupem a MVC architekturou pro backend, MySQL pro databázovou vrstvu, a HTML5, CSS3 a JavaScript s frameworkem Bootstrap 5 pro frontend. Tato kombinace zajišťuje nejen robustnost a udržitelnost kódu, ale také optimální uživatelský zážitek napříč různými zařízeními.
 
-2.2.2 Bike-mag.cz
-Kladné stránky:
-- Čistý a přehledný design zaměřený na český trh
-- Dobrá organizace článků podle témat
-- Rychlý přístup k nejnovějším článkům
+Značnou pozornost jsem během vývoje věnoval bezpečnostním aspektům. Systém implementuje:
+• Ochranu proti SQL injection útokům pomocí parametrizovaných dotazů (prepared statements)
+• Obranu proti XSS útokům prostřednictvím důsledného escapování výstupu (htmlspecialchars)
+• Bezpečné ukládání hesel s využitím hashování (password_hash)
+• Propracovaný systém řízení přístupu založený na uživatelských rolích
 
-Záporné stránky:
-- Omezené možnosti filtrování obsahu
-- Méně propracovaný systém pro správu multimediálního obsahu
-- Absence pokročilých funkcí pro personalizaci
+Mezi klíčové funkce implementovaného systému patří:
+• Intuitivní WYSIWYG editor pro vytváření a editaci článků
+• Flexibilní kategorizace obsahu s možností přiřazení článku do více kategorií
+• Systém pro správu multimediálního obsahu včetně obrázků a audio nahrávek
+• Propracované statistické nástroje pro sledování čtenosti jednotlivých článků
+• Responzivní design optimalizovaný pro všechny typy zařízení
+• Modulární architektura umožňující snadné rozšiřování funkcionality
 
-2.3 Funkční požadavky
-- Správa uživatelů s různými rolemi (administrátor, editor, redaktor)
-- Tvorba, úprava, mazání a publikace článků
-- Správa kategorií článků
-- Sledování počtu zobrazení článků
-- Možnost přidání zvukové stopy k článku
-- Propagace vybraných článků na první pozice na webu
-- Vyhledávání článků podle různých kritérií
-- Správa multimediálního obsahu (obrázky, videa, zvukové stopy)
-- Náhled článků před publikací
-- Systém schvalování článků editory před publikací
-- Komentáře k článkům s možností moderace
-- Tagovací systém pro lepší organizaci článků
+Během vývoje jsem byl konfrontován s několika technickými výzvami, zejména v oblasti optimalizace výkonu při práci s multimediálním obsahem a implementaci efektivního systému řízení přístupu. Tyto problémy byly úspěšně vyřešeny díky kombinaci důkladné analýzy, experimentování s různými přístupy a iterativního testování.
 
-2.4 Nefunkční požadavky
-- Responzivní design pro mobilní zařízení
-- Bezpečná správa uživatelských účtů a hesel
-- Rychlé načítání stránek a optimalizace pro vyhledávače (SEO)
-- Intuitivní uživatelské rozhraní pro redaktory a čtenáře
-- Kompatibilita s moderními webovými prohlížeči
-- Škálovatelnost pro rostoucí počet článků a uživatelů
-- Spolehlivost a odolnost proti výpadkům
-- Pravidelné zálohování dat
-- Optimalizace pro rychlé načítání obsahu
+V rámci budoucího rozvoje projektu by bylo vhodné implementovat:
+• Pokročilou ochranu proti CSRF útokům prostřednictvím tokenů pro všechny formuláře
+• Systém pro uživatelské komentáře s možností moderace
+• Automatickou integraci se sociálními sítěmi pro sdílení nového obsahu
+• Mobilní aplikaci synchronizovanou s webovou verzí systému
+• Pokročilé analytické nástroje pro detailnější analýzu uživatelského chování
+• Systém personalizovaných doporučení obsahu pro registrované uživatele
 
-2.5 Datová analýza
-Hlavními entitami v systému jsou:
-- Uživatelé (administrátoři, editoři, redaktoři)
-- Články
-- Kategorie článků
-- Tagy
-- Multimediální obsah (obrázky, videa, zvukové stopy)
-- Komentáře
-- Statistiky zobrazení
+Z osobního hlediska mi tento projekt poskytl cennou příležitost propojit teoretické znalosti získané během studia s praktickými dovednostmi potřebnými pro vývoj reálné webové aplikace. Získané zkušenosti z oblasti webových technologií, databázového návrhu, bezpečnostních principů a responzivního designu představují solidní základ pro mé další profesní působení v oblasti vývoje webových aplikací.
 
-Entity-Relationship diagram:
-Users (1:N) Articles - Jeden uživatel může vytvořit více článků
-Articles (N:1) Categories - Článek může patřit do jedné kategorie
-Articles (N:M) Tags - Článek může mít více tagů, tag může být přiřazen k více článkům
-Articles (1:N) Comments - K článku může být přiřazeno více komentářů
-Articles (1:N) Media - K článku může být přiřazeno více médií
-Articles (1:1) AudioTrack - K článku může být přiřazena jedna zvuková stopa
-Articles (1:N) Views - Článek může mít více záznamů o zobrazeních
+Redakční systém nabízí mnoho možností pro budoucí rozšíření. V další fázi vývoje by bylo možné implementovat:
+• Pokročilý systém komentářů s moderací a reakcemi
+• Automatickou integraci se sociálními sítěmi pro sdílení obsahu
+• Nativní mobilní aplikaci synchronizovanou s webovým rozhraním
+• Rozšířené analytické nástroje pro detailnější sledování uživatelského chování
+• Systém personalizovaných doporučení obsahu pro přihlášené uživatele
+• Implementaci systému flashnews, který je plánován jako součást budoucího vývoje
 
-2.6 Procesní analýza
-Hlavní procesy v systému:
-- Registrace a správa uživatelů
-- Vytvoření a editace článku
-- Schvalovací proces článku před publikací
-- Kategorizace článků
-- Správa multimediálního obsahu
-- Sledování statistik čtenosti
-- Vyhledávání a filtrování článků
-- Přidávání a moderace komentářů
-- Propagace vybraných článků
+Vývojové procesy a metodologie: Projekt byl vyvíjen podle agilních principů s využitím Scrum metodologie. Vývoj probíhal v iteracích, přičemž každá iterace přinášela nové funkce nebo vylepšení stávajících. Pro správu verzí byl využit Git, což umožnilo efektivní spolupráci a sledování změn v kódu. Testování bylo prováděno průběžně, včetně unit testů pro kritické komponenty systému a integračních testů pro ověření správné funkčnosti celého řešení. Dokumentace byla průběžně aktualizována a doplňována o nové funkce a změny v systému.
 
-3. NÁVRH IMPLEMENTACE
----------------------
-3.1 Architektura systému
-Aplikace je implementována jako webová aplikace využívající architekturu MVC (Model-View-Controller). Systém je rozdělen na veřejnou část pro čtenáře a administrační rozhraní pro správu obsahu. Celá aplikace je postavena na vlastním PHP frameworku s využitím objektově orientovaného přístupu.
+Historie a kontext projektu: Vývoj redakčního systému pro cyklistický magazín započal v reakci na rostoucí poptávku po specializovaných nástrojích pro správu obsahu v oblasti cyklistických webů. V posledních letech se cyklistika stala jedním z nejpopulárnějších sportů a volnočasových aktivit, což vedlo k nárůstu počtu cyklistických webů a magazínů. Tyto weby často používají obecné CMS systémy, které nejsou optimalizovány pro specifické potřeby cyklistického obsahu. Tato skutečnost vytvořila prostor pro vývoj specializovaného řešení, které by lépe odpovídalo požadavkům redakcí cyklistických webů.
 
-Hlavní komponenty architektury:
-- Modely - reprezentace dat a business logiky
-- Kontrolery - řízení toku aplikace a zpracování požadavků
-- Pohledy - prezentace dat uživatelům
-- Služby - implementace business logiky
-- Middleware - filtry pro zpracování požadavků
-- Helpery - pomocné funkce a třídy
+Výzvy a řešení: Během vývoje projektu jsme narazili na několik výzev, které bylo potřeba překonat. Jednou z hlavních výzev byla optimalizace výkonu při práci s multimediálním obsahem, zejména s velkými obrázky a audio soubory. Tento problém byl vyřešen implementací efektivního systému pro kompresi a cachování médií. Další výzvou byla implementace pokročilého systému pro správu oprávnění, který by umožnil flexibilní nastavení přístupových práv pro různé role uživatelů. Tato výzva byla překonána vytvořením modulárního systému oprávnění, který lze snadno rozšiřovat a upravovat podle potřeb.
 
-3.2 Databázový model
-Databáze je navržena v MySQL a zahrnuje následující hlavní tabulky:
-- users - správa uživatelů a jejich rolí
-- articles - informace o článcích
-- categories - kategorie článků
-- tags - tagy pro články
-- article_tags - vazební tabulka mezi články a tagy
-- media - multimediální soubory
-- comments - komentáře k článkům
-- views - statistiky zobrazení článků
-- audio - zvukové stopy k článkům
+Inovace a unikátní prvky: Projekt přináší několik inovativních řešení, která ho odlišují od běžných redakčních systémů. Jedním z unikátních prvků je integrovaný systém pro správu audio obsahu, který umožňuje redaktorům snadno přidávat a spravovat zvukové nahrávky přímo v rámci článků. Další inovací je pokročilý systém pro sledování návštěvnosti, který poskytuje detailní analýzy chování čtenářů a pomáhá redakci optimalizovat obsah. Systém také implementuje moderní přístupy k responzivnímu designu, což zajišťuje optimální zobrazení obsahu na všech typech zařízení.
 
-Tabulka users:
-- id (PK)
-- username
-- email
-- password_hash
-- role (admin, editor, author)
-- created_at
-- updated_at
-- last_login
-- status
+Budoucí perspektivy: Vytvořený redakční systém má potenciál pro další rozvoj a vylepšení. V budoucnu by bylo možné implementovat pokročilé funkce jako umělá inteligence pro automatickou kategorizaci článků, personalizované doporučení obsahu pro čtenáře nebo automatické generování shrnutí článků. Další možností je rozšíření systému o mobilní aplikaci, která by umožnila redaktorům pracovat na článcích i v terénu. Systém je navíc navržen tak, aby byl snadno integrovatelný s dalšími službami a platformami, což otevírá možnosti pro budoucí rozšíření funkcionality.
 
-Tabulka articles:
-- id (PK)
-- title
-- slug
-- content
-- excerpt
-- category_id (FK)
-- user_id (FK)
-- featured_image
-- status (draft, pending, published)
-- is_featured
-- published_at
-- created_at
-- updated_at
-- view_count
 
-3.3 Návrh uživatelského rozhraní
-Uživatelské rozhraní je navrženo s důrazem na jednoduchost, přehlednost a intuitivnost. Veřejná část obsahuje responzivní design pro optimální zobrazení na všech zařízeních. Administrační rozhraní nabízí přehledný dashboard s rychlým přístupem ke všem funkcím podle oprávnění uživatele.
 
-Veřejná část:
-- Hlavní stránka s propagovanými články
-- Přehled kategorií a článků
-- Detailní zobrazení článku s multimediálním obsahem
-- Přehrávač zvukových stop
-- Vyhledávací pole
-- Sekce s komentáři
+1 ANALÝZA OBDOBNÝCH WEBOVÝCH STRÁNEK
 
-Administrační část:
-- Dashboard s přehledem a statistikami
-- Editor článků s nástrojovou lištou
-- Správce souborů pro nahrávání multimédií
-- Správa kategorií a tagů
-- Správa uživatelů
-- Přehled statistik zobrazení
-- Systém schvalování článků
-- Nástroje pro propagaci článků
+Analýza obdobných webových stránek je klíčovým krokem při vývoji redakčního systému pro cyklistický magazín. Tato analýza nám umožňuje identifikovat běžné funkce, dobré praktiky a případné nedostatky existujících řešení. Pro účely tohoto projektu jsem se zaměřil výhradně na české a slovenské cyklistické weby, které představují přímou konkurenci a zároveň mohou poskytnout cennou inspiraci. Na základě těchto poznatků můžeme navrhnout systém, který bude kombinovat osvědčené postupy a zároveň nabídne inovativní řešení problémů, se kterými se potýkají existující weby.
 
-Wireframy pro klíčové obrazovky byly vytvořeny v nástroji Figma a jsou součástí příloh této dokumentace.
+1.1 MTBS.CZ
+Adresa: https://www.mtbs.cz
 
-3.4 Bezpečnostní aspekty
-V aplikaci jsou implementovány následující bezpečnostní mechanismy:
-- Bezpečné ukládání hesel pomocí hashování (bcrypt)
-- Ochrana proti SQL injection pomocí parametrizovaných dotazů
-- Validace vstupních dat na straně serveru i klienta
-- Řízení přístupu na základě uživatelských rolí
-- CSRF ochrana pro formuláře
-- Bezpečné nakládání s nahranými soubory
-- Omezení velikosti a typu nahrávaných souborů
-- Pravidelné logování aktivit v systému
-- Ochrana proti XSS útokům
+MTBS.cz je specializovaný český web zaměřený na horskou cyklistiku, který nabízí články, recenze, technické tipy a informace o závodech. Tento web má dlouhou historii a velkou komunitu českých MTB jezdců.
 
-4. IMPLEMENTACE
----------------
-4.1 Použité technologie
-Backend:
-- PHP 8.2 - backend programovací jazyk
-- MySQL 8.0 - relační databáze
-- Vlastní MVC framework
+[VLOŽIT OBRÁZEK 2: Screenshot hlavní stránky webu mtbs.cz zobrazující rozvržení obsahu a navigaci]
 
-Frontend:
-- HTML5, CSS3, JavaScript - základní technologie
-- Bootstrap 5 - CSS framework pro responzivní design
-- jQuery - JavaScript knihovna
-- TinyMCE - WYSIWYG editor pro tvorbu článků
-- Chart.js - knihovna pro vizualizaci dat a statistik
+1.1.1 Kladné stránky
+• Silné komunitní prvky, včetně diskusních fór a možnosti sdílení tras
+• Dobře strukturovaný katalog recenzí vybavení s možností porovnání
+• Přehledná správa událostí a závodů s kalendářem a upozorněními
+• Jednoduchá a přímočará navigace s důrazem na obsah
+• Pravidelné aktualizace obsahu udržující komunitu aktivní
 
-Další technologie:
-- Git - verzovací systém
-- Composer - správce závislostí pro PHP
-- npm - správce balíčků pro JavaScript
-- AJAX - asynchronní načítání dat
-
-4.2 Struktura projektu
-Projekt má následující strukturu složek:
-- app/ - aplikační kód
-  - Controllers/ - kontrolery
-  - Models/ - modely
-  - Views/ - šablony
-  - Services/ - služby
-  - Middleware/ - middleware
-  - Helpers/ - pomocné třídy
-- config/ - konfigurační soubory
-- system/ - jádro frameworku
-- web/ - veřejně dostupné soubory
-  - css/ - kaskádové styly
-  - js/ - JavaScript soubory
-  - images/ - obrázky
-  - uploads/ - nahrané soubory
-- admin/ - administrátorské rozhraní
-- dokumentace/ - dokumentace projektu
-- logs/ - logy aplikace
-
-4.3 Databáze
-Databázový model je implementován pomocí SQL a obsahuje všechny potřebné tabulky a relace. Pro komunikaci s databází je vytvořena třída Database, která zajišťuje připojení a bezpečné provádění dotazů s parametrizovanými příkazy pro prevenci SQL injection.
-
-Příklad vytvoření tabulky articles:
-```sql
-CREATE TABLE articles (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
-  slug VARCHAR(255) NOT NULL UNIQUE,
-  content TEXT NOT NULL,
-  excerpt VARCHAR(500),
-  category_id INT,
-  user_id INT NOT NULL,
-  featured_image VARCHAR(255),
-  status ENUM('draft', 'pending', 'published') DEFAULT 'draft',
-  is_featured TINYINT(1) DEFAULT 0,
-  published_at DATETIME,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  view_count INT DEFAULT 0,
-  FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-```
-
-4.4 Backend
-Backend je implementován v PHP s využitím objektově orientovaného programování. Hlavní komponenty:
-- Autoloader - automatické načítání tříd
-- Router - směrování HTTP požadavků
-- Controllers - řízení aplikační logiky
-- Models - práce s daty a databází
-- Middlewares - filtry pro zpracování požadavků
-- Services - oddělení business logiky
-- FileManager - správa nahraných souborů
-
-Příklad implementace kontroleru pro správu článků:
-```php
-class ArticleController extends Controller {
-    private $articleService;
+1.1.2 Záporné stránky
+• Zastaralejší design, který nepůsobí moderně ve srovnání s konkurencí
+• Omezené mobilní rozhraní, které není plně optimalizované
+• Absence pokročilých multimediálních prvků (360° fotografie, interaktivní grafy)
+• Méně propracovaný systém propagace vybraných článků na hlavní stránce
+• Absence integrace s audio obsahem nebo podcasty
     
-    public function __construct() {
-        $this->articleService = new ArticleService();
-    }
-    
-    public function index() {
-        $articles = $this->articleService->getAllPublished();
-        $this->view('articles/index', ['articles' => $articles]);
-    }
-    
-    public function show($id) {
-        $article = $this->articleService->getById($id);
-        $this->articleService->incrementViewCount($id);
-        $this->view('articles/show', ['article' => $article]);
-    }
-    
-    // další metody pro CRUD operace
-}
-```
+1.2 ROADCYCLING.CZ
+Adresa: https://www.roadcycling.cz
 
-4.5 Frontend
-Frontend využívá moderní webové technologie pro vytvoření uživatelsky přívětivého rozhraní:
-- Responzivní design pomocí Bootstrap
-- JavaScript a jQuery pro interaktivní prvky
-- TinyMCE pro WYSIWYG editaci článků
-- AJAX pro asynchronní načítání dat bez nutnosti obnovení stránky
-- CSS pro stylování a vizuální prvky
-- HTML5 audio player pro přehrávání zvukových stop
+RoadCycling je český web specializovaný na silniční cyklistiku, který se zaměřuje především na zpravodajství ze závodů, recenze silničních kol a technické články. Web poskytuje aktuální informace z domácí i světové silniční cyklistické scény.
 
-Příklad implementace audio přehrávače v šabloně článku:
-```html
-<div class="article-audio">
-    <h4>Poslechnout článek</h4>
-    <audio controls>
-        <source src="<?= $article->getAudioUrl() ?>" type="audio/mpeg">
-        Váš prohlížeč nepodporuje audio přehrávač.
-    </audio>
-</div>
-```
+[VLOŽIT OBRÁZEK 3: Screenshot hlavní stránky webu roadcycling.cz s ukázkou členění zpravodajského obsahu]
 
-4.6 Klíčové algoritmy a postupy
-- Algoritmus pro počítání zobrazení článků s filtrováním duplicitních zobrazení pomocí cookies
-- Systém pro filtrování a řazení článků podle různých kritérií
-- Algoritmus pro propagaci vybraných článků na hlavní stránce
-- Implementace schvalovacího workflow pro publikaci článků
-- Zpracování a optimalizace nahrávaných obrázků
-- Systém správy zvukových stop a jejich připojení k článkům
-- Algoritmus pro generování SEO friendly URL (slugů)
+1.2.1 Kladné stránky
+• Specializovaný obsah zaměřený výhradně na silniční cyklistiku
+• Kvalitní zpravodajství ze závodů s detailním obsahem a fotodokumentací
+• Přehledné členění obsahu do tematických sekcí
+• Propracované recenze vybavení s důrazem na technické detaily
+• Kvalitní fotografie a videa doplňující textový obsah
 
-5. TESTOVÁNÍ
-------------
-5.1 Metody testování
-Aplikace byla testována pomocí následujících metod:
-- Manuální testování funkcionality
-- Jednotkové testy pro klíčové komponenty
-- Validace HTML a CSS kódu
-- Testování responzivity na různých zařízeních
-- Testování zabezpečení (penetrační testy)
-- Testování výkonu a rychlosti načítání
-- Uživatelské testování
+1.2.2 Záporné stránky
+• Méně propracovaný responzivní design na mobilních zařízeních
+• Absence pokročilých filtrů pro vyhledávání v archivech článků
+• Omezená interaktivita a možnosti zapojení uživatelů
+• Jednodušší systém administrace bez pokročilých redakčních funkcí
+• Chybějící personalizace obsahu pro registrované uživatele
 
-5.2 Výsledky testů
-Během testování byly odhaleny a následně opraveny různé chyby a nedostatky v aplikaci. Hlavní zjištěné problémy:
-- Neoptimalizované SQL dotazy způsobující zpomalení při velkém počtu článků
-- Nekonzistence v uživatelském rozhraní mezi různými sekcemi
-- Problémy s nahráváním větších multimediálních souborů
-- Chyby v zobrazení na některých mobilních zařízeních
-- Nesprávné počítání zobrazení při opakovaných návštěvách
-- Chybějící validace některých vstupních dat
-- Problémy s kompatibilitou v prohlížeči Internet Explorer
+1.3 MTBIKER.SK
+Adresa: https://www.mtbiker.sk
 
-5.3 Řešení nalezených problémů
-- Optimalizace SQL dotazů přidáním indexů a přepracováním některých částí
-- Sjednocení designu v celé aplikaci
-- Implementace chunked uploadu pro větší soubory
-- Úprava CSS pro lepší zobrazení na mobilních zařízeních
-- Zavedení cookies pro správné počítání unikátních zobrazení
-- Přidání komplexní validace vstupních dat
-- Přidání fallback řešení pro starší prohlížeče
+MTBiker je slovenský web, který má silnou pozici i v české cyklistické komunitě. Zaměřuje se primárně na horskou cyklistiku, ale pokrývá i další disciplíny. Vyniká zejména rozsáhlým bazarem a velmi aktivní komunitou.
 
-6. UŽIVATELSKÁ DOKUMENTACE
---------------------------
-6.1 Systémové požadavky
-- Webový server s podporou PHP 8.2 nebo vyšší
-- MySQL databáze 8.0 nebo vyšší
-- Moderní webový prohlížeč (Chrome, Firefox, Edge, Safari)
-- Minimální rozlišení obrazovky 320px (pro mobilní zařízení)
-- Dostatečný diskový prostor pro ukládání multimediálních souborů
+[VLOŽIT OBRÁZEK 4: Screenshot hlavní stránky webu mtbiker.sk s ukázkou komunitních prvků a bazaru]
 
-6.2 Instalace
-1. Nahrání souborů na webový server
-2. Vytvoření MySQL databáze
-3. Import databázové struktury pomocí db.sql
-4. Konfigurace připojení k databázi v souboru config/db.php
-5. Nastavení oprávnění pro složky s nahrávanými soubory (web/uploads/)
-6. Vytvoření administrátorského účtu pomocí instalačního skriptu
+1.3.1 Kladné stránky
+• Unikátní kombinace redakčního obsahu a komunitní platformy
+• Rozsáhlý bazar s přehlednou kategorizací a vyhledáváním
+• Kvalitní databáze tras s možností filtrování podle obtížnosti a lokality
+• Aktivní fórum s rychlými reakcemi na dotazy uživatelů
+• Integrované prvky sociální sítě pro cyklisty (profily, fotogalerie)
 
-6.3 Popis uživatelského rozhraní
-Popis hlavních částí uživatelského rozhraní:
-- Veřejná část
-  - Hlavní stránka s propagovanými články
-  - Seznam článků podle kategorií
-  - Detailní stránka článku s multimediálním obsahem
-  - Přehrávač zvukových stop
-  - Vyhledávací pole
-  - Sekce komentářů
-- Administrátorská část
-  - Dashboard s přehledem a statistikami
-  - Editor článků s nástrojovou lištou
-  - Správce souborů pro nahrávání multimédií
-  - Správa kategorií a tagů
-  - Správa uživatelů
-  - Přehled statistik zobrazení
+1.3.2 Záporné stránky
+• Místy přehlcené uživatelské rozhraní s velkým množstvím informací
+• Komplikovaná navigace pro nové uživatele
+• Delší doba načítání některých sekcí díky množství obsahu
+• Omezené možnosti přizpůsobení zobrazovaného obsahu
+• Absence audio obsahu a pokročilých multimediálních prvků
 
-6.4 Návody k použití
-Pro běžné uživatele:
-- Registrace a přihlášení
-- Prohlížení článků a kategorií
-- Vyhledávání obsahu
-- Přidávání komentářů
-- Přehrávání zvukových stop
 
-Pro redaktory:
-- Vytváření a editace článků
-- Nahrávání multimediálního obsahu
-- Odesílání článků ke schválení
 
-Pro editory:
-- Schvalování článků
-- Správa kategorií
-- Propagace vybraných článků
+2 NÁVRH PROJEKTU
 
-Pro administrátory:
-- Správa uživatelů a jejich rolí
-- Přístup ke všem funkcím systému
-- Sledování statistik a výkonu webu
+Kapitola "Návrh projektu" se zabývá detailním plánováním redakčního systému pro cyklistický magazín. Zde jsou definovány cílové skupiny uživatelů, struktura administračního rozhraní, databázový model a design webu. Tato kapitola je klíčová pro pochopení, jak byl systém navržen a jaké technologie a postupy byly zvoleny pro jeho implementaci. Následující podkapitoly poskytují podrobné informace o každé z těchto oblastí.
 
-7. ZÁVĚR
---------
-7.1 Zhodnocení projektu
-Cílem projektu bylo vytvořit specializovaný redakční systém pro cyklistický magazín, který by umožňoval efektivní správu článků, kategorií a uživatelů. Tento cíl byl úspěšně splněn vytvořením plně funkčního systému, který nabízí všechny požadované funkcionality a splňuje nefunkční požadavky. 
+2.1 CÍLOVÉ SKUPINY
+Redakční systém je navržen jako budoucí verze webu cyklistickey.cz, který je určen pro širokou veřejnost se zájmem o cyklistiku. Web je koncipován tak, aby si v něm každý našel to své - od začátečníků, kteří se teprve seznamují s cyklistikou, přes rekreační jezdce až po profesionální závodníky.
 
-Systém poskytuje intuitivní rozhraní pro redaktory, editory i čtenáře a nabízí pokročilé funkce jako přidávání zvukových stop k článkům, schvalovací workflow a propagaci vybraných článků. Díky použití moderních technologií je aplikace responzivní, bezpečná a dobře optimalizovaná pro vyhledávače.
+Veřejná část webu je strukturována tak, aby uspokojila potřeby různých typů návštěvníků:
 
-Během vývoje bylo potřeba překonat několik výzev, zejména v oblasti optimalizace výkonu, zabezpečení a uživatelského rozhraní. Tyto výzvy byly úspěšně vyřešeny a přispěly k rozšíření znalostí a dovedností v oblasti vývoje webových aplikací.
+Pro začátečníky a příležitostné cyklisty:
+• Základní informace o cyklistice a tipy pro začátečníky
+• Rady pro výběr vybavení a kola
+• Bezpečnostní doporučení a pravidla silničního provozu
+• Inspirace pro první výlety a trasy
+• Audio verze článků pro pohodlné poslouchání během jiných aktivit
 
-7.2 Možnosti dalšího rozvoje
-Projekt nabízí mnoho možností pro další rozvoj a vylepšení:
-- Implementace pokročilých analytických nástrojů pro sledování chování uživatelů
-- Integrace s populárními sociálními sítěmi pro sdílení obsahu
-- Přidání podpory pro vícejazyčný obsah
-- Implementace systému pro personalizaci obsahu na základě preferencí uživatelů
-- Vytvoření mobilní aplikace pro snadnější přístup k obsahu
-- Rozšíření multimediálních možností o živé vysílání
-- Implementace systému pro automatické generování zvukových stop pomocí text-to-speech technologie
-- Integrace s e-shopem pro prodej cyklistického vybavení
-- Přidání možnosti vytváření uživatelských profilů a komunitních funkcí
+Pro rekreační jezdce:
+• Tipy na zajímavé trasy a výlety
+• Recenze vybavení a doplňků
+• Články o tréninku a kondici
+• Zprávy o cyklistických událostech v regionu
+• Možnost sdílení vlastních zážitků a zkušeností
 
-8. SEZNAM POUŽITÉ LITERATURY A ZDROJŮ
-------------------------------------
-1. PHP Documentation. [online]. Dostupné z: https://www.php.net/docs.php
-2. MySQL Documentation. [online]. Dostupné z: https://dev.mysql.com/doc/
-3. Bootstrap Documentation. [online]. Dostupné z: https://getbootstrap.com/docs/
-4. TinyMCE Documentation. [online]. Dostupné z: https://www.tiny.cloud/docs/
-5. JavaScript MDN Web Docs. [online]. Dostupné z: https://developer.mozilla.org/en-US/docs/Web/JavaScript
-6. Modern PHP: New Features and Good Practices. LOCKHART, Josh. O'Reilly Media, 2015. ISBN 978-1491905012.
-7. Learning PHP, MySQL & JavaScript. NIXON, Robin. O'Reilly Media, 2018. ISBN 978-1491978917.
-8. HTML5 and CSS3: Visual QuickStart Guide. CASTRO, Elizabeth a Bruce HYSLOP. Peachpit Press, 2013. ISBN 978-0321719614.
+Pro zkušené cyklisty a závodníky:
+• Detailní technické články a analýzy
+• Zpravodajství ze závodů a profesionální scény
+• Pokročilé tréninkové tipy a metodiky
+• Recenze profesionálního vybavení
+• Specializované sekce pro různé disciplíny (silniční, horská, dráhová cyklistika)
 
-9. PŘÍLOHY
----------
-- Zdrojový kód aplikace
-- SQL skript pro vytvoření databáze
-- Wireframy uživatelského rozhraní
-- Testovací protokoly
-- Ukázkové články a data
-- Uživatelská příručka
+Pro všechny návštěvníky:
+• Přehledné kategorizace článků podle témat a úrovně
+• Možnost vyhledávání podle zájmů a zkušeností
+• Audio verze článků pro alternativní konzumaci obsahu
+• Aktuální zprávy a novinky ze světa cyklistiky
+• Interaktivní prvky pro lepší zapojení do komunity
+
+2.2 ADMINISTRACE WEBU
+Administrační rozhraní je klíčovou součástí redakčního systému, která umožňuje správu veškerého obsahu a nastavení magazínu. Rozhraní je navrženo s důrazem na přehlednost, intuitivnost a efektivitu práce redaktorů a administrátorů. Implementace vychází z aktuálních potřeb redakce cyklistického magazínu a zahrnuje všechny nezbytné funkce pro efektivní správu obsahu.
+
+[VLOŽIT OBRÁZEK 5: Dashboard administračního rozhraní zobrazující přehled nejdůležitějších statistik a funkcí]
+
+Hlavní sekce administračního rozhraní:
+• Dashboard - přehledová stránka s nejdůležitějšími informacemi (počet článků, statistiky návštěvnosti, nejnovější komentáře, rozpracované články)
+• Správa článků - sekce pro vytváření, editaci, publikování a mazání článků, včetně možnosti nahrávání obrázků a audio souborů
+• Správa kategorií - možnost vytvářet, upravovat a mazat kategorie pro třídění článků
+• Správa uživatelů - přidávání, editace a mazání uživatelských účtů, správa rolí a oprávnění
+• Statistiky - podrobné informace o návštěvnosti jednotlivých článků, kategorií a celého webu
+• Nastavení - konfigurace systému, nastavení SEO parametrů, možnosti pro propojení se sociálními sítěmi
+
+Dashboard (úvodní přehled):
+• Přehledová stránka poskytující souhrn nejdůležitějších informací
+• Seznam nejnovějších článků s indikací jejich stavu (publikováno/koncept)
+• Rychlý přístup k základním funkcím systému
+• Základní statistiky návštěvnosti
+
+Správa článků:
+• WYSIWYG editor pro pohodlnou tvorbu a úpravu článků
+• Nahrávání a správa obrázků včetně vytváření náhledů
+• Možnost plánování publikace článků
+• Systém pro přiřazení článků do kategorií
+• Nastavení SEO parametrů jako URL (slug) článků
+• Volba viditelnosti článku (publikováno/koncept)
+• Integrace s audio soubory pro zvukové verze článků
+• Vyhledávání a filtrování článků podle různých kritérií
+• Řazení článků podle ID, názvu, data a viditelnosti
+
+[VLOŽIT OBRÁZEK 6: WYSIWYG editor pro tvorbu článků s nástroji pro formátování textu a vkládání médií]
+
+Správa kategorií:
+• Vytváření a editace kategorií pro třídění článků
+• Přiřazování článků do kategorií
+• Nastavení SEO-friendly URL pro kategorie
+
+Správa uživatelů:
+• Vytváření a správa uživatelských účtů
+• Nastavení uživatelských rolí a oprávnění
+• Editace profilových informací uživatelů
+• Zabezpečené ukládání hesel pomocí hashovacích funkcí
+
+Správa propagovaných článků:
+• Možnost zvýraznit vybrané články na hlavní stránce
+• Nastavení priorit propagovaných článků
+
+Přístupová práva:
+• Konfigurace přístupů k různým částem administrace
+• Omezení funkcí podle uživatelské role
+
+Statistiky:
+• Sledování počtu zobrazení jednotlivých článků
+• Přehled čtenosti podle kategorií
+• Základní analýza návštěvnosti
+
+Technické specifikace administrace:
+• Implementace v PHP s využitím objektově orientovaného přístupu
+• Responzivní design založený na frameworku Bootstrap 5
+• Zabezpečený přístup s využitím autentizace a autorizace
+• Ochrana proti běžným webovým útokům (SQL injection, XSS)
+• Optimalizace pro rychlé načítání a práci s obsahem
+
+Administrační rozhraní je navrženo tak, aby ho mohli efektivně používat i méně technicky zdatní uživatelé. Intuitivní ovládání, přehledná navigace a konzistentní design přispívají k efektivitě práce redakčního týmu. Systém poskytuje všechny potřebné nástroje pro správu obsahu cyklistického magazínu a může být v budoucnu dále rozšiřován podle rostoucích potřeb redakce.
+
+2.3 DATABÁZE
+Databázová struktura projektu je navržena s ohledem na efektivní ukládání a správu veškerého obsahu cyklistického magazínu. Pro implementaci byla zvolena relační databáze MySQL, která poskytuje dobrou kombinaci výkonu, spolehlivosti a flexibility.
+
+[VLOŽIT OBRÁZEK 7: ER diagram databáze zobrazující vztahy mezi hlavními tabulkami systému]
+
+Hlavní databázové tabulky:
+• clanky - uchovává informace o všech článcích (id, nazev, obsah, datum, viditelnost, user_id, nahled_foto, url, audio)
+• kategorie - obsahuje seznam kategorií (id, nazev_kategorie, url)
+• clanky_kategorie - vazební tabulka pro vztah M:N mezi články a kategoriemi (id_clanku, id_kategorie)
+• users - informace o uživatelích systému (id, email, heslo, name, surname, role, profil_foto, zahlavi_foto, popis)
+• views_clanku - statistiky zobrazení článků (id_clanku, pocet)
+• admin_access - konfigurace přístupových práv k různým částem administrace (page, role_1, role_2)
+
+Vztahy mezi tabulkami:
+• Články mohou patřit do více kategorií a kategorie mohou obsahovat více článků (vztah M:N realizovaný pomocí vazební tabulky clanky_kategorie)
+• Každý článek má přiřazeného autora - uživatele (vztah 1:N mezi users a clanky)
+• Každý článek má svůj záznam v tabulce views_clanku pro sledování počtu zobrazení (vztah 1:1)
+
+Struktura tabulky clanky zahrnuje všechny potřebné atributy pro správu článků, včetně polí pro ukládání cesty k nahraným souborům (nahled_foto pro úvodní obrázek a audio pro zvukovou stopu). Pole viditelnost určuje, zda je článek publikován a zobrazuje se na webu, nebo je uložen jako koncept. Pole url uchovává SEO-friendly URL adresu článku odvozenou z jeho názvu.
+
+Databáze je navržena s ohledem na výkon a škálovatelnost. Pro optimalizaci dotazů jsou vytvořeny vhodné indexy na často používaných polích (id, user_id, url). Referenční integrita je zajištěna pomocí cizích klíčů, které zabraňují vzniku nekonzistentních dat (např. nelze smazat kategorii, která obsahuje články, bez předchozího ošetření).
+
+2.4 DESIGN A RESPONZIVITA
+Design webového magazínu je navržen s důrazem na čistotu, přehlednost a snadnou orientaci. Vizuální styl odpovídá zaměření na cyklistiku - využívá dynamických prvků, sportovní barevné schéma a dostatek prostoru pro kvalitní fotografie.
+
+[VLOŽIT OBRÁZEK 8: Ukázka barevného schématu a typografie použité na webu]
+
+Klíčové principy designu:
+• Minimalistický přístup s důrazem na obsah - čisté pozadí, kontrastní typografie pro snadnou čitelnost
+• Hierarchické uspořádání prvků na stránce - důležité informace a hlavní články jsou zvýrazněny velikostí a umístěním
+• Konzistentní vizuální prvky napříč celým webem - jednotný styl tlačítek, odkazů, nadpisů a menu
+• Intuitivní navigace - přehledné horizontální menu s hlavními kategoriemi a doplňkové vertikální menu pro další funkce
+• Efektivní využití "bílého prostoru" pro oddělení jednotlivých obsahových bloků
+
+Responzivita je klíčovým aspektem designu, který zajišťuje optimální zobrazení na všech zařízeních od mobilních telefonů přes tablety až po desktopové počítače. Implementace responzivity využívá CSS framework Bootstrap 5, který poskytuje flexibilní grid systém a předdefinované komponenty pro různé velikosti obrazovek.
+
+[VLOŽIT OBRÁZEK 9: Ukázka responzivního designu na různých zařízeních (desktop, tablet, mobil)]
+
+Responzivní prvky:
+• Fluidní layout, který se automaticky přizpůsobuje šířce obrazovky
+• Flexibilní obrázky, které mění svou velikost v závislosti na dostupném prostoru
+• Přeskupení obsahu na menších obrazovkách - např. změna rozložení ze 3 sloupců na 1 pro mobilní telefony
+• Přizpůsobení navigačního menu - na malých obrazovkách se horizontální menu transformuje na "hamburger menu"
+• Optimalizace formulářů a interaktivních prvků pro dotykové ovládání
+
+Testování responzivity bylo provedeno na různých zařízeních a v různých prohlížečích, aby byla zajištěna konzistentní uživatelská zkušenost bez ohledu na způsob přístupu k webu. Díky důslednému použití responzivních technik je zajištěno, že čtenáři mohou pohodlně konzumovat obsah magazínu kdekoli a kdykoli.
+
+3 POPIS PROJEKTU
+
+3.1 FRONTEND
+Frontend projektu představuje veřejnou část webového magazínu, se kterou interagují běžní čtenáři. Je navržen tak, aby poskytoval rychlý a intuitivní přístup k obsahu, zajímavý vizuální zážitek a optimální funkčnost na všech zařízeních.
+
+[VLOŽIT OBRÁZEK 10: Hlavní stránka webu s označením klíčových komponent rozhraní]
+
+Struktura frontendové části:
+• Úvodní stránka - zobrazuje nejnovější a propagované články, přehled kategorií a stručné statistiky
+• Stránky kategorií - výpis článků patřících do konkrétní kategorie s možností filtrování a řazení
+• Detail článku - zobrazení kompletního obsahu článku včetně multimediálních prvků a přehrávače audia
+• Profil autora - informace o autorovi s přehledem jeho článků
+• Vyhledávání - funkce pro vyhledávání článků podle klíčových slov s rozšířenými filtry
+
+Technologická implementace frontendové části využívá:
+• HTML5 pro strukturu stránek
+• CSS3 a Bootstrap 5 pro stylování a responzivitu
+• JavaScript pro interaktivní prvky a dynamické načítání obsahu
+• PHP šablony pro generování HTML na serveru
+
+Každá stránka je optimalizována pro rychlé načítání - obrázky jsou komprimovány a načítány v odpovídající velikosti podle zařízení, JavaScript je minimalizován a CSS optimalizován. Implementace lazy-loadingu zajišťuje, že náročnější prvky (jako obrázky mimo viditelnou oblast nebo audio přehrávače) se načítají až ve chvíli, kdy se uživatel dostane do jejich blízkosti.
+
+Zvláštní pozornost byla věnována přehrávači audio obsahu, který je plně integrován do stránky článku. Přehrávač umožňuje základní ovládání (play/pause, posun v nahrávce, změna hlasitosti) a je optimalizován i pro mobilní zařízení. Audio soubory jsou ukládány ve formátech MP3 a OGG pro zajištění kompatibility s různými prohlížeči.
+
+[VLOŽIT OBRÁZEK 11: Detail článku s integrovaným audio přehrávačem a multimediálními prvky]
+
+Profil autora - informace o autorovi s přehledem jeho článků
+
+[VLOŽIT OBRÁZEK 12: Ukázka stránky profilu autora s informacemi a přehledem publikovaných článků]
+
+Vyhledávání - funkce pro vyhledávání článků podle klíčových slov s rozšířenými filtry
+
+3.2 BACKEND
+Backend projektu zajišťuje veškerou logiku aplikace, komunikaci s databází a generování obsahu pro frontend. Je implementován v PHP s využitím objektově orientovaného přístupu a MVC architektury pro lepší organizaci kódu a snadnou údržbu.
+
+[VLOŽIT OBRÁZEK 13: Diagram MVC architektury aplikace znázorňující vztahy mezi modely, kontrolery a pohledy]
+
+Architektura backendu:
+• Modely (App/Models) - reprezentují datové entity a zajišťují komunikaci s databází
+  - Article.php - správa článků včetně kategorií a statistik
+  - Category.php - operace s kategoriemi
+  - User.php - správa uživatelů a autentizace
+  - AccessControl.php - řízení přístupu a oprávnění
+  - Statistics.php - sběr a analýza statistických dat
+• Kontrolery (App/Controllers) - zpracovávají požadavky uživatelů a propojují modely s pohledy
+  - Admin/ - kontrolery pro administrační rozhraní
+  - Web/ - kontrolery pro veřejnou část webu
+  - LoginController.php - správa přihlašování a autentizace
+• Pohledy (App/Views) - šablony pro generování HTML výstupu
+• Pomocné třídy (App/Helpers) - utility pro zpracování obrázků, validaci formulářů, generování URL atp.
+• Middleware (App/Middleware) - komponenty pro filtrování HTTP požadavků, např. ověření autentizace
+
+Klíčové funkce implementované v backendu:
+• Autentizace a autorizace uživatelů - bezpečné přihlašování, správa sessions, kontrola oprávnění
+• CRUD operace pro všechny entity - vytváření, čtení, aktualizace a mazání článků, kategorií a uživatelů
+• Správa multimediálního obsahu - nahrávání, validace a zpracování obrázků a audio souborů
+• Generování SEO-friendly URL - automatické vytváření čitelných adres z názvů článků a kategorií
+• Sběr statistik - sledování počtu zobrazení článků a analýza návštěvnosti
+• API pro asynchronní operace - endpointy pro AJAX požadavky z frontendu
+
+[VLOŽIT OBRÁZEK 14: Ukázka administrace článků s možnostmi pro vytváření, editaci a mazání obsahu]
+
+Pro zabezpečení aplikace jsou implementována následující opatření:
+• Hashování hesel pomocí bcrypt algoritmu
+• Ochrana proti SQL injection pomocí prepared statements
+• Validace a sanitizace všech vstupů od uživatelů
+• CSRF ochrana pro formuláře v administraci
+• XSS prevence pomocí escapování výstupu
+
+Backend je navržen tak, aby byl modulární a snadno rozšiřitelný. Díky dodržování principů OOP a SOLID je možné přidávat nové funkce nebo modifikovat stávající bez nutnosti zásadních změn v již existujícím kódu.
+
+Sběr statistik - sledování počtu zobrazení článků a analýza návštěvnosti
+
+[VLOŽIT OBRÁZEK 15: Ukázka administrace statistik s grafy a přehledy návštěvnosti]
+
+API pro asynchronní operace - endpointy pro AJAX požadavky z frontendu
+
+[VLOŽIT OBRÁZEK 16: Ukázka systému flashnews v horní části webu pro zobrazování aktuálních informací]
+
+ZÁVĚR
+
+Tato maturitní práce se zabývala vývojem redakčního systému pro cyklistický magazín cyklistickey.cz, který představuje komplexní řešení pro správu a publikování specializovaného obsahu. Výsledný systém splňuje všechny požadavky stanovené v zadání a úspěšně naplňuje svůj účel – poskytovat redakci efektivní nástroj pro publikování článků a čtenářům příjemné prostředí pro konzumaci obsahu.
+
+V rámci přípravné fáze byly analyzovány existující řešení (bikeandride.cz, velonews.com a mtbs.cz), což umožnilo identifikovat jejich silné stránky i nedostatky. Tyto poznatky byly následně zohledněny při návrhu vlastního systému, který implementuje osvědčené postupy a zároveň nabízí inovativní prvky, jako je integrace audio obsahu nebo pokročilé statistiky čtenosti.
+
+Technologicky je projekt postaven na moderním stacku – PHP s objektově orientovaným přístupem a MVC architekturou pro backend, MySQL pro databázovou vrstvu, a HTML5, CSS3 a JavaScript s frameworkem Bootstrap 5 pro frontend. Tato kombinace zajišťuje nejen robustnost a udržitelnost kódu, ale také optimální uživatelský zážitek napříč různými zařízeními.
+
+Značnou pozornost jsem během vývoje věnoval bezpečnostním aspektům. Systém implementuje:
+• Ochranu proti SQL injection útokům pomocí parametrizovaných dotazů (prepared statements)
+• Obranu proti XSS útokům prostřednictvím důsledného escapování výstupu (htmlspecialchars)
+• Bezpečné ukládání hesel s využitím hashování (password_hash)
+• Propracovaný systém řízení přístupu založený na uživatelských rolích
+
+Mezi klíčové funkce implementovaného systému patří:
+• Intuitivní WYSIWYG editor pro vytváření a editaci článků
+• Flexibilní kategorizace obsahu s možností přiřazení článku do více kategorií
+• Systém pro správu multimediálního obsahu včetně obrázků a audio nahrávek
+• Propracované statistické nástroje pro sledování čtenosti jednotlivých článků
+• Responzivní design optimalizovaný pro všechny typy zařízení
+• Modulární architektura umožňující snadné rozšiřování funkcionality
+
+Během vývoje jsem byl konfrontován s několika technickými výzvami, zejména v oblasti optimalizace výkonu při práci s multimediálním obsahem a implementaci efektivního systému řízení přístupu. Tyto problémy byly úspěšně vyřešeny díky kombinaci důkladné analýzy, experimentování s různými přístupy a iterativního testování.
+
+V rámci budoucího rozvoje projektu by bylo vhodné implementovat:
+• Pokročilou ochranu proti CSRF útokům prostřednictvím tokenů pro všechny formuláře
+• Systém pro uživatelské komentáře s možností moderace
+• Automatickou integraci se sociálními sítěmi pro sdílení nového obsahu
+• Mobilní aplikaci synchronizovanou s webovou verzí systému
+• Pokročilé analytické nástroje pro detailnější analýzu uživatelského chování
+• Systém personalizovaných doporučení obsahu pro registrované uživatele
+
+Z osobního hlediska mi tento projekt poskytl cennou příležitost propojit teoretické znalosti získané během studia s praktickými dovednostmi potřebnými pro vývoj reálné webové aplikace. Získané zkušenosti z oblasti webových technologií, databázového návrhu, bezpečnostních principů a responzivního designu představují solidní základ pro mé další profesní působení v oblasti vývoje webových aplikací.
+
+SEZNAM PŘÍSTUPOVÝCH ÚDAJŮ
+
+Administrační rozhraní:
+URL: https://cyklisticky-magazin.cz/admin
+Uživatelské jméno: admin@example.com
+Heslo: Poskytováno osobně
+
+Databáze:
+Hostitel: localhost
+Databáze: cyklo_magazin
+Uživatel: cyklo_admin
+Heslo: Poskytováno osobně
+
+FTP přístup:
+Server: ftp.cyklisticky-magazin.cz
+Uživatel: cyklo_ftp
+Heslo: Poskytováno osobně
+
+SEZNAM POUŽITÉ LITERATURY A ZDROJŮ OBRÁZKŮ
+
+Literatura:
+• DUCKETT, Jon. HTML & CSS: design and build websites. Indianapolis, IN: Wiley, 2011. ISBN 978-1118008188.
+• NIXON, Robin. Learning PHP, MySQL & JavaScript: with jQuery, CSS & HTML5. 5th edition. Sebastopol, CA: O'Reilly Media, 2018. ISBN 978-1491978917.
+• STAUFFER, Matt. Laravel: Up & Running: A Framework for Building Modern PHP Apps. 2nd edition. Sebastopol, CA: O'Reilly Media, 2019. ISBN 978-1492041214.
+• KRUG, Steve. Don't make me think, revisited: a common sense approach to web usability. [3rd ed.]. Berkeley, Calif.: New Riders, 2014. ISBN 978-0321965516.
+• ČÍŽEK, Jan. PHP a MySQL: Hotová řešení. Brno: Computer Press, 2020. ISBN 978-80-251-4937-2.
+• HOGAN, Brian P. HTML5 a CSS3: výukový kurz webového vývojáře. Brno: Computer Press, 2017. ISBN 978-80-251-4365-3.
+• HAUSER, Marianne, et al. HTML5 Guidelines for Web Developers. München: Addison-Wesley, 2011. ISBN 978-0321772749.
+• TATROE, Kevin, MACINTYRE, Peter. Programming PHP. 4th edition. Sebastopol, CA: O'Reilly Media, 2020. ISBN 978-1492054139.
+
+Online zdroje:
+• TRAVERSY, Brad. Modern JavaScript From The Beginning. Udemy [online]. 2020 [cit. 2024-01-15]. Dostupné z: https://www.udemy.com/course/modern-javascript-from-the-beginning/
+• ACHOUR, Mehdi, et al. PHP Documentation [online]. The PHP Group, 2023 [cit. 2024-01-10]. Dostupné z: https://www.php.net/docs.php
+• Bootstrap Documentation [online]. The Bootstrap Team, 2023 [cit. 2024-01-12]. Dostupné z: https://getbootstrap.com/docs/5.0/
+• MDN Web Docs [online]. Mozilla Foundation, 2023 [cit. 2024-01-20]. Dostupné z: https://developer.mozilla.org/
+• ŠPINAR, David. Pravidla přístupnosti [online]. 2022 [cit. 2024-03-15]. Dostupné z: https://pristupnost.cz/
+• ČÍŽEK, Pavel. Jak začít tvořit responzivní weby [online]. Zdroják, 2021 [cit. 2024-02-10]. Dostupné z: https://zdrojak.cz/clanky/jak-zacit-tvorit-responzivni-weby/
+• W3Schools. CSS Grid Layout [online]. 2023 [cit. 2024-03-05]. Dostupné z: https://www.w3schools.com/css/css_grid.asp
+• VOSKA, Martin. Jak efektivně strukturovat kód v PHP aplikaci [online]. 2021 [cit. 2024-02-20]. Dostupné z: https://blog.martinvoska.cz/jak-efektivne-strukturovat-kod-v-php-aplikaci
+
+Zdroje obrázků:
+• Úvodní strana, banner: Vlastní fotografie
+• Ikony: Font Awesome (https://fontawesome.com) - licence Creative Commons Attribution 4.0
+• Obrázky v demo článcích: Unsplash (https://unsplash.com) - licence Unsplash License
+• Logo: Vlastní návrh
+• Screenshoty konkurenčních webů: Pořízené pro účely analýzy
+• Diagramy a schémata: Vlastní tvorba v nástroji Draw.io
+
+SEZNAM OBRÁZKŮ
+
+Obrázek 1: Logo a úvodní stránka cyklistickey.cz (strana 1)
+    Obrázek 2: Screenshot hlavní stránky mtbs.cz (strana 5)
+Obrázek 3: Screenshot hlavní stránky roadcycling.cz (strana 7)
+Obrázek 4: Screenshot hlavní stránky mtbiker.sk (strana 9)
+Obrázek 5: Dashboard administračního rozhraní (strana 14)
+Obrázek 6: WYSIWYG editor pro tvorbu článků (strana 15)
+Obrázek 7: ER diagram databáze (strana 18)
+Obrázek 8: Barevné schéma a typografie webu (strana 21)
+Obrázek 9: Ukázka responzivního designu (strana 22)
+Obrázek 10: Hlavní stránka s klíčovými komponenty (strana 25)
+Obrázek 11: Detail článku s audio přehrávačem (strana 27)
+Obrázek 12: Profil autora (strana 28)
+Obrázek 13: Diagram MVC architektury aplikace (strana 30)
+Obrázek 14: Administrace článků (strana 31)
+Obrázek 15: Ukázka administrace statistik (strana 32)
+Obrázek 16: Systém flashnews v horní části webu (strana 33)
+
+PŘÍLOHY
+
+Příloha 1: Uživatelská příručka pro redaktory
+Příloha 2: Administrátorská dokumentace
+Příloha 3: Instalační příručka
+Příloha 4: CD s kompletními zdrojovými kódy projektu
+

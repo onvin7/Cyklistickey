@@ -16,7 +16,19 @@ class LoginController
     // Zobrazení přihlašovacího formuláře
     public function showLoginForm()
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Pokud je uživatel již přihlášený, přesměruj ho do adminu
+        if (isset($_SESSION['user_id'])) {
+            echo "<script>window.location.href='/admin';</script>";
+            exit();
+        }
+
         $disableNavbar = true;
+        $disableBootstrap = true;
+        $css = ['login'];
         $view = '../app/Views/login.php';
         include '../app/Views/Admin/layout/base.php';
     }
@@ -62,6 +74,10 @@ class LoginController
     // Zobrazení registračního formuláře
     public function create()
     {
+        $disableNavbar = true;
+        $disableBootstrap = true;
+        $css = ['login'];
+        
         $view = '../app/Views/Admin/users/create.php';
         include '../app/Views/Admin/layout/base.php';
     }
@@ -107,6 +123,10 @@ class LoginController
     // Zobrazení formuláře pro reset hesla
     public function reset()
     {
+        $disableNavbar = true;
+        $disableBootstrap = true;
+        $css = ['login'];
+        
         $view = '../app/Views/Admin/users/reset_password.php';
         include '../app/Views/Admin/layout/base.php';
     }
@@ -161,9 +181,12 @@ class LoginController
     }
 
     // Potvrdí reset hesla
-    public function confirmResetPassword()
+    public function confirmResetPassword($token = null)
     {
-        $token = $_GET['token'] ?? null;
+        if (!$token) {
+            $token = $_GET['token'] ?? null;
+        }
+        
         if (!$token) {
             echo "<script>alert('Token nebyl poskytnut.'); window.location.href='/login';</script>";
             return;
@@ -175,6 +198,9 @@ class LoginController
             return;
         }
 
+        $disableNavbar = true;
+        $disableBootstrap = true;
+        $css = ['login'];
         $view = '../app/Views/Admin/users/new_password.php';
         include '../app/Views/Admin/layout/base.php';
     }

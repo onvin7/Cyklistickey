@@ -47,6 +47,9 @@ $routes = [
     '/register' => [LoginController::class, 'create'],
     '/register/submit' => [LoginController::class, 'store'],
     '/reset-password' => [LoginController::class, 'reset'],
+    '/reset-password/submit' => [LoginController::class, 'resetPassword'],
+    '/reset-password/save' => [LoginController::class, 'saveNewPassword'],
+    '/reset-password\?token=([^/]+)' => [LoginController::class, 'confirmResetPassword'],
     '/user/([^/]+)' => [UserController::class, 'userDetail'],
     '/user/([^/]+)/articles' => [UserController::class, 'userArticles'],
 ];

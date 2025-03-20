@@ -1,39 +1,53 @@
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header text-center">
-                    <h3>Registrace</h3>
+<div class="ohraniceni new">
+    <div class="logo register">
+        <img src="/assets/graphics/logo_text_cyklistickey.png">
+    </div>
+    <div class="inputy">
+        <form method="POST" action="/register/submit">
+                <div class="prvek">
+                    <span class="form-title">Registrace</span>
                 </div>
-                <div class="card-body">
-                    <form action="/register/submit" method="POST">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">E-mail</label>
-                            <input type="email" name="email" id="email" class="form-control" placeholder="Zadejte váš e-mail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Jméno</label>
-                            <input type="text" name="name" id="name" class="form-control" placeholder="Zadejte vaše jméno" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="surname" class="form-label">Příjmení</label>
-                            <input type="text" name="surname" id="surname" class="form-control" placeholder="Zadejte vaše příjmení" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="heslo" class="form-label">Heslo</label>
-                            <input type="password" name="heslo" id="heslo" class="form-control" placeholder="Zadejte vaše heslo" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirm_heslo" class="form-label">Potvrzení hesla</label>
-                            <input type="password" name="confirm_heslo" id="confirm_heslo" class="form-control" placeholder="Potvrďte vaše heslo" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Registrovat</button>
-                    </form>
-                    <div class="text-center mt-3 d-flex justify-content-center align-items-center">
-                        <a href="/login" class="btn btn-link">Zpět na přihlášení</a>
+                <div class="prvek">
+                    <div class="input-group validator-msg-holder js-validated-element-wrapper">
+                        <label class="input-group__label" for="email">EMAIL</label>
+                        <input id="email" class="form-control input-group__input" name="email" required="" type="email"
+                            placeholder="jsem@cyklistickey.cz" />
                     </div>
                 </div>
+                <div class="prvek">
+                    <div class="input-group validator-msg-holder js-validated-element-wrapper">
+                        <label class="input-group__label" for="name">JMÉNO</label>
+                        <input id="name" class="form-control input-group__input" name="name" required="" type="text"
+                            placeholder="Jsem" />
+                    </div>
+                </div>
+                <div class="prvek">
+                    <div class="input-group validator-msg-holder js-validated-element-wrapper">
+                        <label class="input-group__label" for="surname">PŘÍJMENÍ</label>
+                        <input id="surname" class="form-control input-group__input" name="surname" required=""
+                            type="text" placeholder="Cyklistickey" />
+                    </div>
+                </div>
+                <div class="prvek">
+                    <div class="input-group validator-msg-holder js-validated-element-wrapper">
+                        <label class="input-group__label" for="heslo">HESLO</label>
+                        <input id="heslo" class="form-control input-group__input" name="heslo" required=""
+                            type="password" placeholder="heslo1234" />
+                    </div>
+                </div>
+                <div class="prvek">
+                    <div class="input-group validator-msg-holder js-validated-element-wrapper">
+                        <label class="input-group__label" for="confirm_heslo">POTVRDIT HESLO</label>
+                        <input id="confirm_heslo" class="form-control input-group__input" name="confirm_heslo"
+                            required="" type="password" placeholder="heslo1234" />
+                    </div>
+                </div>
+
+                <input type="submit" value="Registrovat">
+
+            <div class="prvek">
+                <a href="/login">Zpět na přihlášení</a>
             </div>
-        </div>
+        </form>
     </div>
 </div>
