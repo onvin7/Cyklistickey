@@ -426,35 +426,31 @@ section.content-section::before {
 
 /* Styly pro správu přístupů */
 .group-header {
-    background: var(--light-gray);
+    background: linear-gradient(90deg, var(--primary-color) 0%, rgba(77, 90, 234, 0.85) 100%);
     font-weight: 700;
-    color: var(--dark-gray);
-    padding: 12px 15px !important;
+    color: white !important;
+    padding: 15px 20px !important;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .group-header i {
-    margin-right: 8px;
-    color: var(--primary-color);
+    margin-right: 10px;
+    color: var(--accent-color);
+    font-size: 1.2rem;
 }
 
 .page-item {
     padding-left: 35px !important;
+    color: var(--dark-gray);
+    font-size: 0.95rem;
 }
 
 .page-item i {
     margin-right: 8px;
     color: var(--dark-gray);
     opacity: 0.6;
-}
-
-tr:not(.group-header) td:first-child i {
-    color: var(--dark-gray);
-    opacity: 0.6;
-}
-
-.group-header i {
-    margin-right: 8px;
-    color: var(--primary-color);
 }
 
 tr:not(.group-header) td:first-child i {
