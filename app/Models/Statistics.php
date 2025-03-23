@@ -350,28 +350,51 @@ class Statistics
 
     public function getViewsDistribution()
     {
-        $query = "SELECT 
-                  CASE 
-                      WHEN views_count = 0 THEN '0'
-                      WHEN views_count BETWEEN 1 AND 10 THEN '1-10'
-                      WHEN views_count BETWEEN 11 AND 50 THEN '11-50'
-                      WHEN views_count BETWEEN 51 AND 100 THEN '51-100'
-                      WHEN views_count BETWEEN 101 AND 500 THEN '101-500'
-                      WHEN views_count BETWEEN 501 AND 1000 THEN '501-1000'
-                      ELSE '1000+' 
-                  END AS views_range,
-                  COUNT(*) AS article_count
+        $query = "SELECT view_range, COUNT(*) AS article_count
                   FROM (
-                      SELECT c.id, COALESCE(SUM(v.pocet), 0) AS views_count
+                      SELECT 
+                        CASE 
+                          WHEN COALESCE(SUM(v.pocet), 0) = 0 THEN '0'
+                          WHEN COALESCE(SUM(v.pocet), 0) BETWEEN 1 AND 10 THEN '1-10'
+                          WHEN COALESCE(SUM(v.pocet), 0) BETWEEN 11 AND 50 THEN '11-50'
+                          WHEN COALESCE(SUM(v.pocet), 0) BETWEEN 51 AND 100 THEN '51-100'
+                          WHEN COALESCE(SUM(v.pocet), 0) BETWEEN 101 AND 500 THEN '101-500'
+                          WHEN COALESCE(SUM(v.pocet), 0) BETWEEN 501 AND 1000 THEN '501-1000'
+                          ELSE '1000+'
+                        END AS view_range
                       FROM clanky c
                       LEFT JOIN views_clanku v ON c.id = v.id_clanku
                       GROUP BY c.id
                   ) AS article_views
-                  GROUP BY views_range
-                  ORDER BY FIELD(views_range, '0', '1-10', '11-50', '51-100', '101-500', '501-1000', '1000+')";
+                  GROUP BY view_range
+                  ORDER BY FIELD(view_range, '0', '1-10', '11-50', '51-100', '101-500', '501-1000', '1000+')";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        
+        // Definujeme všechny očekávané rozsahy (pro případ, že by některé chyběly)
+        $expectedRanges = ['0', '1-10', '11-50', '51-100', '101-500', '501-1000', '1000+'];
+        $ranges = [];
+        $counts = [];
+        
+        // Inicializujeme pole s nulovými hodnotami pro všechny očekávané rozsahy
+        $countsByRange = array_fill_keys($expectedRanges, 0);
+        
+        // Naplníme skutečnými hodnotami
+        foreach ($result as $row) {
+            $countsByRange[$row['view_range']] = (int)$row['article_count'];
+        }
+        
+        // Převedeme do formátu pro graf (zachováme pořadí)
+        foreach ($expectedRanges as $range) {
+            $ranges[] = $range;
+            $counts[] = $countsByRange[$range];
+        }
+        
+        return [
+            'ranges' => $ranges,
+            'counts' => $counts
+        ];
     }
 
     public function getPublishingTrend()
@@ -385,7 +408,25 @@ class Statistics
                   ORDER BY month";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        
+        // Připravíme data ve správném formátu pro graf
+        $periods = [];
+        $counts = [];
+        
+        foreach ($result as $row) {
+            // Převedeme formát měsíce na čitelnější (např. "2023-01" na "Led 2023")
+            $date = \DateTime::createFromFormat('Y-m', $row['month']);
+            $formatted = $date ? $date->format('M Y') : $row['month'];
+            
+            $periods[] = $formatted;
+            $counts[] = (int)$row['article_count'];
+        }
+        
+        return [
+            'periods' => $periods,
+            'counts' => $counts
+        ];
     }
 
     public function getCategoriesExtendedStats($period = '30')

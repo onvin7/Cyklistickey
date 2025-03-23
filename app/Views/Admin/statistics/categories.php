@@ -268,17 +268,8 @@
             document.getElementById('period-filter').submit();
         });
         
-        // DataTable
-        $('#categoriesTable').DataTable({
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/cs.json'
-            },
-            order: [[2, 'desc']],
-            pageLength: 25
-        });
-        
-        // Graf kategorií podle počtu zobrazení
-        const categoriesViewsOptions = {
+        // Inicializace různých grafů
+        const categoriesOptions = {
             chart: {
                 type: 'donut',
                 height: 350
@@ -307,7 +298,7 @@
             colors: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#5a5c69', '#858796', '#4e73df', '#1cc88a', '#36b9cc']
         };
         
-        const categoriesViewsChart = new ApexCharts(document.querySelector("#categoriesViewsChart"), categoriesViewsOptions);
+        const categoriesViewsChart = new ApexCharts(document.querySelector("#categoriesViewsChart"), categoriesOptions);
         categoriesViewsChart.render();
 
         // Graf kategorií podle počtu článků
