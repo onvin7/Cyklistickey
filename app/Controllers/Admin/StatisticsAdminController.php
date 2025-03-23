@@ -168,14 +168,86 @@ class StatisticsAdminController
         
         // Základní statistiky zobrazení
         $totalViews = $this->model->getTotalViews();
-        $trendsData = $this->model->getViewsTrend($period);
+        
+        // Získání trendu zobrazení v čase
+        $trendData = $this->model->getViewsTrend($period);
+        $viewsTrend = [];
+        
+        // Transformace dat pro graf trendu
+        if (isset($trendData['dates']) && isset($trendData['views']) && 
+            count($trendData['dates']) === count($trendData['views'])) {
+            for ($i = 0; $i < count($trendData['dates']); $i++) {
+                $viewsTrend[] = [
+                    'date' => $trendData['dates'][$i],
+                    'count' => $trendData['views'][$i]
+                ];
+            }
+        }
+        
+        // Výpočet průměrného počtu zobrazení za den
+        $avgViewsPerDay = 0;
+        if (!empty($trendData['views'])) {
+            $avgViewsPerDay = array_sum($trendData['views']) / count($trendData['views']);
+        }
+        
+        // Najít den s nejvyšším počtem zobrazení
+        $maxViewsInDay = 0;
+        $mostViewedDay = null;
+        
+        if (!empty($trendData['views']) && !empty($trendData['dates'])) {
+            $maxIndex = array_search(max($trendData['views']), $trendData['views']);
+            if ($maxIndex !== false) {
+                $maxViewsInDay = $trendData['views'][$maxIndex];
+                $mostViewedDay = [
+                    'date' => $trendData['dates'][$maxIndex],
+                    'views' => $maxViewsInDay
+                ];
+            }
+        }
+        
+        // Zobrazení podle dnů v týdnu
+        $viewsByDayOfWeek = [];
+        $daysOfWeek = ['Neděle', 'Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota'];
+        
+        // Inicializujeme pole pro každý den v týdnu
+        for ($i = 0; $i < 7; $i++) {
+            $viewsByDayOfWeek[] = [
+                'day_of_week' => $i,
+                'name' => $daysOfWeek[$i],
+                'count' => 0
+            ];
+        }
+        
+        // Spočítáme zobrazení podle dnů v týdnu z dostupných dat
+        if (!empty($trendData['dates']) && !empty($trendData['views'])) {
+            foreach ($trendData['dates'] as $key => $date) {
+                $dayOfWeek = date('w', strtotime($date)); // 0 (Ne) až 6 (So)
+                $viewsByDayOfWeek[$dayOfWeek]['count'] += $trendData['views'][$key];
+            }
+        }
         
         // Top články podle zobrazení
         $topArticles = $this->model->getTopArticles(20);
         
-        // Zobrazení podle dnů v týdnu a hodin
-        $viewsByDayOfWeek = [0, 0, 0, 0, 0, 0, 0]; // Ne, Po, Út, St, Čt, Pá, So
-        $viewsByHour = array_fill(0, 24, 0);
+        // Získání dat pro kalendářní tepelnou mapu
+        $currentYear = date('Y');
+        $calendarHeatmap = $this->model->getViewsCalendarHeatmap($currentYear);
+        
+        // Předání dat do view
+        $data = [
+            'period' => $period,
+            'totalViews' => $totalViews,
+            'avgViewsPerDay' => $avgViewsPerDay,
+            'maxViewsInDay' => $maxViewsInDay,
+            'mostViewedDay' => $mostViewedDay,
+            'viewsTrend' => $viewsTrend,
+            'viewsByDayOfWeek' => $viewsByDayOfWeek,
+            'topArticles' => $topArticles,
+            'calendarHeatmap' => $calendarHeatmap
+        ];
+        
+        // Předání všech proměnných do aktuálního rozsahu
+        extract($data);
         
         $view = '../app/Views/Admin/statistics/views.php';
         include '../app/Views/Admin/layout/base.php';
@@ -192,6 +264,27 @@ class StatisticsAdminController
         $totalArticles = $this->model->getTotalArticles();
         $avgViewsPerArticle = $totalArticles > 0 ? $totalViews / $totalArticles : 0;
         
+        // Výpočet průměru zobrazení za den
+        $periodDays = ($period == 'all') ? 365 : intval($period); // Pro 'all' použijeme 365 dnů
+        
+        // Získáme trend dat pro aktuální období, abychom mohli vypočítat skutečný průměr
+        $trendData = $this->model->getViewsTrend($period);
+        if (!empty($trendData['views'])) {
+            // Počítáme průměr jen z dnů, kdy byly nějaké návštěvy
+            $nonZeroDays = array_filter($trendData['views'], function($views) {
+                return $views > 0;
+            });
+            
+            if (count($nonZeroDays) > 0) {
+                $avgViewsPerDay = array_sum($nonZeroDays) / count($nonZeroDays);
+            } else {
+                $avgViewsPerDay = 0;
+            }
+        } else {
+            // Pokud nemáme data o trendu, použijeme jednoduchý výpočet
+            $avgViewsPerDay = ($periodDays > 0) ? $totalViews / $periodDays : 0;
+        }
+        
         // Top performing vs underperforming články
         $articles = $this->model->getArticleStatistics($period);
         $articlesWithViews = array_filter($articles, function($article) {
@@ -204,6 +297,41 @@ class StatisticsAdminController
         
         $topPerforming = array_slice($articlesWithViews, 0, 10);
         $underPerforming = array_slice(array_reverse($articlesWithViews), 0, 10);
+        
+        // Získání statistik kategorií
+        $categoryStats = $this->model->getCategoryStatistics($period);
+        
+        // Data pro graf podílu top článků na celkových zobrazeních
+        $topArticlesViews = 0;
+        $top10Articles = array_slice($articlesWithViews, 0, 10);
+        
+        foreach ($top10Articles as $article) {
+            $topArticlesViews += $article['total_views'];
+        }
+        
+        $topArticlesPercentage = $totalViews > 0 ? ($topArticlesViews / $totalViews) * 100 : 0;
+        $otherArticlesPercentage = 100 - $topArticlesPercentage;
+        
+        $topArticlesShare = [
+            $topArticlesPercentage,
+            $otherArticlesPercentage
+        ];
+        
+        // Předání všech dat do view
+        $data = [
+            'period' => $period,
+            'totalViews' => $totalViews,
+            'totalArticles' => $totalArticles,
+            'avgViewsPerArticle' => $avgViewsPerArticle,
+            'avgViewsPerDay' => $avgViewsPerDay,
+            'topPerforming' => $topPerforming,
+            'underPerforming' => $underPerforming,
+            'topArticlesShare' => $topArticlesShare,
+            'topArticlesViews' => $topArticlesViews,
+            'categoryStats' => $categoryStats
+        ];
+        
+        extract($data);
         
         $view = '../app/Views/Admin/statistics/performance.php';
         include '../app/Views/Admin/layout/base.php';
@@ -236,5 +364,22 @@ class StatisticsAdminController
         header('Content-Type: application/json');
         echo json_encode($authorDetails);
         exit;
+    }
+
+    // API pro statistiky kategorií
+    public function getCategoryStats()
+    {
+        $period = isset($_GET['period']) ? $_GET['period'] : '30';
+        $categoryStats = $this->model->getCategoryStatistics($period);
+        
+        header('Content-Type: application/json');
+        echo json_encode($categoryStats);
+        exit;
+    }
+    
+    // Alias pro API kategorií s přátelštější URL adresou
+    public function apiCategories()
+    {
+        $this->getCategoryStats();
     }
 }
