@@ -6,70 +6,74 @@
     </ol>
 
     <!-- Souhrnné karty -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6">
-            <section class="content-section summary-card">
-                <div class="d-flex justify-content-between align-items-center p-3">
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card">
+                <div class="stat-border" style="background-color: #4d5aea;"></div>
+                <div class="stat-content">
                     <div>
-                        <h3 class="fs-2 mb-1 fw-bold"><?= number_format($totalViews) ?></h3>
-                        <div class="text-muted">Celkový počet zobrazení</div>
+                        <div class="stat-value"><?= number_format($totalViews) ?></div>
+                        <div class="stat-label">Celkový počet zobrazení</div>
                     </div>
-                    <div class="fs-1" style="color: #666;">
+                    <div class="stat-icon" style="color: #4d5aea;">
                         <i class="fa-solid fa-eye"></i>
                     </div>
                 </div>
-                <div class="pt-2 mt-2 border-top">
+                <div class="pt-2 mt-2 border-top px-3 pb-3">
                     <a href="/admin/statistics/views" class="btn btn-sm btn-primary w-100">Zobrazit detail <i class="fas fa-angle-right ms-1"></i></a>
                 </div>
-            </section>
+            </div>
         </div>
-        <div class="col-xl-3 col-md-6">
-            <section class="content-section summary-card">
-                <div class="d-flex justify-content-between align-items-center p-3">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card">
+                <div class="stat-border" style="background-color: #f25c78;"></div>
+                <div class="stat-content">
                     <div>
-                        <h3 class="fs-2 mb-1 fw-bold"><?= number_format($totalArticles) ?></h3>
-                        <div class="text-muted">Celkový počet článků</div>
+                        <div class="stat-value"><?= number_format($totalArticles) ?></div>
+                        <div class="stat-label">Celkový počet článků</div>
                     </div>
-                    <div class="fs-1" style="color: #666;">
+                    <div class="stat-icon" style="color: #f25c78;">
                         <i class="fa-solid fa-newspaper"></i>
                     </div>
                 </div>
-                <div class="pt-2 mt-2 border-top">
+                <div class="pt-2 mt-2 border-top px-3 pb-3">
                     <a href="/admin/statistics/articles" class="btn btn-sm btn-primary w-100">Zobrazit detail <i class="fas fa-angle-right ms-1"></i></a>
                 </div>
-            </section>
+            </div>
         </div>
-        <div class="col-xl-3 col-md-6">
-            <section class="content-section summary-card">
-                <div class="d-flex justify-content-between align-items-center p-3">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card">
+                <div class="stat-border" style="background-color: #1bd4cd;"></div>
+                <div class="stat-content">
                     <div>
-                        <h3 class="fs-2 mb-1 fw-bold"><?= number_format($totalCategories) ?></h3>
-                        <div class="text-muted">Celkový počet kategorií</div>
+                        <div class="stat-value"><?= number_format($totalCategories) ?></div>
+                        <div class="stat-label">Celkový počet kategorií</div>
                     </div>
-                    <div class="fs-1" style="color: #666;">
+                    <div class="stat-icon" style="color: #1bd4cd;">
                         <i class="fa-solid fa-tags"></i>
                     </div>
                 </div>
-                <div class="pt-2 mt-2 border-top">
+                <div class="pt-2 mt-2 border-top px-3 pb-3">
                     <a href="/admin/statistics/categories" class="btn btn-sm btn-primary w-100">Zobrazit detail <i class="fas fa-angle-right ms-1"></i></a>
                 </div>
-            </section>
+            </div>
         </div>
-        <div class="col-xl-3 col-md-6">
-            <section class="content-section summary-card">
-                <div class="d-flex justify-content-between align-items-center p-3">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card">
+                <div class="stat-border" style="background-color: #ffbb44;"></div>
+                <div class="stat-content">
                     <div>
-                        <h3 class="fs-2 mb-1 fw-bold"><?= number_format($avgViewsPerArticle, 1) ?></h3>
-                        <div class="text-muted">Průměr zobrazení na článek</div>
+                        <div class="stat-value"><?= number_format($avgViewsPerArticle, 1) ?></div>
+                        <div class="stat-label">Průměr zobrazení na článek</div>
                     </div>
-                    <div class="fs-1" style="color: #666;">
+                    <div class="stat-icon" style="color: #ffbb44;">
                         <i class="fa-solid fa-chart-simple"></i>
                     </div>
                 </div>
-                <div class="pt-2 mt-2 border-top">
+                <div class="pt-2 mt-2 border-top px-3 pb-3">
                     <a href="/admin/statistics/performance" class="btn btn-sm btn-primary w-100">Zobrazit detail <i class="fas fa-angle-right ms-1"></i></a>
                 </div>
-            </section>
+            </div>
         </div>
     </div>
 
@@ -642,119 +646,3 @@
         }
     });
 </script>
-
-<style>
-/* Přizpůsobení grafů designu administrace */
-.apexcharts-tooltip {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-    border: none !important;
-    border-radius: 8px !important;
-}
-
-.apexcharts-tooltip-title {
-    background-color: #4d5aea !important;
-    color: white !important;
-    font-weight: 600 !important;
-    border-bottom: none !important;
-}
-
-.content-section .apexcharts-legend {
-    padding: 8px !important;
-    border-bottom: 1px solid rgba(0,0,0,0.05) !important;
-}
-
-.apexcharts-xaxis-label, 
-.apexcharts-yaxis-label {
-    fill: #666 !important;
-    font-weight: 500 !important;
-}
-
-.apexcharts-grid line {
-    stroke: rgba(0,0,0,0.03) !important;
-}
-
-#viewsTrendChart, 
-#topArticlesChart, 
-#categoriesChart, 
-#authorsChart {
-    border-radius: 8px !important;
-    overflow: hidden !important;
-    padding: 15px 10px !important;
-    background-color: white !important;
-}
-
-.summary-card {
-    transition: transform 0.2s ease;
-    background-color: white !important;
-    border-radius: 10px !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
-}
-
-.summary-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08) !important;
-}
-
-.summary-card h3 {
-    font-weight: 700 !important;
-}
-
-.btn-primary, .btn-action {
-    background-color: #4d5aea !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 5px !important;
-    transition: all 0.2s ease !important;
-}
-
-.btn-primary:hover, .btn-action:hover {
-    background-color: #3a46c3 !important;
-    color: white !important;
-    box-shadow: 0 2px 8px rgba(77, 90, 234, 0.3) !important;
-}
-
-.section-header {
-    padding: 15px !important;
-    border-bottom: 1px solid rgba(0,0,0,0.05) !important;
-}
-
-.section-header h2 {
-    font-size: 1.2rem !important;
-    font-weight: 600 !important;
-    color: #333 !important;
-    margin-bottom: 0 !important;
-}
-
-.section-header i {
-    color: #4d5aea !important;
-}
-
-.content-section {
-    border-radius: 10px !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
-    background-color: white !important;
-}
-
-/* Barvy pro grafy */
-:root {
-    --chart-color-1: #4d5aea;
-    --chart-color-2: #1bd4cd;
-    --chart-color-3: #f25c78;
-    --chart-color-4: #ffbb44;
-    --chart-color-5: #7367f0;
-}
-
-.form-select, .form-control {
-    border-color: #eaeaea !important;
-}
-
-.form-select:focus, .form-control:focus {
-    border-color: var(--chart-color-1) !important;
-    box-shadow: 0 0 0 0.2rem rgba(77, 90, 234, 0.15) !important;
-}
-
-.form-select-sm, .form-control-sm {
-    font-size: 0.85rem !important;
-    padding: 0.4rem 0.7rem !important;
-}
-</style>
