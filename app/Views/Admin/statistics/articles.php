@@ -69,7 +69,7 @@
     </section>
 
     <!-- Souhrné statistiky -->
-    <div class="row mb-4">
+    <div class="row">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="stat-card">
                 <div class="stat-border" style="background-color: var(--secondary-color, #f25c78);"></div>

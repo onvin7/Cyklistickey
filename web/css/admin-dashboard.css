@@ -726,3 +726,38 @@ tr:not(.group-header) td:first-child i {
     color: var(--secondary-color);
     text-decoration: underline;
 }
+
+/* Styly pro informace o autorovi */
+.author-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.author-name {
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.author-email {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* Styly pro badge aktivity */
+.activity-badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.activity-badge.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.activity-badge.inactive {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}

@@ -11,12 +11,12 @@
             <div class="stat-card">
                 <div class="stat-border" style="background-color: #4d5aea;"></div>
                 <div class="stat-content">
-                    <div>
+                        <div>
                         <div class="stat-value"><?= number_format($totalViews) ?></div>
                         <div class="stat-label">Celkový počet zobrazení</div>
-                    </div>
+                        </div>
                     <div class="stat-icon" style="color: #4d5aea;">
-                        <i class="fa-solid fa-eye"></i>
+                            <i class="fa-solid fa-eye"></i>
                     </div>
                 </div>
                 <div class="pt-2 mt-2 border-top px-3 pb-3">
@@ -28,12 +28,12 @@
             <div class="stat-card">
                 <div class="stat-border" style="background-color: #f25c78;"></div>
                 <div class="stat-content">
-                    <div>
+                        <div>
                         <div class="stat-value"><?= number_format($totalArticles) ?></div>
                         <div class="stat-label">Celkový počet článků</div>
-                    </div>
+                        </div>
                     <div class="stat-icon" style="color: #f25c78;">
-                        <i class="fa-solid fa-newspaper"></i>
+                            <i class="fa-solid fa-newspaper"></i>
                     </div>
                 </div>
                 <div class="pt-2 mt-2 border-top px-3 pb-3">
@@ -45,12 +45,12 @@
             <div class="stat-card">
                 <div class="stat-border" style="background-color: #1bd4cd;"></div>
                 <div class="stat-content">
-                    <div>
+                        <div>
                         <div class="stat-value"><?= number_format($totalCategories) ?></div>
                         <div class="stat-label">Celkový počet kategorií</div>
-                    </div>
+                        </div>
                     <div class="stat-icon" style="color: #1bd4cd;">
-                        <i class="fa-solid fa-tags"></i>
+                            <i class="fa-solid fa-tags"></i>
                     </div>
                 </div>
                 <div class="pt-2 mt-2 border-top px-3 pb-3">
@@ -62,12 +62,12 @@
             <div class="stat-card">
                 <div class="stat-border" style="background-color: #ffbb44;"></div>
                 <div class="stat-content">
-                    <div>
+                        <div>
                         <div class="stat-value"><?= number_format($avgViewsPerArticle, 1) ?></div>
                         <div class="stat-label">Průměr zobrazení na článek</div>
-                    </div>
+                        </div>
                     <div class="stat-icon" style="color: #ffbb44;">
-                        <i class="fa-solid fa-chart-simple"></i>
+                            <i class="fa-solid fa-chart-simple"></i>
                     </div>
                 </div>
                 <div class="pt-2 mt-2 border-top px-3 pb-3">
@@ -323,8 +323,8 @@
         if (topArticlesSeries.length > 0) {
             console.log('Rendering top articles chart with data:', topArticlesSeries);
             // Zjednodušení grafu, přepnutí na horizontální bar chart pro lepší čitelnost
-            const topArticlesOptions = {
-                chart: {
+        const topArticlesOptions = {
+            chart: {
                     type: 'bar',
                     height: 350,
                     fontFamily: 'Nunito, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
@@ -409,8 +409,8 @@
         
         if (categoryViewsData.length > 0) {
             console.log('Rendering categories chart with data:', categoryViewsData);
-            const categoriesOptions = {
-                chart: {
+        const categoriesOptions = {
+            chart: {
                     type: 'bar',
                     height: 350,
                     stacked: false,
@@ -474,7 +474,7 @@
                     }
                 ],
                 colors: ['var(--chart-color-1)', 'var(--chart-color-2)', 'var(--chart-color-3)', 'var(--chart-color-4)', 'var(--chart-color-5)'],
-                legend: {
+            legend: {
                     position: 'top',
                     horizontalAlign: 'left'
                 },
@@ -519,18 +519,18 @@
         
         if (authorStats.length > 0) {
             console.log('Rendering authors chart with data:', authorStats);
-            const authorsOptions = {
-                chart: {
-                    type: 'bar',
+        const authorsOptions = {
+            chart: {
+                type: 'bar',
                     height: 350,
                     stacked: false,
                     fontFamily: 'Nunito, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
                     toolbar: {
                         show: false
                     }
-                },
-                plotOptions: {
-                    bar: {
+            },
+            plotOptions: {
+                bar: {
                         horizontal: false,
                         columnWidth: '50%',
                         borderRadius: 4,
@@ -543,18 +543,18 @@
                 },
                 series: [
                     {
-                        name: 'Počet článků',
+                name: 'Počet článků',
                         type: 'column',
-                        data: <?= json_encode(array_column($authorStats, 'article_count')) ?>
+                data: <?= json_encode(array_column($authorStats, 'article_count')) ?>
                     }, 
                     {
-                        name: 'Počet zobrazení (v tis.)',
+                name: 'Počet zobrazení (v tis.)',
                         type: 'line',
-                        data: <?= json_encode(array_map(function($val) { return round($val / 1000, 1); }, array_column($authorStats, 'total_views'))) ?>
+                data: <?= json_encode(array_map(function($val) { return round($val / 1000, 1); }, array_column($authorStats, 'total_views'))) ?>
                     }
                 ],
-                xaxis: {
-                    categories: <?= json_encode(array_column($authorStats, 'name')) ?>,
+            xaxis: {
+                categories: <?= json_encode(array_column($authorStats, 'name')) ?>,
                     labels: {
                         rotate: -45,
                         style: {
@@ -597,8 +597,8 @@
                         size: 7
                     }
                 },
-                legend: {
-                    position: 'top'
+            legend: {
+                position: 'top'
                 },
                 dataLabels: {
                     enabled: true,

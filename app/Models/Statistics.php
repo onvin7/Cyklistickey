@@ -162,20 +162,74 @@ class Statistics
         return $result['total'] ? $result['total'] : 0;
     }
 
-    public function getCategoryStatistics()
+    // Pomocná metoda pro získání SQL podmínky filtrování podle data na základě období
+    private function getDateFilter($period = 'all')
     {
-        $query = "SELECT kategorie.id, kategorie.nazev_kategorie AS name, 
-                  COUNT(DISTINCT ck.id_clanku) AS article_count,
-                  COALESCE(SUM(v.pocet), 0) AS views
-                  FROM kategorie
-                  LEFT JOIN clanky_kategorie ck ON kategorie.id = ck.id_kategorie
-                  LEFT JOIN clanky ON ck.id_clanku = clanky.id
-                  LEFT JOIN views_clanku v ON clanky.id = v.id_clanku
-                  GROUP BY kategorie.id
-                  ORDER BY views DESC";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        if ($period == 'all') {
+            return ''; // Žádný filtr pro všechna data
+        }
+        
+        // Převést období na celé číslo
+        $days = intval($period);
+        
+        // Pokud je období platné číslo, vrátíme SQL podmínku pro filtrování podle data
+        if ($days > 0) {
+            return "v.datum >= DATE_SUB(CURDATE(), INTERVAL $days DAY)";
+        }
+        
+        return '';
+    }
+
+    public function getCategoryStatistics($period = 'all')
+    {
+        $db = $this->db;
+        
+        // Určení časového období pro filtrování
+        $dateFilter = $this->getDateFilter($period);
+        
+        try {
+            // Základní SQL dotaz pro získání statistik kategorií
+            $sql = "
+                SELECT 
+                    k.nazev_kategorie AS name,
+                    COALESCE(SUM(v.pocet), 0) AS views
+                FROM 
+                    kategorie k
+                LEFT JOIN 
+                    clanky_kategorie ck ON k.id = ck.id_kategorie
+                LEFT JOIN 
+                    clanky c ON ck.id_clanku = c.id
+                LEFT JOIN 
+                    views_clanku v ON c.id = v.id_clanku
+            ";
+            
+            // Přidání filtru období, pokud je specifikováno
+            if ($dateFilter) {
+                $sql .= " WHERE " . $dateFilter;
+            }
+            
+            // Seskupení podle kategorií a seřazení podle počtu zobrazení
+            $sql .= "
+                GROUP BY k.id
+                ORDER BY views DESC
+            ";
+            
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
+            
+            $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            // Pokud nemáme žádné výsledky, vrátíme prázdné pole
+            if (empty($results)) {
+                return [];
+            }
+            
+            return $results;
+            
+        } catch (\PDOException $e) {
+            error_log("Chyba při získávání statistik kategorií: " . $e->getMessage());
+            return [];
+        }
     }
 
     public function getAuthorStatistics()
@@ -982,6 +1036,66 @@ class Statistics
         $author['categories'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         return $author;
+    }
+
+    // Získání dat pro tepelnou mapu zobrazení podle dnů v roce
+    public function getViewsCalendarHeatmap($year = null) 
+    {
+        // Pokud není rok specifikován, použijeme aktuální rok
+        if (!$year) {
+            $year = date('Y');
+        }
+        
+        // Dotaz na získání denních zobrazení pro zadaný rok
+        $query = "SELECT DATE_FORMAT(datum, '%Y-%m-%d') AS day, 
+                         SUM(pocet) AS views_count
+                  FROM views_clanku 
+                  WHERE YEAR(datum) = :year
+                  GROUP BY day
+                  ORDER BY day ASC";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':year', $year, \PDO::PARAM_INT);
+        $stmt->execute();
+        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        
+        // Zpracujeme výsledky do pole, kde klíč je datum a hodnota je počet zobrazení
+        $viewsData = [];
+        $maxViews = 0;
+        
+        foreach ($results as $row) {
+            $viewsData[$row['day']] = (int)$row['views_count'];
+            $maxViews = max($maxViews, (int)$row['views_count']);
+        }
+        
+        // Vytvoříme kompletní pole pro celý rok, včetně dnů bez dat
+        $calendarData = [];
+        $startDate = new \DateTime($year . '-01-01');
+        $endDate = new \DateTime($year . '-12-31');
+        $interval = new \DateInterval('P1D');
+        $dateRange = new \DatePeriod($startDate, $interval, $endDate);
+        
+        foreach ($dateRange as $date) {
+            $day = $date->format('Y-m-d');
+            $calendarData[] = [
+                'date' => $day,
+                'count' => isset($viewsData[$day]) ? $viewsData[$day] : 0,
+                'month' => $date->format('n') - 1, // 0-indexed měsíc pro JS
+                'day_of_week' => $date->format('w'), // 0 (neděle) až 6 (sobota)
+                'day_of_month' => $date->format('j')
+            ];
+        }
+        
+        // Výpočet průměrné intenzity pro určení škálování barev
+        $avgViewsPerDay = count($calendarData) > 0 && $maxViews > 0 ? 
+            array_sum(array_column($calendarData, 'count')) / count($calendarData) : 0;
+        
+        return [
+            'calendar_data' => $calendarData,
+            'max_views' => $maxViews,
+            'avg_views' => $avgViewsPerDay,
+            'year' => $year
+        ];
     }
 
 }
