@@ -30,8 +30,16 @@ AuthMiddleware::check($db);
 // ✅ **Definice dostupných rout**
 $routes = [
     'statistics' => [StatisticsAdminController::class, 'index'],
+    'statistics/articles' => [StatisticsAdminController::class, 'articles'],
+    'statistics/categories' => [StatisticsAdminController::class, 'categories'],
+    'statistics/authors' => [StatisticsAdminController::class, 'authors'],
+    'statistics/performance' => [StatisticsAdminController::class, 'performance'],
+    'statistics/views' => [StatisticsAdminController::class, 'views'],
     'statistics/top' => [StatisticsAdminController::class, 'top'],
     'statistics/view' => [StatisticsAdminController::class, 'view', 'id'],
+    'statistics/article-details/(\d+)' => [StatisticsAdminController::class, 'getArticleDetails', 'articleId'],
+    'statistics/category-details/(\d+)' => [StatisticsAdminController::class, 'getCategoryDetails', 'categoryId'],
+    'statistics/author-details/(\d+)' => [StatisticsAdminController::class, 'getAuthorDetails', 'authorId'],
     'articles' => [ArticleAdminController::class, 'index'],
     'articles/create' => [ArticleAdminController::class, 'create'],
     'articles/store' => [ArticleAdminController::class, 'store', 'data'],
@@ -83,16 +91,52 @@ if ($uri === '' || $uri === 'home') {
 $routeFound = false;
 
 foreach ($routes as $path => $route) {
-    if (preg_match('#^' . $path . '(/(\d+))?$#', $uri, $matches)) {
+    // Zjistíme, jestli je v cestě přímo regulární výraz
+    if (strpos($path, '(') !== false) {
+        // Použijeme cestu přímo jako vzor
+        $pattern = '#^' . $path . '$#';
+    } else {
+        // Jinak použijeme původní logiku
+        $pattern = '#^' . $path;
+        
+        // Zjistíme, jaký parametr očekáváme
+        $expectedParam = $route[2] ?? 'id';
+        
+        // Přidáme vzor pro parametr do URL
+        if (isset($route[2])) {
+            $pattern .= '(/(\d+))';
+        }
+        
+        $pattern .= '$#';
+    }
+    
+    if (preg_match($pattern, $uri, $matches)) {
         $controllerClass = $route[0];
         $method = $route[1];
-        $param = $matches[2] ?? null;
+        
+        // Získáme parametr podle toho, jaký typ URL vzoru byl použit
+        if (strpos($path, '(') !== false) {
+            $param = $matches[1] ?? null;
+        } else {
+            $param = $matches[2] ?? null;
+        }
 
         // ✅ **Kontrola přístupu k dané stránce pro role 1 a 2**
-        if ($accessibleRoutes !== null && !in_array($path, $accessibleRoutes)) {
-            echo "<script>alert('Na tuto stránku nemáte přístup.'); window.history.back();</script>";
-            $routeFound = true;
-            break;
+        if ($accessibleRoutes !== null) {
+            $routeBase = $path;
+            
+            // U cest s regulárními výrazy extrahujeme základní cestu pro kontrolu přístupu
+            if (strpos($path, '(') !== false) {
+                $routeBase = substr($path, 0, strpos($path, '('));
+                $routeBase = rtrim($routeBase, '/');
+            }
+            
+            // Kontrolujeme, zda je základní cesta nebo celá cesta v dostupných cestách
+            if (!in_array($routeBase, $accessibleRoutes) && !in_array($path, $accessibleRoutes)) {
+                echo "<script>alert('Na tuto stránku nemáte přístup.'); window.history.back();</script>";
+                $routeFound = true;
+                break;
+            }
         }
 
         $controller = new $controllerClass($db);
@@ -107,6 +151,7 @@ foreach ($routes as $path => $route) {
         } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === 'categories/update') {
             $controller->$method($param, $_POST);
         } elseif ($param) {
+            // Zpracování GET parametrů podle očekávaného názvu
             $controller->$method($param);
         } else {
             $controller->$method();
