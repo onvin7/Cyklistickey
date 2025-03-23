@@ -9,9 +9,9 @@ $hasProfilePhoto = isset($_SESSION['profil_foto']) && !empty($_SESSION['profil_f
 $profilePhoto = $hasProfilePhoto ? "/uploads/users/thumbnails/" . $_SESSION['profil_foto'] : null;
 
 $roleData = [
-    1 =>  ["🧑‍💼", "Moderátor"],
-    2 =>  ["👨‍🏫", "Editor"],
-    3 =>  ["👑", "Administrátor"]
+    1 =>  ["<i class=\"fa-solid fa-user-tie\"></i>", "Moderátor"],
+    2 =>  ["<i class=\"fa-solid fa-user-pen\"></i>", "Editor"],
+    3 =>  ["<i class=\"fa-solid fa-crown\"></i>", "Administrátor"]
 ];
 
 if (isset($roleData[$_SESSION['role']])) {
