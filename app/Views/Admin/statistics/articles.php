@@ -1,7 +1,6 @@
 <div class="container-fluid px-4">
     <h1 class="dashboard-title mb-4"><i class="fa-solid fa-newspaper me-2"></i>Statistiky článků</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
         <li class="breadcrumb-item"><a href="/admin/statistics">Statistiky</a></li>
         <li class="breadcrumb-item active">Články</li>
     </ol>
