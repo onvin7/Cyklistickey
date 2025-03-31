@@ -4,17 +4,11 @@ namespace App\Controllers\Admin;
 
 use App\Models\Article;
 use App\Models\Category;
+use App\Helpers\TextHelper;
 
 use function imagecreatefromjpeg;
 use function imagecreatefrompng;
 use function imagecreatefromgif;
-
-use Doctrine\ORM\EntityManagerInterface;
-use Google\Cloud\TextToSpeech\V1\TextToSpeechClient;
-use Google\Cloud\TextToSpeech\V1\SynthesisInput;
-use Google\Cloud\TextToSpeech\V1\VoiceSelectionParams;
-use Google\Cloud\TextToSpeech\V1\AudioConfig;
-use Google\Cloud\TextToSpeech\V1\AudioEncoding;
 
 class ArticleAdminController
 {
@@ -35,16 +29,20 @@ class ArticleAdminController
 
         $articles = $this->articleModel->getAllWithSortingAndFiltering($sortBy, $order, $filter);
 
+        $adminTitle = "Články | Admin Panel - Cyklistickey magazín";
+
         $view = '../app/Views/Admin/articles/index.php';
         include '../app/Views/Admin/layout/base.php';
     }
-
 
     // Formulář pro vytvoření článku
     public function create()
     {
         $categoryModel = new Category($this->model); // Použití modelu kategorie
         $categories = $categoryModel->getAll(); // Načtení kategorií
+        
+        $adminTitle = "Vytvořit článek | Admin Panel - Cyklistickey magazín";
+        
         $view = '../app/Views/Admin/articles/create.php';
         include '../app/Views/Admin/layout/base.php';
     }
@@ -63,9 +61,18 @@ class ArticleAdminController
 
         // Zpracování nahrání souboru
         $nahledFoto = "default.jpg";
-        $targetDir = __DIR__ . '/../../web/uploads/thumbnails/';
+        $targetDir = __DIR__ . '/../../../web/uploads/thumbnails/';
 
         if (isset($_FILES['nahled_foto']) && $_FILES['nahled_foto']['error'] === UPLOAD_ERR_OK) {
+            // Kontrola typu souboru - povolujeme pouze obrázky
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            $fileType = $_FILES['nahled_foto']['type'];
+            
+            if (!in_array($fileType, $allowedTypes)) {
+                echo "<div class='alert alert-danger'>Chyba: Nepodporovaný formát souboru. Povolené formáty jsou JPEG, PNG a GIF.</div>";
+                return;
+            }
+            
             $uniqueName = basename($_FILES['nahled_foto']['name']);
 
             $largeDir = $targetDir . 'velke/';
@@ -73,7 +80,7 @@ class ArticleAdminController
             $largeFilePath = $largeDir . $uniqueName;
             $smallFilePath = $smallDir . $uniqueName;
 
-            // ✅ **Vytvoření adresářů, pokud neexistují**
+            // Vytvoření adresářů, pokud neexistují
             if (!is_dir($largeDir)) {
                 mkdir($largeDir, 0777, true);
             }
@@ -81,36 +88,79 @@ class ArticleAdminController
                 mkdir($smallDir, 0777, true);
             }
 
-            // ✅ **Přesun originálního souboru do složky "velke"**
+            // Přesun a zpracování originálního souboru
             if (move_uploaded_file($_FILES['nahled_foto']['tmp_name'], $largeFilePath)) {
-                // ✅ **Vytvoření náhledu s poměrem 3:2**
-                $this->createThumbnail($largeFilePath, $smallFilePath, 300, 200);
+                // Pro velké fotky použijeme optimalizovanou velikost
+                $this->createThumbnail($largeFilePath, $largeFilePath, 1600, 1067, 90, true);
+                
+                // Vytvoření malé verze pro náhledy
+                $this->createThumbnail($largeFilePath, $smallFilePath, 600, 400, 85, false);
 
-                // ✅ **Nastavení názvu souboru do proměnné**
                 $nahledFoto = $uniqueName;
                 echo "<p>Fotka byla úspěšně nahrána:</p>";
-                echo "<img src='/uploads/male/$nahledFoto' alt='Náhled' style='max-width: 150px;'>";
+                echo "<img src='/uploads/thumbnails/male/$nahledFoto' alt='Náhled' style='max-width: 150px;'>";
             } else {
                 echo "❌ Chyba při nahrávání souboru!";
             }
         }
 
-        $slug = $this->generateSlug($postData['nazev']);
+        // Zpracování nahrání zvukového souboru
+        $audioFile = null;
+        $audioDir = __DIR__ . '/../../../web/uploads/audio/';
+        
+        // Zajistíme, že adresář pro audio existuje
+        if (!is_dir($audioDir)) {
+            mkdir($audioDir, 0777, true);
+        }
+
+        if (isset($_FILES['audio_file']) && $_FILES['audio_file']['error'] === UPLOAD_ERR_OK) {
+            // Kontrola typu souboru - povolujeme pouze MP3
+            $allowedAudioTypes = ['audio/mpeg', 'audio/mp3'];
+            $audioFileType = $_FILES['audio_file']['type'];
+            
+            if (!in_array($audioFileType, $allowedAudioTypes)) {
+                echo "<div class='alert alert-danger'>Chyba: Nepodporovaný formát zvukového souboru. Povolený formát je MP3.</div>";
+                return;
+            }
+            
+            // ID získáme až po vytvoření článku, proto zatím uložíme do dočasného souboru
+            $tempAudioName = uniqid() . '.mp3';
+            $tempAudioPath = $audioDir . $tempAudioName;
+            
+            if (move_uploaded_file($_FILES['audio_file']['tmp_name'], $tempAudioPath)) {
+                $audioFile = $tempAudioName;
+                echo "<p>Zvukový soubor byl úspěšně nahrán.</p>";
+            } else {
+                echo "<div class='alert alert-danger'>❌ Chyba při nahrávání zvukového souboru!</div>";
+            }
+        }
+
+        $slug = TextHelper::generateFriendlyUrl($postData['nazev']);
 
         $data = [
             'nazev' => $postData['nazev'],
-            'obsah' => $postData['content'],
+            'obsah' => $this->fixImagePaths($postData['content']),
             'viditelnost' => isset($postData['viditelnost']) ? 1 : 0,
             'nahled_foto' => $nahledFoto,
             'user_id' => $_SESSION['user_id'],
-            'autor' => 1,
             'url' => $slug,
             'datum' => date('Y-m-d H:i:s')
         ];
 
-        $result = $this->articleModel->create($data);
+        $articleId = $this->articleModel->create($data);
 
-        if ($result) {
+        if ($articleId) {
+            // Zpracování kategorií článku
+            if (isset($postData['kategorie']) && is_array($postData['kategorie'])) {
+                $this->articleModel->addCategories($articleId, $postData['kategorie']);
+            }
+            
+            // Pokud byl nahrán zvukový soubor, přejmenujeme ho podle ID článku
+            if ($audioFile) {
+                $finalAudioPath = $audioDir . $articleId . '.mp3';
+                rename($audioDir . $audioFile, $finalAudioPath);
+            }
+            
             header("Location: /admin/articles");
             exit;
         } else {
@@ -128,6 +178,11 @@ class ArticleAdminController
 
         $categoryModel = new Category($this->model); // Použití modelu kategorie
         $categories = $categoryModel->getAll(); // Načtení všech kategorií
+        
+        // Načtení kategorií článku
+        $article_categories = $this->articleModel->getArticleCategories($id);
+
+        $adminTitle = "Upravit článek: " . $article['nazev'] . " | Admin Panel - Cyklistickey magazín";
 
         $view = '../app/Views/Admin/articles/edit.php';
         include '../app/Views/Admin/layout/base.php';
@@ -145,7 +200,7 @@ class ArticleAdminController
             return;
         }
 
-        $targetDir = __DIR__ . '/../../web/uploads/thumbnails/';
+        $targetDir = __DIR__ . '/../../../web/uploads/thumbnails/';
         $nahledFoto = $postData['current_foto']; // Použijeme aktuální foto, pokud není nové
 
         // Kontrola a vytvoření složky, pokud neexistuje
@@ -154,33 +209,101 @@ class ArticleAdminController
         }
 
         if (isset($_FILES['nahled_foto']) && $_FILES['nahled_foto']['error'] === UPLOAD_ERR_OK) {
+            // Kontrola typu souboru - povolujeme pouze obrázky
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            $fileType = $_FILES['nahled_foto']['type'];
+            
+            if (!in_array($fileType, $allowedTypes)) {
+                echo "<div class='alert alert-danger'>Chyba: Nepodporovaný formát souboru. Povolené formáty jsou JPEG, PNG a GIF.</div>";
+                return;
+            }
+            
             $noveFoto = basename($_FILES['nahled_foto']['name']);
-            $targetFile = $targetDir . $noveFoto;
+            
+            $largeDir = $targetDir . 'velke/';
+            $smallDir = $targetDir . 'male/';
+            $largeFilePath = $largeDir . $noveFoto;
+            $smallFilePath = $smallDir . $noveFoto;
 
-            if (move_uploaded_file($_FILES['nahled_foto']['tmp_name'], $targetFile)) {
+            // Vytvoření adresářů, pokud neexistují
+            if (!is_dir($largeDir)) {
+                mkdir($largeDir, 0777, true);
+            }
+            if (!is_dir($smallDir)) {
+                mkdir($smallDir, 0777, true);
+            }
+
+            if (move_uploaded_file($_FILES['nahled_foto']['tmp_name'], $largeFilePath)) {
+                // Pro velké fotky použijeme optimalizovanou velikost
+                $this->createThumbnail($largeFilePath, $largeFilePath, 1600, 1067, 90, true);
+                
+                // Vytvoření malé verze pro náhledy
+                $this->createThumbnail($largeFilePath, $smallFilePath, 600, 400, 85, false);
+
                 $nahledFoto = $noveFoto;
-                echo "<p>Nová fotka byla úspěšně nahrána:</p>";
-                echo "<img src='/uploads/thumbnails/$nahledFoto' alt='Náhled' style='max-width: 150px;'>";
+                echo "<p>Nová fotka byla úspěšně nahrána</p>";
             }
         }
 
-        $slug = $this->generateSlug($postData['nazev']);
+        // Zpracování nahrání zvukového souboru
+        $audioDir = __DIR__ . '/../../../web/uploads/audio/';
+        
+        // Zajistíme, že adresář pro audio existuje
+        if (!is_dir($audioDir)) {
+            mkdir($audioDir, 0777, true);
+        }
+
+        if (isset($_FILES['audio_file']) && $_FILES['audio_file']['error'] === UPLOAD_ERR_OK) {
+            // Kontrola typu souboru - povolujeme pouze MP3
+            $allowedAudioTypes = ['audio/mpeg', 'audio/mp3'];
+            $audioFileType = $_FILES['audio_file']['type'];
+            
+            if (!in_array($audioFileType, $allowedAudioTypes)) {
+                echo "<div class='alert alert-danger'>Chyba: Nepodporovaný formát zvukového souboru. Povolený formát je MP3.</div>";
+                return;
+            }
+            
+            $audioPath = $audioDir . $id . '.mp3';
+            
+            if (move_uploaded_file($_FILES['audio_file']['tmp_name'], $audioPath)) {
+                echo "<p>Zvukový soubor byl úspěšně aktualizován.</p>";
+            } else {
+                echo "<div class='alert alert-danger'>❌ Chyba při nahrávání zvukového souboru!</div>";
+            }
+        }
+
+        // Nejprve získáme původní data článku
+        $originalArticle = $this->articleModel->getById($id);
+        
+        // Použijeme původní datum, pokud není explicitně zadáno nové
+        $datum = isset($postData['datum_publikace']) && !empty($postData['datum_publikace']) 
+               ? date('Y-m-d H:i:s', strtotime($postData['datum_publikace'])) 
+               : $originalArticle['datum'];
+        
+        $slug = TextHelper::generateFriendlyUrl($postData['nazev']);
 
         $data = [
             'id' => $id,
             'nazev' => $postData['nazev'],
-            'obsah' => $postData['content'],
+            'obsah' => $this->fixImagePaths($postData['content']),
             'viditelnost' => isset($postData['viditelnost']) ? 1 : 0,
             'nahled_foto' => $nahledFoto,
-            'user_id' => $_SESSION['user_id'],
-            'autor' => 1,
+            'user_id' => $_SESSION['user_id'], 
             'url' => $slug,
-            'datum' => date('Y-m-d H:i:s')
+            'datum' => $datum
         ];
 
         $result = $this->articleModel->update($data);
 
         if ($result) {
+            // Zpracování kategorií článku
+            if (isset($postData['kategorie']) && is_array($postData['kategorie'])) {
+                $this->articleModel->addCategories($id, $postData['kategorie']);
+            } else {
+                // Pokud kategorie nebyla vybrána, odebereme všechny kategorie článku
+                $this->articleModel->addCategories($id, []);
+            }
+            
             header("Location: /admin/articles");
             exit;
         } else {
@@ -190,9 +313,8 @@ class ArticleAdminController
 
     public function delete($id)
     {
-        $article = $this->articleModel->getById($id); // Získáme článek podle ID
-
-        if (!$article) {
+        // ✅ **Kontrola existence článku v databázi**
+        if (!$this->articleModel->getById($id)) {
             die("❌ Chyba: Článek nenalezen.");
         }
 
@@ -205,77 +327,125 @@ class ArticleAdminController
         }
     }
 
-    function createThumbnail($sourcePath, $destinationPath, $thumbWidth, $thumbHeight)
-    {
-        list($origWidth, $origHeight, $imageType) = getimagesize($sourcePath);
-
-        if (!function_exists('imagecreatefromjpeg')) {
-            die("🔥 CHYBA: GD knihovna není aktivní! Zapni php-gd v PHP.");
-        }
-
+    private function createThumbnail($sourcePath, $targetPath, $maxWidth, $maxHeight, $quality = 85, $highQuality = false) {
+        // Načtení EXIF dat pro zjištění orientace
+        $exif = @exif_read_data($sourcePath);
+        
+        // Načtení původního obrázku
+        list($originalWidth, $originalHeight, $imageType) = getimagesize($sourcePath);
+        
+        // Načtení zdrojového obrázku
+        $sourceImage = null;
         switch ($imageType) {
             case IMAGETYPE_JPEG:
-                $image = imagecreatefromjpeg($sourcePath);
+                $sourceImage = imagecreatefromjpeg($sourcePath);
                 break;
             case IMAGETYPE_PNG:
-                $image = imagecreatefrompng($sourcePath);
+                $sourceImage = imagecreatefrompng($sourcePath);
                 break;
             case IMAGETYPE_GIF:
-                $image = imagecreatefromgif($sourcePath);
+                $sourceImage = imagecreatefromgif($sourcePath);
                 break;
             default:
-                return false;
+                throw new \Exception('Nepodporovaný formát obrázku: ' . $imageType);
+        }
+        
+        // Oprava orientace podle EXIF dat
+        if (!empty($exif['Orientation'])) {
+            switch ($exif['Orientation']) {
+                case 3:
+                    $sourceImage = imagerotate($sourceImage, 180, 0);
+                    break;
+                case 6:
+                    $sourceImage = imagerotate($sourceImage, -90, 0);
+                    list($originalWidth, $originalHeight) = array($originalHeight, $originalWidth);
+                    break;
+                case 8:
+                    $sourceImage = imagerotate($sourceImage, 90, 0);
+                    list($originalWidth, $originalHeight) = array($originalHeight, $originalWidth);
+                    break;
+            }
         }
 
-        // Výpočet nových rozměrů pro oříznutí na 3:2
+        // Výpočet cílového poměru stran (3:2)
         $targetRatio = 3 / 2;
-        $origRatio = $origWidth / $origHeight;
+        $sourceRatio = $originalWidth / $originalHeight;
 
-        if ($origRatio > $targetRatio) {
-            // Příliš široký obrázek - ořízneme šířku
-            $newWidth = (int) ($origHeight * $targetRatio);
-            $newHeight = $origHeight;
-            $xOffset = (int) (($origWidth - $newWidth) / 2);
-            $yOffset = 0;
+        // Určení rozměrů pro oříznutí
+        if ($sourceRatio < $targetRatio) {
+            // Obrázek je vyšší než potřebujeme (např. 2:3)
+            // Ořízněte ho na výšku tak, aby vznikl poměr 3:2
+            $cropHeight = round($originalWidth / $targetRatio);
+            $cropWidth = $originalWidth;
+            $cropX = 0;
+            $cropY = round(($originalHeight - $cropHeight) / 2); // Ořez ze středu
         } else {
-            // Příliš vysoký obrázek - ořízneme výšku
-            $newWidth = $origWidth;
-            $newHeight = (int) ($origWidth / $targetRatio);
-            $xOffset = 0;
-            $yOffset = (int) (($origHeight - $newHeight) / 2);
+            // Obrázek je širší nebo má správný poměr
+            $cropWidth = round($originalHeight * $targetRatio);
+            $cropHeight = $originalHeight;
+            $cropX = round(($originalWidth - $cropWidth) / 2); // Ořez ze středu
+            $cropY = 0;
         }
 
-        // Vytvoření oříznutého obrázku
-        $croppedImage = imagecreatetruecolor($newWidth, $newHeight);
-        imagecopy($croppedImage, $image, 0, 0, $xOffset, $yOffset, $newWidth, $newHeight);
+        // Vytvoření dočasného obrázku pro ořez
+        $croppedImage = imagecreatetruecolor($cropWidth, $cropHeight);
+        
+        // Zachování průhlednosti pro PNG
+        if ($imageType === IMAGETYPE_PNG) {
+            imagealphablending($croppedImage, false);
+            imagesavealpha($croppedImage, true);
+        }
 
-        // Změna velikosti na náhled
-        $thumbnail = imagecreatetruecolor($thumbWidth, $thumbHeight);
-        imagecopyresampled($thumbnail, $croppedImage, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $newWidth, $newHeight);
+        // Provedení ořezu
+        imagecopy($croppedImage, $sourceImage, 0, 0, $cropX, $cropY, $cropWidth, $cropHeight);
 
-        // Uložení výsledného náhledu
+        // Výpočet finálních rozměrů pro změnu velikosti
+        if ($cropWidth > $maxWidth || $cropHeight > $maxHeight) {
+            $ratio = min($maxWidth / $cropWidth, $maxHeight / $cropHeight);
+            $newWidth = round($cropWidth * $ratio);
+            $newHeight = round($cropHeight * $ratio);
+        } else {
+            $newWidth = $cropWidth;
+            $newHeight = $cropHeight;
+        }
+
+        // Vytvoření finálního obrázku
+        $newImage = imagecreatetruecolor($newWidth, $newHeight);
+        
+        // Zachování průhlednosti pro PNG
+        if ($imageType === IMAGETYPE_PNG) {
+            imagealphablending($newImage, false);
+            imagesavealpha($newImage, true);
+        }
+
+        // Změna velikosti oříznutého obrázku
+        imagecopyresampled(
+            $newImage, $croppedImage,
+            0, 0, 0, 0,
+            $newWidth, $newHeight,
+            $cropWidth, $cropHeight
+        );
+
+        // Uložení výsledku
         switch ($imageType) {
             case IMAGETYPE_JPEG:
-                imagejpeg($thumbnail, $destinationPath, 90);
+                imagejpeg($newImage, $targetPath, $quality);
                 break;
             case IMAGETYPE_PNG:
-                imagepng($thumbnail, $destinationPath);
-                break;
-            case IMAGETYPE_GIF:
-                imagegif($thumbnail, $destinationPath);
+                $pngQuality = $highQuality ? 1 : 6;
+                imagepng($newImage, $targetPath, $pngQuality);
                 break;
         }
 
-        imagedestroy($image);
+        // Uvolnění paměti
+        imagedestroy($newImage);
         imagedestroy($croppedImage);
-        imagedestroy($thumbnail);
-
-        return true;
+        imagedestroy($sourceImage);
     }
 
     public function uploadImage()
     {
-        $uploadDir = __DIR__ . '/../../web/uploads/articles/';
+        $uploadDir = __DIR__ . '/../../../web/uploads/articles/';
         $publicPath = '/uploads/articles/';
 
         // ✅ Kontrola složky
@@ -318,40 +488,29 @@ class ArticleAdminController
         }
     }
 
-    // ✅ Generování validního URL slugu z názvu
-    private function generateSlug($title)
-    {
-        // Převod na malá písmena, odstranění diakritiky a speciálních znaků
-        $slug = iconv('UTF-8', 'ASCII//TRANSLIT', $title);
-        $slug = preg_replace('/[^a-zA-Z0-9 -]/', '', $slug);  // Povolit pouze písmena, čísla a pomlčky
-        $slug = strtolower(trim($slug));
-        $slug = preg_replace('/[\s-]+/', '-', $slug);  // Nahrazení mezer a vícenásobných pomlček jedinou pomlčkou
-
-        return $slug;
+    /**
+     * Opraví relativní cesty k obrázkům v HTML obsahu
+     * Změní cesty obsahující ../ na absolutní cesty /uploads/articles/
+     */
+    private function fixImagePaths($html) {
+        // Použijeme regulární výraz k nalezení všech obrázků a jejich src atributů
+        return preg_replace_callback(
+            '/<img[^>]*?src=(["\'])(.*?)\\1/i',
+            function($matches) {
+                $src = $matches[2];
+                
+                // Pokud src obsahuje uploads/articles, extrahujeme název souboru
+                if (strpos($src, 'uploads/articles/') !== false) {
+                    $parts = explode('uploads/articles/', $src);
+                    if (isset($parts[1])) {
+                        // Vytvoříme absolutní cestu
+                        return str_replace($src, '/uploads/articles/' . $parts[1], $matches[0]);
+                    }
+                }
+                
+                return $matches[0]; // Pokud se nejedná o náš typ obrázku, vrátíme původní tag
+            },
+            $html
+        );
     }
-    /*
-    function generateArticleAudio($text, $articleId)
-    {
-        $client = new TextToSpeechClient([
-            'credentials' => 'path/to/your-google-cloud-key.json'
-        ]);
-
-        $input = new SynthesisInput();
-        $input->setText($text);
-
-        $voice = new VoiceSelectionParams();
-        $voice->setLanguageCode('cs-CZ');
-        $voice->setSsmlGender(1); // 1 = MALE, 2 = FEMALE
-
-        $audioConfig = new AudioConfig();
-        $audioConfig->setAudioEncoding(AudioEncoding::MP3);
-
-        $response = $client->synthesizeSpeech($input, $voice, $audioConfig);
-        $filePath = "uploads/audio/article_" . $articleId . ".mp3";
-        file_put_contents($filePath, $response->getAudioContent());
-
-        $client->close();
-        return $filePath;
-    }
-        */
 }

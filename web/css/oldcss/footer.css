@@ -1,0 +1,354 @@
+footer {
+  background-color: #00000f;
+  background-position: left;
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-inline: 5%;
+  padding-top: 100px;
+}
+
+footer .kontakt,
+.newsletter,
+.ikony,
+.menu {
+  margin-bottom: 100px;
+}
+
+footer h2 {
+  color: white;
+  font-weight: 100;
+  text-transform: uppercase;
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+footer .left-side {
+  text-align: left;
+  width: auto;
+}
+
+footer .left-side .kontakt .radek a {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  font-size: 22px;
+  font-weight: 300;
+  align-items: center;
+}
+
+footer .left-side .kontakt .radek a:hover {
+  color: #f1008d;
+}
+
+footer .left-side .kontakt .radek a i {
+  overflow: hidden;
+}
+
+footer .left-side .newsletter button {
+  background-color: white;
+  color: black;
+  padding: 0.7em 1.5em;
+  border-radius: 25px;
+  margin-top: 10px;
+  text-transform: uppercase;
+  border: 3px solid transparent;
+  transition: 0.2s;
+}
+
+footer .left-side .newsletter button:hover {
+  transition: 0.2s;
+  background: #00000f;
+  border: 3px solid white;
+  color: white;
+}
+
+/*-------------email-styles-----------*/
+
+.cist-clanek {
+  color: #fff;
+  line-height: 1;
+  width: max-content;
+  padding: 0.7em 0.9em;
+  border: 0.25em solid transparent;
+  background-image: linear-gradient(#00000f, #00000f),
+    linear-gradient(
+      to right,
+      rgb(229, 7, 126),
+      rgb(154, 31, 106),
+      rgb(4, 142, 206),
+      rgb(4, 142, 206),
+      rgb(99, 195, 208)
+    );
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  border-radius: 1.8em;
+  background-size: 200% 100%;
+  background-position: left bottom;
+  transition: background-position 0.3s ease-out, background-size 0.3s ease-out; /* Adjusted for demonstration */
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.cist-clanek:hover {
+  background-position: right bottom;
+}
+
+.cist-clanek input {
+  background-color: #00000f;
+  color: white;
+  font-size: 16px;
+}
+
+.cist-clanek input:focus {
+  outline: none;
+}
+
+/*--right-side--*/
+
+footer .right-side {
+  text-align: right;
+  width: auto;
+}
+
+footer .right-side .site {
+  display: flex;
+  flex-direction: column;
+}
+
+footer .right-side .site .ikony {
+  display: flex;
+  gap: 2em;
+  justify-content: flex-end;
+}
+
+footer .right-side .site .ikony i {
+  color: white;
+  font-size: 30px;
+  padding: 1.5vh;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+footer .right-side .site .ikony i:hover {
+  background-color: white;
+  color: #00000f;
+  padding: 1.5vh;
+  border-radius: 50px;
+  transition: 0.2s;
+}
+
+footer .right-side .menu ul {
+  list-style: none;
+}
+
+footer .right-side .menu ul li {
+  color: white;
+  font-size: 22px;
+  font-weight: 400;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+footer .right-side .menu ul li:hover {
+  color: #f1008d;
+  transition: 0.2s;
+}
+
+.container-prava {
+  display: flex;
+  justify-content: space-between;
+  padding-inline: 5%;
+  background-color: #00000f;
+}
+
+.container-prava p,
+.container-prava p a {
+  text-decoration: none;
+  color: white;
+  font-weight: 200;
+  transition: 0.2s;
+}
+
+.container-prava a:hover {
+  transition: 0.2s;
+  color: #f1008d;
+  text-decoration: none;
+}
+
+/*---mobile-version---*/
+
+.mobile-footer .kontakt,
+.newsletter,
+.ikony,
+.menu {
+  margin-bottom: 50px;
+}
+
+.mobile-footer {
+  display: none;
+  flex-direction: column;
+  padding-inline: 5%;
+  padding-top: 100px;
+  background-color: #00000f;
+}
+
+.mobile-footer .site {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-footer h2 {
+  color: white;
+  font-weight: 100;
+  text-transform: uppercase;
+  font-size: 40px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.mobile-footer .site .ikony {
+  display: flex;
+  gap: 2em;
+  justify-content: center;
+}
+
+.mobile-footer .site .ikony i {
+  color: white;
+  font-size: 30px;
+  padding: 1.5vh;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.mobile-footer .site .ikony i:hover {
+  background-color: white;
+  color: #00000f;
+  padding: 1.5vh;
+  border-radius: 50px;
+  transition: 0.2s;
+}
+
+.mobile-footer .newsletter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mobile-footer .cist-clanek {
+  width: 80%;
+}
+
+.mobile-footer .newsletter button {
+  background-color: white;
+  color: black;
+  padding: 0.8em 1.5em;
+  border-radius: 25px;
+  margin-top: 10px;
+  text-transform: uppercase;
+  border: 3px solid transparent;
+  transition: 0.2s;
+  width: 80%;
+}
+
+.mobile-footer .newsletter button:hover {
+  transition: 0.2s;
+  background: #00000f;
+  border: 3px solid white;
+  color: white;
+}
+
+.mobile-footer .kontakt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mobile-footer .kontakt .radek a {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  font-size: 22px;
+  font-weight: 300;
+  align-items: center;
+}
+
+.mobile-footer .kontakt .radek a:hover {
+  color: #f1008d;
+}
+
+.mobile-footer .kontakt .radek a.active {
+  color: #3eb7e7;
+}
+
+.mobile-footer .kontakt .radek a i {
+  overflow: hidden;
+}
+
+.mobile-footer .menu ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.menu ul li a {
+  color: white;
+  font-size: 22px;
+  font-weight: 400;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.2s;
+  text-decoration: none;
+}
+
+.menu ul li a.active {
+  color: #3eb7e7;
+}
+
+.menu ul li a:hover {
+  color: #f1008d;
+  transition: 0.2s;
+  text-decoration: none;
+}
+
+.mobile-footer hr {
+  background-color: #4a4a50;
+  margin-bottom: 50px;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f1008d;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+@media screen and (max-width: 650px) {
+  footer {
+    display: none;
+  }
+
+  .mobile-footer {
+    display: flex;
+  }
+
+  .container-prava {
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+}

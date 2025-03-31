@@ -25,6 +25,7 @@ if (isset($roleData[$_SESSION['role']])) {
 // Určení aktivní stránky
 $currentUri = $_SERVER['REQUEST_URI'];
 $activeLinks = [
+    'home' => $currentUri === '/admin' || $currentUri === '/admin/',
     'articles' => strpos($currentUri, '/admin/articles') !== false,
     'categories' => strpos($currentUri, '/admin/categories') !== false,
     'statistics' => strpos($currentUri, '/admin/statistics') !== false,
@@ -45,6 +46,9 @@ $activeLinks = [
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <?php if ($isLoggedIn): ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $activeLinks['home'] ? 'active' : '' ?>" href="/admin">Home</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link <?= $activeLinks['articles'] ? 'active' : '' ?>" href="/admin/articles">Články</a>
                     </li>

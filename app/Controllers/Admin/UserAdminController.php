@@ -27,6 +27,8 @@ class UserAdminController
         // Načtení uživatelů s filtrováním a řazením
         $users = $this->model->getAllWithSortingAndFiltering($sortBy, $order, $filter);
 
+        $adminTitle = "Uživatelé | Admin Panel - Cyklistickey magazín";
+
         // Zobrazení view
         $view = '../app/Views/Admin/users/index.php';
         include '../app/Views/Admin/layout/base.php';
@@ -43,6 +45,8 @@ class UserAdminController
             echo "Uživatel nenalezen.";
             return;
         }
+
+        $adminTitle = "Upravit uživatele: " . $user['name'] . " " . $user['surname'] . " | Admin Panel - Cyklistickey magazín";
 
         // Zahrnutí šablony pro úpravu uživatele
         $view = '../app/Views/Admin/users/edit.php';
@@ -63,7 +67,6 @@ class UserAdminController
             'surname' => $postData['surname'],
             'role' => $postData['role'] ?? 0,
             'profil_foto' => $postData['profil_foto'] ?? null,
-            'zahlavi_foto' => $postData['zahlavi_foto'] ?? null,
             'popis' => $postData['popis'] ?? ''
         ];
 
@@ -99,6 +102,8 @@ class UserAdminController
         $user = $this->model->getById($userId);
         $social_links = $this->model->getSocials($userId);
         $available_socials = $this->model->getAvailableSocialSites();
+
+        $adminTitle = "Nastavení uživatele | Admin Panel - Cyklistickey magazín";
 
         $view = '../app/Views/Admin/users/settings.php';
         include '../app/Views/Admin/layout/base.php';
@@ -138,9 +143,10 @@ class UserAdminController
         error_log("DEBUG: Příchozí soubory: " . print_r($_FILES, true));
 
         // **Profilová fotka**
-        $profile_photo = $_SESSION['profile_photo'] ?? null;
+        $profile_photo = isset($_POST['current_foto']) ? $_POST['current_foto'] : null;
+
         if (isset($_FILES['profil_foto']) && $_FILES['profil_foto']['error'] === UPLOAD_ERR_OK) {
-            $targetDir = __DIR__ . '/../../web/uploads/users/thumbnails/';
+            $targetDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/users/thumbnails/';
             if (!is_dir($targetDir)) {
                 mkdir($targetDir, 0777, true);
             }
@@ -151,34 +157,14 @@ class UserAdminController
             if (move_uploaded_file($_FILES['profil_foto']['tmp_name'], $targetFile)) {
                 error_log("✅ Profilová fotka nahrána do: $targetFile");
                 $this->resizeAndCropImage($targetFile, 400, 400, true);
-                $_SESSION['profile_photo'] = $fileName; // Uložení do session
+                $profile_photo = $fileName;
             } else {
                 error_log("✖️ Chyba při přesunu profilové fotky.");
             }
         }
 
-        // **Background fotka (kontrola na prázdnou hodnotu)**
-        $header_photo = $_SESSION['header_photo'] ?? null;
-        if (isset($_FILES['zahlavi_foto']) && $_FILES['zahlavi_foto']['error'] === UPLOAD_ERR_OK) {
-            $targetDir = __DIR__ . '/../../web/uploads/users/background/';
-            if (!is_dir($targetDir)) {
-                mkdir($targetDir, 0777, true);
-            }
-
-            $fileName = time() . '_' . basename($_FILES['zahlavi_foto']['name']);
-            $targetFile = $targetDir . $fileName;
-
-            if (move_uploaded_file($_FILES['zahlavi_foto']['tmp_name'], $targetFile)) {
-                error_log("✅ Background fotka nahrána do: $targetFile");
-                $this->resizeAndCropImage($targetFile, 1200, 675, false);
-                $_SESSION['header_photo'] = $fileName; // Uložení do session
-            } else {
-                error_log("✖️ Chyba při přesunu background fotky.");
-            }
-        }
-
         // **Aktualizace databáze pouze s novými hodnotami**
-        $this->model->updateUser($userId, $name, $surname, $email, $description, $_SESSION['profile_photo'], $_SESSION['header_photo']);
+        $this->model->updateUser($userId, $name, $surname, $email, $description, $profile_photo);
 
         $social_ids = $_POST['social_id'] ?? [];
         $links = $_POST['link'] ?? [];
@@ -187,7 +173,15 @@ class UserAdminController
         error_log("DEBUG: Links - " . print_r($links, true));
 
         if (!empty($social_ids) && !empty($links)) {
-            $this->model->updateUserSocialLinks($userId, $social_ids, $links);
+            // Nejprve smažeme existující sociální odkazy
+            $this->model->deleteUserSocialLinks($userId);
+            
+            // Potom uložíme nové
+            foreach ($social_ids as $key => $socialId) {
+                if (!empty($socialId) && !empty($links[$key])) {
+                    $this->model->saveUserSocialLink($userId, $socialId, $links[$key]);
+                }
+            }
         } else {
             error_log("✖️ Žádná sociální síť nebyla odeslána.");
         }
@@ -262,50 +256,12 @@ class UserAdminController
 
     public function socialSites()
     {
-        $socials = $this->model->getSocials();
+        // Načteme všechny dostupné sociální sítě, ne konkrétního uživatele
+        $socials = $this->model->getAvailableSocialSites();
+        
+        $adminTitle = "Správa sociálních sítí | Admin Panel - Cyklistickey magazín";
+        
         $view = '../app/Views/Admin/users/social_sites.php';
         include '../app/Views/Admin/layout/base.php';
-    }
-
-    public function saveSocialSite()
-    {
-        $id = $_POST['id'] ?? null;
-        $name = $_POST['name'];
-        $url = $_POST['url'];
-        $icon = $_POST['current_icon'] ?? null;
-
-        // Nahrávání ikony
-        if (!empty($_FILES['icon']['name']) && $_FILES['icon']['error'] === 0) {
-            $uploadDir = __DIR__ . '/../../web/uploads/social_icons/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-
-            $fileName = time() . '_' . basename($_FILES['icon']['name']);
-            $targetFile = $uploadDir . $fileName;
-
-            if (move_uploaded_file($_FILES['icon']['tmp_name'], $targetFile)) {
-                $icon = $fileName;
-            }
-        }
-
-        if ($id) {
-            $this->model->updateSocialSite($id, $name, $url, $icon);
-        } else {
-            $this->model->addSocialSite($name, $url, $icon);
-        }
-
-        $_SESSION['success'] = "Sociální síť byla úspěšně uložena.";
-        header("Location: /admin/social-sites");
-        exit();
-    }
-
-    public function deleteSocialSite($id)
-    {
-        $this->model->deleteSocialSite($id);
-
-        $_SESSION['success'] = "Sociální síť byla odstraněna.";
-        header("Location: /admin/social-sites");
-        exit();
     }
 }

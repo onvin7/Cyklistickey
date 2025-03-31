@@ -82,9 +82,13 @@ class Category
             $stmt->bindParam(':id', $id, \PDO::PARAM_INT); // Přidáno $
             $stmt->execute();
 
+            // Potvrzení transakce
+            $this->db->commit();
             return true;
         } catch (\PDOException $e) {
-            echo "<script>alert('Chyba při mazání kategorie: " . addslashes($e->getMessage()) . "');</script>";
+            // Pokud nastane chyba, vrátíme změny zpět
+            $this->db->rollBack();
+            error_log("Chyba při mazání kategorie ID $id: " . $e->getMessage());
             return false;
         }
     }

@@ -1,0 +1,482 @@
+::-webkit-scrollbar {
+
+    background-color: #00000F;
+
+}
+
+
+
+::-webkit-scrollbar-thumb {
+
+    background-color: #171925;
+
+    border-radius: 25px;
+
+}
+
+
+
+.container-kontakt {
+
+    background-color: #00000f;
+
+    align-items: center;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+
+body {
+
+    background-color: #00000f;
+
+}
+
+
+
+.container-kontakt .foto-header {
+
+    width: 100%;
+
+    height: 420px;
+
+    object-fit: contain;
+
+    overflow: hidden;
+
+    background-position: 50% 0;
+
+    margin-bottom: 50px;
+
+    margin-top: -42.4px;
+
+}
+
+
+
+.parallax-image {
+
+    width: 100%;
+
+    object-fit: contain;
+
+    position: relative;
+
+}
+
+
+
+.foto-header-mobile {
+
+    display: none;
+
+}
+
+
+
+@media screen and (max-width: 930px) {
+
+    .foto-header {
+
+        display: none;
+
+    }
+
+
+
+    .foto-header-mobile {
+
+        display: block;
+
+        margin-top: 65px;
+
+    }
+
+}
+
+
+
+.container-kontakt .text {
+
+    width: 60%;
+
+}
+
+
+
+.container-kontakt .text p {
+
+    color: white;
+
+    font-weight: 200;
+
+    text-align: justify;
+
+}
+
+
+
+.container-kontakt .text a {
+
+    color: #f1008d;
+
+    font-weight: 400;
+
+    text-decoration: none;
+
+}
+
+
+
+.container-kontakt .text a:hover {
+
+    color: #f1008d;
+
+    text-decoration: underline;
+
+}
+
+
+
+.container-kontakt .text h2 {
+
+    font-size: 40px;
+
+    font-weight: 100;
+
+    color: white;
+
+    text-transform: uppercase;
+
+    margin-top: 50px;
+
+}
+
+
+
+@media screen and (max-width: 700px) {
+
+    .container-kontakt .text {
+
+        width: 90%;
+
+    }
+
+
+
+    .container-kontakt .foto-header {
+
+        width: 100%;
+
+        height: max-content;
+
+        object-fit: contain;
+
+        overflow: hidden;
+
+        background-position: 50% 0;
+
+        margin-bottom: 25px;
+
+        margin-top: 60px;
+
+    }
+
+}
+
+.galerie {
+    overflow-x: auto;
+    white-space: nowrap;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    margin-block: 50px;
+    padding-left: 10%;
+}
+
+.galerie.team {
+    width: 100%;
+}
+
+.galerie img:nth-child(1) {
+
+    margin-right: 10px;
+
+}
+
+
+
+.galerie::-webkit-scrollbar-thumb {
+
+    display: none;
+
+    -webkit-appearance: none;
+
+}
+
+
+
+.galerie .obrazky {
+
+    display: inline-block;
+
+}
+
+
+
+.galerie img {
+
+    height: 400px;
+
+    /* Set height and maintain aspect ratio */
+
+    width: auto;
+
+    /* Automatically adjust width to maintain aspect ratio */
+
+    display: inline-block;
+
+}
+
+
+
+.galerie .bikelab {
+
+    width: max-content;
+
+    transform: rotate(-90deg);
+
+}
+
+
+
+.galerie .bikelab h2 {
+
+    text-transform: uppercase;
+
+    font-size: 100px;
+
+    width: max-content;
+
+}
+
+
+
+.galerie .bikelab {
+
+    width: max-content;
+
+    transform: rotate(-90deg);
+
+}
+
+
+
+.galerie .bikelab h2 {
+
+    text-transform: uppercase;
+
+    font-size: 100px;
+
+    width: max-content;
+
+}
+
+
+
+.galerie .obrazky img#kategorie {
+
+    margin-inline: 10px;
+
+}
+
+
+
+@media screen and (max-width: 700px) {
+
+    .galerie {
+
+        padding-left: 5%;
+
+    }
+
+
+
+    .galerie img:nth-child(1) {
+
+        margin-right: 5px;
+
+    }
+
+
+
+    .galerie img {
+
+        height: 250px;
+
+    }
+
+}
+
+
+
+/*--------team--------*/
+
+
+
+.galerie .team-image {
+
+    display: inline-block;
+
+    position: relative;
+
+    margin-right: 10px;
+
+    width: auto;
+
+}
+
+
+
+.galerie .team-image img {
+
+    height: 400px;
+
+    width: auto;
+
+    display: block;
+
+}
+
+
+
+.galerie .team-image h2 {
+
+    position: absolute;
+
+    bottom: 0;
+
+    left: 0;
+
+    font-size: 2rem;
+
+    font-weight: 800;
+
+    margin: 0;
+
+    color: #00000F;
+
+    text-transform: uppercase;
+
+    z-index: 2;
+
+    padding: 10px 15px;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+}
+
+
+
+@media screen and (max-width: 700px) {
+
+    .galerie .team-image img {
+
+        height: 250px;
+
+    }
+
+
+
+    .galerie .team-image h2 {
+
+        font-size: 1rem;
+
+    }
+
+}
+
+/*-------------partneri----------*/
+
+
+
+.partneri {
+
+    flex-wrap: wrap;
+
+    display: flex;
+
+    flex-direction: row;
+
+    width: 90%;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 20px;
+
+    margin-top: 15px;
+
+}
+
+
+
+.partneri img {
+
+    width: 300px;
+
+    height: auto;
+
+    border-radius: 25px;
+
+}
+
+
+
+/*-------idnes--------*/
+
+
+
+.idnes {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+
+.idnes img {
+
+    width: 90%;
+
+    border-radius: 25px;
+
+    margin-top: 20px;
+
+}
+
+
+
+@media screen and (max-width: 700px) {
+
+    .idnes img {
+
+        border-radius: 15px;
+
+    }
+
+}
+
+
+
+/*----cards-container---*/

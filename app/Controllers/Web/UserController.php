@@ -19,6 +19,22 @@ class UserController
     {
         $users = $this->userModel->getAll();
         $css = ['authors', 'kategorie'];
+        
+        // SEO nastavení
+        $title = "Redakce | Cyklistický magazín";
+        $description = "Seznamte se s redakčním týmem Cyklistického magazínu - naši autoři, fotografové a editoři.";
+        $ogTitle = "Naše redakce | Cyklistický magazín";
+        $ogDescription = "Poznejte blíže celý tým, který pro vás tvoří obsah Cyklistického magazínu.";
+        $canonicalUrl = "https://vincenon21.mp.spse-net.cz/authors";
+        
+        // Structured data pro seznam autorů
+        $structuredData = [
+            "@context" => "https://schema.org",
+            "@type" => "CollectionPage",
+            "name" => "Redakce Cyklistického magazínu",
+            "url" => $canonicalUrl,
+            "description" => $description
+        ];
 
         $view = '../app/Views/Web/user/index.php';
         require '../app/Views/Web/layouts/base.php';
@@ -35,6 +51,10 @@ class UserController
   
         if (!$user) {
             header("HTTP/1.0 404 Not Found"); 
+            // SEO pro 404
+            $title = "Autor nenalezen | Cyklistický magazín";
+            $description = "Požadovaný autor nebyl nalezen. Zkuste navštívit stránku s přehledem redakce.";
+            
             $view = '../app/Views/Web/templates/404.php';
             require '../app/Views/Web/layouts/base.php';
             exit;
@@ -45,6 +65,38 @@ class UserController
         $relatedArticles = $this->articleModel->getByUser($user['id'], 3);
 
         $css = ["main-page", "autor_clanku"];
+        
+        // SEO nastavení
+        $title = $user['name'] . " " . $user['surname'] . " | Cyklistický magazín";
+        $description = $user['popis'] ? substr(strip_tags($user['popis']), 0, 155) . "..." : "Profil autora " . $user['name'] . " " . $user['surname'] . " a seznam jeho článků.";
+        $ogTitle = $user['name'] . " " . $user['surname'] . " - Autor | Cyklistický magazín";
+        $ogDescription = $description;
+        $canonicalUrl = "https://vincenon21.mp.spse-net.cz/author/" . $user['name'] . "-" . $user['surname'];
+        $ogImage = $user['profil_foto'] ? "https://vincenon21.mp.spse-net.cz/" . $user['profil_foto'] : null;
+        
+        // Structured data pro autora
+        $structuredData = [
+            "@context" => "https://schema.org",
+            "@type" => "Person",
+            "name" => $user['name'] . " " . $user['surname'],
+            "url" => $canonicalUrl,
+            "jobTitle" => $user['role'] ?? "Autor",
+            "description" => strip_tags($user['popis'] ?? ""),
+            "image" => $ogImage
+        ];
+        
+        // Pokud máme sociální sítě, přidáme je
+        if (!empty($socials)) {
+            $sameAs = [];
+            foreach ($socials as $social) {
+                if (!empty($social['url'])) {
+                    $sameAs[] = $social['url'];
+                }
+            }
+            if (!empty($sameAs)) {
+                $structuredData["sameAs"] = $sameAs;
+            }
+        }
 
         $view = '../app/Views/Web/user/detail.php';
         require '../app/Views/Web/layouts/base.php';
@@ -60,6 +112,10 @@ class UserController
   
         if (!$user) {
             header("HTTP/1.0 404 Not Found"); 
+            // SEO pro 404
+            $title = "Autor nenalezen | Cyklistický magazín";
+            $description = "Požadovaný autor nebyl nalezen. Zkuste navštívit stránku s přehledem redakce.";
+            
             $view = '../app/Views/Web/templates/404.php';
             require '../app/Views/Web/layouts/base.php';
             exit;
@@ -68,50 +124,15 @@ class UserController
         $articles = $this->articleModel->getByIdUser($user['id']);
 
         $css = ["kategorie"];
+        
+        // SEO nastavení
+        $title = "Články od " . $user['name'] . " " . $user['surname'] . " | Cyklistický magazín";
+        $description = "Kompletní seznam článků, které napsal " . $user['name'] . " " . $user['surname'] . " pro Cyklistický magazín.";
+        $ogTitle = "Články autora " . $user['name'] . " " . $user['surname'];
+        $ogDescription = "Přečtěte si všechny články od našeho autora " . $user['name'] . " " . $user['surname'] . ".";
+        $canonicalUrl = "https://vincenon21.mp.spse-net.cz/author/" . $user['name'] . "-" . $user['surname'] . "/articles";
 
         $view = '../app/Views/Web/user/article.php';
         include '../app/Views/Web/layouts/base.php';
-    }
-
-    // Registrace uživatele
-    public function register()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->model->create($_POST['email'], $_POST['heslo'], $_POST['role'], $_POST['name'], $_POST['surname']);
-            header('Location: /login');
-        } else {
-            include '../../app/Views/Web/users/register.php';
-        }
-    }
-
-    // Přihlášení uživatele
-    public function login()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $user = $this->model->authenticate($_POST['email'], $_POST['heslo']);
-            if ($user) {
-                session_start();
-                $_SESSION['user'] = $user;
-                header('Location: /');
-            } else {
-                $error = "Špatný e-mail nebo heslo";
-                include '../../app/Views/Web/users/login.php';
-            }
-        } else {
-            include '../../app/Views/Web/users/login.php';
-        }
-    }
-
-    public function showLoginForm()
-    {
-        include '../../app/Views/Web/users/login.php';
-    }
-
-    // Odhlášení uživatele
-    public function logout()
-    {
-        session_start();
-        session_destroy();
-        header('Location: /');
     }
 }

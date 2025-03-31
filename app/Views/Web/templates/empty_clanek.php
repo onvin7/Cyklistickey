@@ -1,5 +1,5 @@
 <div class="chybi-clanek">
-    <img src="/assets/graphics/empty_clanek.png">
+    <img src="/assets/graphics/empty_clanek.png" alt="Prázdný článek">
 </div>
 
 <style>

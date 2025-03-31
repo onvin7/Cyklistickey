@@ -1,0 +1,988 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+
+* {
+
+    margin: 0;
+
+    padding: 0;
+
+    border: 0;
+
+    font-family: 'Fira Sans Condensed', sans-serif;
+
+}
+
+
+
+::-webkit-scrollbar {
+
+    background-color: #00000F;
+
+}
+
+
+
+::-webkit-scrollbar-thumb {
+
+    background-color: #171925;
+
+    border-radius: 25px;
+
+}
+
+
+
+body {
+
+    background: #00000F;
+
+}
+
+
+
+.container-clanky {
+
+    max-width: 100%;
+
+    display: flex;
+
+    flex-direction: row;
+
+    height: max-content;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    justify-content: space-between;
+
+    margin-top: 10vh;
+
+    margin-bottom: 10vh;
+
+    margin-inline: 30px;
+
+}
+
+
+
+.container-clanky .card {
+
+    display: flex;
+
+    flex-direction: column;
+
+    flex: 1;
+
+    overflow: hidden;
+
+    background: #00000F;
+
+    color: white;
+
+    height: max-content;
+
+}
+
+
+
+@media screen and (max-width: 650px) {
+
+    .container-clanky {
+
+        display: flex;
+
+        flex-direction: column;
+
+    }
+
+}
+
+
+
+.container-clanky .card .card-body {
+    overflow: hidden;
+    padding: 0;
+    padding-top: 5px;
+    height: 100%;
+}
+
+
+.container-clanky .card .card-body .kategorie {
+
+    display: flex;
+
+    margin-left: -5px;
+
+    margin-top: 5px;
+
+}
+
+
+
+.container-clanky .card .card-body .kategorie a {
+
+    margin-right: 5px;
+
+    color: white;
+
+    text-decoration: none;
+
+}
+
+
+
+.container-clanky .card h5 {
+
+    text-transform: uppercase;
+
+    font-weight: 300;
+
+}
+
+
+
+.container-clanky .card p {
+
+    display: block;
+
+    width: max-content;
+
+    padding: 0.5vh 1vh;
+
+    border-radius: 25px;
+
+    background-color: #f1008d;
+
+    font-size: 12px;
+
+    text-transform: uppercase;
+
+    border: 3px solid transparent;
+
+    transition: 0.2s;
+    margin-bottom: 5px;
+
+
+}
+
+
+
+.container-clanky .card p:hover {
+
+    border: 3px solid #f1008d;
+
+    background-color: #00000F;
+
+    transition: 0.2s;
+
+    color: #f1008d;
+
+    font-weight: 500;
+
+}
+
+
+
+.container-clanky .card a {
+    color: white;
+    text-decoration: none;
+    overflow: hidden;
+}
+
+
+
+.container-clanky .card img {
+    width: 100%;
+    object-fit: cover;
+    display: block;
+    aspect-ratio: 16/9;
+    transition: 0.5s;
+    overflow: hidden;
+}
+
+
+
+.pinned {
+
+    height: auto;
+
+    width: 100%;
+
+}
+
+
+
+.pinned .image {
+
+    width: 100%;
+
+    height: 80vh;
+
+    background-position: center;
+
+    background-size: cover;
+
+    transition: 0.5s;
+
+}
+
+
+
+.pinned .image .pinned-body {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: end;
+
+    justify-content: center;
+
+    height: 80vh;
+
+}
+
+
+
+.pinned .image .pinned-body h5 {
+
+    color: white;
+
+    max-width: 40%;
+
+    height: auto;
+
+    font-weight: 300;
+
+    font-size: 28px;
+
+    margin-right: 20px;
+
+}
+
+
+
+.cist-clanek {
+
+    color: #fff;
+
+    font-size: 1.25rem;
+
+    line-height: 1;
+
+    width: max-content;
+
+    padding: .7em .9em;
+
+    border: 0.25em solid transparent;
+
+    background-image: linear-gradient(#00000F, #00000F), linear-gradient(to right, rgb(229, 7, 126), rgb(154, 31, 106), rgb(4, 142, 206), rgb(4, 142, 206), rgb(99, 195, 208));
+
+    background-origin: border-box;
+
+    background-clip: padding-box, border-box;
+
+    border-radius: 1.8em;
+
+    background-size: 200% 100%;
+
+    background-position: left bottom;
+
+    transition: background-position 0.3s ease-out, background-size 0.3s ease-out;
+
+    overflow: hidden;
+
+    cursor: pointer;
+
+}
+
+
+
+.cist-clanek:hover {
+
+    background-position: right bottom;
+
+}
+
+
+
+.cist-clanek a {
+
+    font-weight: 300;
+
+    color: white;
+
+    text-decoration: none;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    font-size: 20px;
+
+    overflow: hidden;
+
+    padding: 2px;
+
+}
+
+
+
+.cist-clanek i {
+
+    margin-left: 20px;
+
+}
+
+
+
+.container-clanky-kategorie {
+
+    max-width: 100%;
+
+    display: flex;
+
+    flex-direction: row;
+
+    height: max-content;
+
+    gap: 15px;
+
+    justify-content: space-between;
+
+    margin: 10vh 30px 10vh 10px;
+}
+
+
+
+.container-clanky-kategorie .card {
+
+    display: flex;
+
+    flex-direction: column;
+
+    flex: 1;
+
+    overflow: hidden;
+
+    background: #00000F;
+
+    color: white;
+
+    height: max-content;
+}
+
+
+
+.container-clanky-kategorie .card .card-body {
+
+    padding: 10px 15px 15px;
+
+    height: 100%;
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+
+
+.container-clanky-kategorie .card .card-body .gradient {
+
+    position: relative;
+
+    width: calc(100% + 30px);
+
+    height: 4px;
+
+    background: linear-gradient(90deg, #1e7bd8 0%, #f1008d 100%);
+
+    border-radius: 2px;
+
+    margin: 0 0 8px -15px;
+
+}
+
+
+
+.container-clanky-kategorie .card .card-body .gradient::after {
+
+    content: '';
+
+    display: block;
+
+    position: absolute;
+
+    top: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    left: 0;
+
+    pointer-events: none;
+
+}
+
+/* Přidáme třídu pro datum */
+.container-clanky-kategorie .card .card-body .datum, .container-clanky .card .card-body .datum  {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+    font-weight: 300;
+    margin-bottom: 5px;
+    display: block;
+}
+
+
+.container-clanky-kategorie .card .card-body .kategorie {
+
+    display: flex;
+
+    flex-wrap: nowrap;
+
+    gap: 5px;
+
+    white-space: nowrap;
+
+    min-width: max-content;
+
+    -ms-overflow-style: none;
+
+    scrollbar-width: none;
+
+}
+
+
+
+.container-clanky-kategorie .card .card-body .kategorie a {
+
+    margin-right: 5px;
+
+    color: white;
+
+    text-decoration: none;
+
+}
+
+
+
+.container-clanky-kategorie .card .card-body .kategorie a:nth-child(n+4) {
+
+    display: none;
+
+}
+
+
+
+.container-clanky-kategorie .card h5 {
+
+    text-transform: uppercase;
+
+    font-weight: 400;
+
+    font-size: 20px;
+
+    margin-bottom: 10px;
+
+    margin-top: 0;
+
+    line-height: 1.3;
+
+    letter-spacing: 0.5px;
+}
+
+
+.container-clanky-kategorie .card p {
+
+    display: block;
+
+    width: max-content;
+
+    padding: 0.2vh 1vh;
+
+    border-radius: 25px;
+
+    background-color: #3eb7e7;
+
+    font-size: 12px;
+
+    text-transform: uppercase;
+
+    border: 3px solid transparent;
+
+    transition: 0.2s;
+
+    color: white;
+
+    min-width: max-content;
+
+    margin: 0;
+
+}
+
+
+
+.container-clanky-kategorie .card p:hover {
+
+    border: 3px solid #3eb7e7;
+
+    background-color: #00000F;
+
+    transition: 0.2s;
+
+    color: #3eb7e7;
+
+    font-weight: 500;
+
+}
+
+
+
+.container-clanky-kategorie .card a {
+
+    color: white;
+
+    text-decoration: none;
+
+    transition: all 0.3s ease;
+
+}
+
+
+
+.container-clanky-kategorie .card img {
+
+    width: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    aspect-ratio: 16/9;
+
+    transition: 0.5s;
+
+    border-radius: 8px;
+
+    margin: 0;
+
+}
+
+
+.container-clanky-kategorie .card.text {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    height: 35vh;
+
+}
+
+.container-clanky-kategorie .card.text h2 {
+
+    font-size: 50px;
+
+    text-transform: uppercase;
+
+    font-weight: 100;
+
+}
+
+
+
+.container-clanky-kategorie .card.text .cist-clanek {
+
+    font-size: 1em;
+
+}
+
+
+
+.iframe-container {
+
+    position: relative;
+
+    overflow: visible; /* Make sure the skewed background is not cut off */
+
+    display: flex;
+
+    justify-content: space-between;
+
+    padding-inline: 2.8%;
+
+    gap: 5%;
+
+    padding-block: 50px;
+
+    margin-block: 25px;
+
+  }
+
+  
+
+  .iframe-container::before {
+
+    content: '';
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    background-color: rgba(23, 25, 37, 57%);
+
+    transform: skewY(-5deg) scale(1); /* Increase scale as needed */
+
+    transform-origin: bottom; /* Adjust if necessary */
+
+    z-index: -1;
+
+  }
+
+
+
+.iframe-container .text {
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+}
+
+
+
+.iframe-container .text h1 {
+
+    color: white;
+
+    text-transform: uppercase;
+
+    font-weight: 200;
+
+}
+
+
+
+.podkategorie-container {
+
+    display: flex;
+
+    padding-inline: 5%;
+
+    width: 100%;
+
+    padding-block: 50px;
+
+    background-color: #171925;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+
+
+.podkategorie-container .text {
+
+    width: 50%;
+
+}
+
+.card.clanek, .card.clanek a {
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.card.clanek img {
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.card.clanek:hover img {
+    transform: scale(1.02);
+}
+
+.podkategorie-container .text h1 {
+
+    color: white;
+
+    text-transform: uppercase;
+
+    font-weight: 200;
+
+}
+
+.podkategorie-container .text p {
+
+    color: rgb(180, 180, 180);
+
+    font-weight: 200;
+
+}
+
+
+
+.podkategorie-container .podkategorie {
+
+    width: 50%;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    justify-content: right;
+
+}
+
+.podkategorie-container .podkategorie .prvek {
+    margin-right: 50px;
+}
+
+
+
+.podkategorie-container .podkategorie .prvek h2 {
+
+    overflow: hidden;
+
+}
+
+
+
+.podkategorie-container .podkategorie .prvek h2 a {
+
+    display: block;
+
+    background-color: #3eb7e7;
+
+    border-radius: 30px;
+
+    border: 3px solid transparent;
+
+    color: #00000F;
+
+    text-decoration: none;
+
+    text-transform: uppercase;
+
+    padding: 10px 20px;
+
+    font-size: 22px;
+
+    font-weight: 400;
+
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.podkategorie-container .podkategorie .prvek h2 a i {
+    margin-left: 15px;
+}
+
+.podkategorie-container .podkategorie .prvek h2 a:hover {
+
+    border: 3px solid #3eb7e7;
+
+    background-color: #171925;
+
+    border-radius: 25px;
+
+    color: #3eb7e7;
+
+    transition: 0.2s;
+
+}
+
+
+
+@media screen and (max-width: 835px) {
+
+    .pinned .image {
+
+        height: 65vh !important;
+
+    }
+
+
+
+    .pinned .image .pinned-body {
+
+        flex-direction: column;
+
+        align-items: start;
+
+        justify-content: end;
+
+        margin-left: 5%;
+
+        height: 65vh;
+
+    }
+
+
+
+    .pinned .image .pinned-body h5 {
+
+        max-width: 90%;
+
+        align-items: start;
+
+        margin-bottom: 20px;
+
+    }
+
+
+
+    .podkategorie-container {
+
+        flex-direction: column;
+
+        margin-top: 50px;
+
+    }
+
+
+
+    .podkategorie-container .text {
+
+        width: 100%;
+
+    }
+
+
+
+    .podkategorie-container .text h1 {
+
+        color: white;
+
+        text-transform: uppercase;
+
+        font-weight: 200;
+
+        text-align: center;
+
+        margin-bottom: 50px;
+
+    }
+
+
+
+    .podkategorie-container .podkategorie {
+
+        width: 100%;
+
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 10px;
+
+        justify-content: space-around;
+
+    }
+
+
+
+}
+
+
+
+div.podobne_clanky {
+
+    display: flex;
+
+    width: 100%;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+
+.podobne_clanky h1 {
+
+    color: white;
+
+}
+
+
+
+.container-clanky.podobne_clanky {
+
+    margin-top: 2vh;
+
+}
+
+.iframe-container .text-mobile {
+    display: none;
+}
+
+@media screen and (max-width: 1100px) {
+    .container-clanky-kategorie {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        margin-inline: 30px;
+        gap: 20px;
+    }
+
+    .container-clanky-kategorie .card.text {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 35vh;
+        margin-bottom: 30px;
+        margin-top: 50px;
+    }
+
+    .iframe-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .iframe-container .text {
+        display: none !important;
+    }
+
+    .iframe-container .text-mobile {
+        display: flex;
+        width: 100%;
+        align-items: center;
+    }
+
+    .iframe-container .text-mobile h1 {
+        width: 100%;
+        display: block;
+        color: white;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: 200;
+        margin-bottom: 40px;
+    }
+
+    .iframe-container iframe {
+        aspect-ratio: 16/9;
+        width: 100%;
+        height: auto;
+    }
+}

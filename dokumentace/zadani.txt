@@ -1,0 +1,25 @@
+Redakční systém pro cyklistický magazín
+
+Téma maturitní práce (popis):
+Vytvořte redakční systém zaměřený na správu článků pro cyklistický magazín. Systém bude umožňovat tvorbu, úpravy, mazání a publikaci článků s různými úrovněmi přístupu pro uživatele s různými rolemi (např. redaktor, editor, administrátor). Systém bude rovněž zahrnovat správu kategorií článků, sledování počtu zobrazení článků, možnost přidání zvukové stopy k článku a funkce pro propagaci vybraných článků na první pozice na webu.
+
+Hlavní body – specifikace maturitní práce:
+1. Uživatelské účty a role
+2. Správa článků
+3. Publikace článků
+4. Správa kategorií
+5. Počítání zobrazení článků
+6. Správa uživatelů
+
+
+Způsob zpracování maturitní práce:
+
+Maturitní práce musí být zpracována v souladu se zákonem č. 121/2000 Sb., autorský zákon.
+
+Maturitní práce je tvořena praktickou částí (viz téma a specifikace maturitní práce výše) a písemnou prací.
+
+Maturitní práce je realizována žákem převážně v rámci výuky ve 4. ročníku. Lze pokračovat na projektu z nižších ročníků.
+
+Podrobné pokyny ke zpracování maturitní práce příslušné kategorie jsou uvedeny v dokumentu MP_Zpracovani-podrobne_pokyny.
+
+Zpracování písemné práce musí odpovídat požadavkům uvedeným v dokumentu MP_Formalni_stranka_dokumentace. Písemná práce musí být rovněž zpracována v souladu s normou pro úpravu písemností [ČSN 01 6910 (2014)], s citační normou [ČSN ISO 690], se základními typografickými pravidly, pravidly sazby, gramatickými pravidly a pravidly českého pravopisu.

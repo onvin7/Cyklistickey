@@ -32,7 +32,9 @@ if (!empty($articles) && count($articles) > 1) {
     ?>
         <a href="/article/<?php echo htmlspecialchars($row['url']); ?>/">
             <div class="card">
-                <img loading="lazy" src="/uploads/thumbnails/male/<?php echo !empty($row["nahled_foto"]) ? htmlspecialchars($row["nahled_foto"]) : 'noimage.png'; ?>" alt="Náhled">
+                <div class="image-container">
+                    <img loading="lazy" src="/uploads/thumbnails/male/<?php echo !empty($row["nahled_foto"]) ? htmlspecialchars($row["nahled_foto"]) : 'noimage.png'; ?>" alt="Náhled">
+                </div>
                 <div class="card-body">
                     <div class="kategorie">
                         <?php 
@@ -88,7 +90,9 @@ if (!empty($articles) && count($articles) > 1) {
                 <?php foreach ($category['articles'] as $clanek): ?>
                     <div class="card clanek">
                         <a href="/article/<?php echo htmlspecialchars($clanek['url']); ?>/">
-                            <img loading="lazy" src="/uploads/thumbnails/male/<?php echo !empty($clanek['nahled_foto']) ? htmlspecialchars($clanek['nahled_foto']) : 'noimage.png'; ?>" alt="Náhled článku">
+                            <div class="image-container">
+                                <img loading="lazy" src="/uploads/thumbnails/male/<?php echo !empty($clanek['nahled_foto']) ? htmlspecialchars($clanek['nahled_foto']) : 'noimage.png'; ?>" alt="Náhled článku">
+                            </div>
                         </a>
                         <div class="card-body">
                             <div class="gradient"></div>

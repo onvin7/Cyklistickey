@@ -101,4 +101,108 @@ class TimeHelper
             return "hodinami";
         }
     }
+
+    /**
+     * Vrací formátovaný čas do budoucího data
+     * 
+     * @param string $futureDate Datum ve formátu, který lze zpracovat strtotime nebo DateTime objekt
+     * @return string Formátovaný čas do budoucnosti (např. "za 5 minut", "za 2 hodiny", "za 3 dny")
+     */
+    public static function getTimeUntil($futureDate)
+    {
+        if ($futureDate instanceof \DateTime) {
+            $timestamp = $futureDate->getTimestamp();
+        } else {
+            $timestamp = strtotime($futureDate);
+        }
+        
+        $now = time();
+        $diff = $timestamp - $now;
+        
+        // Už proběhlo
+        if ($diff <= 0) {
+            return "již proběhlo";
+        }
+        
+        // Za méně než hodinu
+        if ($diff < 3600) {
+            $minutes = ceil($diff / 60);
+            return "za " . $minutes . " " . self::getCzechMinutesFutureForm($minutes);
+        }
+        
+        // Za méně než den
+        if ($diff < 86400) { // 24 hodin = 24 * 3600 = 86400 sekund
+            $hours = floor($diff / 3600);
+            $minutes = ceil(($diff % 3600) / 60);
+            
+            if ($minutes > 0) {
+                return "za " . $hours . " " . self::getCzechHoursFutureForm($hours) . 
+                       " a " . $minutes . " " . self::getCzechMinutesFutureForm($minutes);
+            } else {
+                return "za " . $hours . " " . self::getCzechHoursFutureForm($hours);
+            }
+        }
+        
+        // Za více dní
+        $days = floor($diff / 86400);
+        $hours = floor(($diff % 86400) / 3600);
+        
+        if ($hours > 0) {
+            return "za " . $days . " " . self::getCzechDaysFutureForm($days) . 
+                   " a " . $hours . " " . self::getCzechHoursFutureForm($hours);
+        } else {
+            return "za " . $days . " " . self::getCzechDaysFutureForm($days);
+        }
+    }
+    
+    /**
+     * Vrací správný český tvar slova "minuta" pro budoucnost
+     * 
+     * @param int $minutes Počet minut
+     * @return string Správný tvar slova
+     */
+    private static function getCzechMinutesFutureForm($minutes)
+    {
+        if ($minutes === 1) {
+            return "minutu";
+        } elseif ($minutes >= 2 && $minutes <= 4) {
+            return "minuty";
+        } else {
+            return "minut";
+        }
+    }
+    
+    /**
+     * Vrací správný český tvar slova "hodina" pro budoucnost
+     * 
+     * @param int $hours Počet hodin
+     * @return string Správný tvar slova
+     */
+    private static function getCzechHoursFutureForm($hours)
+    {
+        if ($hours === 1) {
+            return "hodinu";
+        } elseif ($hours >= 2 && $hours <= 4) {
+            return "hodiny";
+        } else {
+            return "hodin";
+        }
+    }
+    
+    /**
+     * Vrací správný český tvar slova "den" pro budoucnost
+     * 
+     * @param int $days Počet dní
+     * @return string Správný tvar slova
+     */
+    private static function getCzechDaysFutureForm($days)
+    {
+        if ($days === 1) {
+            return "den";
+        } elseif ($days >= 2 && $days <= 4) {
+            return "dny";
+        } else {
+            return "dní";
+        }
+    }
 } 

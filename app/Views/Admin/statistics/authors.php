@@ -13,7 +13,7 @@
         </div>
         <div class="p-3">
             <form id="period-filter" class="row g-3" method="GET">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="input-group">
                         <span class="input-group-text bg-light"><i class="fas fa-calendar me-1"></i></span>
                         <select class="form-select shadow-none border-start-0" id="period" name="period">

@@ -251,6 +251,9 @@ section.content-section::before {
 
 .navbar-nav .nav-item {
   margin: 0 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .navbar-nav .nav-link {
@@ -636,6 +639,11 @@ tr:not(.group-header) td:first-child i {
     box-shadow: 0 2px 8px rgba(77, 90, 234, 0.3) !important;
 }
 
+.btn-danger {
+    text-decoration: none !important;
+    color: white !important;
+}
+
 .section-header {
     padding: 15px !important;
     border-bottom: 1px solid rgba(0,0,0,0.05) !important;
@@ -659,7 +667,7 @@ tr:not(.group-header) td:first-child i {
 }
 
 .form-select, .form-control {
-    border-color: #eaeaea !important;
+    border-color: #eaeaea;
 }
 
 .form-select:focus, .form-control:focus {
@@ -727,6 +735,17 @@ tr:not(.group-header) td:first-child i {
     text-decoration: underline;
 }
 
+/* Zajištění správného zobrazení tlačítek v tabulce */
+.table a.btn-danger {
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.table a.btn-danger:hover {
+    color: white !important;
+    text-decoration: none !important;
+}
+
 /* Styly pro informace o autorovi */
 .author-info {
     display: flex;
@@ -760,4 +779,313 @@ tr:not(.group-header) td:first-child i {
 .activity-badge.inactive {
     background-color: #f3f4f6;
     color: #6b7280;
+}
+
+.card {
+    border: none;
+    box-shadow: var(--card-shadow);
+    border-radius: var(--border-radius);
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1.25rem;
+}
+
+.card-header h5 {
+    margin-bottom: 0;
+    font-weight: 600;
+    color: var(--dark-gray);
+}
+
+/* Editor a formulářové prvky pro vytváření článků */
+#editor {
+    min-height: 500px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.tox-tinymce {
+    transition: all 0.3s ease;
+    border-radius: 8px !important;
+}
+
+.tox-tinymce:hover {
+    box-shadow: 0 5px 15px rgba(77, 90, 234, 0.15);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+/* Moderní styly pro formulářové prvky */
+.content-section form .form-label {
+    font-weight: 500;
+    color: #464e5f;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.form-control, .form-select {
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #e4e6ef;
+    transition: all 0.2s ease;
+    background-color: #f8f9fc;
+    color: #464e5f;
+    font-size: 0.95rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(77, 90, 234, 0.15);
+    background-color: #fff;
+}
+
+.form-control::placeholder {
+    color: #b5b5c3;
+    opacity: 0.6;
+}
+
+/* Moderní přepínače */
+.form-check.form-switch .form-check-input {
+    height: 1.6rem;
+    width: 3.2rem;
+    border-radius: 1rem;
+    background-color: #e4e6ef;
+    border: none;
+}
+
+.form-check.form-switch .form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-check.form-switch .form-check-label {
+    padding-top: 5px;
+    padding-left: 8px;
+    font-weight: 500;
+    color: #464e5f;
+}
+
+/* Vylepšený placeholder pro prázdné náhledy */
+.empty-media-placeholder {
+    height: 180px;
+    background-color: #f0f3f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.empty-media-placeholder:hover {
+    background-color: #e9ecef;
+}
+
+.empty-media-placeholder i {
+    font-size: 3rem;
+    color: #adb5bd;
+    margin-bottom: 12px;
+    opacity: 0.7;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.empty-media-placeholder span {
+    color: #6c757d;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Styly pro propagace */
+.promotion-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.promotion-active {
+    background-color: rgba(27, 212, 205, 0.15);
+    color: var(--accent-color);
+    border: 1px solid rgba(27, 212, 205, 0.3);
+}
+
+.promotion-upcoming {
+    background-color: rgba(77, 90, 234, 0.15);
+    color: var(--primary-color);
+    border: 1px solid rgba(77, 90, 234, 0.3);
+}
+
+.promotion-ended {
+    background-color: rgba(108, 117, 125, 0.15);
+    color: #6c757d;
+    border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+.promotion-card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid #e4e6ef;
+    background-color: #fff;
+    margin-bottom: 1.5rem;
+}
+
+.promotion-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transform: translateY(-3px);
+}
+
+.promotion-card-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e4e6ef;
+    background-color: var(--light-gray);
+    font-weight: 600;
+    color: var(--dark-gray);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.promotion-card-body {
+    padding: 15px 20px;
+}
+
+.promotion-dates {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.promotion-date {
+    display: flex;
+    flex-direction: column;
+}
+
+.promotion-date span:first-child {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 2px;
+}
+
+.promotion-date span:last-child {
+    font-weight: 600;
+    color: var(--dark-gray);
+}
+
+.promotion-timespan-bar {
+    height: 8px;
+    width: 100%;
+    background-color: #e4e6ef;
+    border-radius: 20px;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.promotion-timespan-progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--chart-color-2) 0%, var(--chart-color-1) 100%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: width 0.5s ease;
+}
+
+/* Stylování pro přepínače */
+.nav-pills.promotion-tabs {
+    margin-bottom: 25px;
+    border-radius: 10px;
+    background-color: var(--light-gray);
+    padding: 5px;
+}
+
+.nav-pills.promotion-tabs .nav-link {
+    color: var(--dark-gray);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin: 0 3px;
+}
+
+.nav-pills.promotion-tabs .nav-link:hover {
+    background-color: rgba(77, 90, 234, 0.08);
+}
+
+.nav-pills.promotion-tabs .nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 10px rgba(77, 90, 234, 0.2);
+}
+
+.category-select-container {
+  position: relative;
+  width: 100%;
+}
+
+.category-select-header {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  background-color: #fff;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.category-select-header:hover {
+  border-color: #adb5bd;
+}
+
+.category-select-options {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  margin-top: 0.25rem;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.category-option {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.category-option:hover {
+  background-color: #f8f9fa;
+}
+
+.category-option input[type="checkbox"] {
+  display: none;
+}
+
+.category-option label {
+  margin: 0;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+}
+
+.category-option input[type="checkbox"]:checked + label {
+  color: #0d6efd;
+  font-weight: 500;
+}
+
+.category-option input[type="checkbox"]:checked ~ .category-option {
+  background-color: #e9ecef;
 }

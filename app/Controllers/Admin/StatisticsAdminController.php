@@ -59,6 +59,8 @@ class StatisticsAdminController
             ];
         }
 
+        $adminTitle = "Statistiky přehled | Admin Panel - Cyklistickey magazín";
+
         $view = '../app/Views/Admin/statistics/index.php';
         include '../app/Views/Admin/layout/base.php';
     }
@@ -107,6 +109,8 @@ class StatisticsAdminController
         $viewsDistribution = $this->model->getViewsDistribution();
         $publishingTrend = $this->model->getPublishingTrend();
 
+        $adminTitle = "Statistiky článků | Admin Panel - Cyklistickey magazín";
+
         $view = '../app/Views/Admin/statistics/articles.php';
         include '../app/Views/Admin/layout/base.php';
     }
@@ -132,6 +136,8 @@ class StatisticsAdminController
         $categoriesTrendData = $this->model->getCategoriesTrendData($period);
         $categoriesCorrelationData = $this->model->getCategoriesCorrelation();
 
+        $adminTitle = "Statistiky kategorií | Admin Panel - Cyklistickey magazín";
+
         $view = '../app/Views/Admin/statistics/categories.php';
         include '../app/Views/Admin/layout/base.php';
     }
@@ -155,6 +161,8 @@ class StatisticsAdminController
         // Získání dat pro grafy
         $authorsTrend = $this->model->getAuthorsTrend($period);
         $authorsCategoryDistribution = $this->model->getAuthorsCategoryDistribution();
+
+        $adminTitle = "Statistiky autorů | Admin Panel - Cyklistickey magazín";
 
         $view = '../app/Views/Admin/statistics/authors.php';
         include '../app/Views/Admin/layout/base.php';
@@ -249,6 +257,8 @@ class StatisticsAdminController
         // Předání všech proměnných do aktuálního rozsahu
         extract($data);
         
+        $adminTitle = "Statistiky zobrazení | Admin Panel - Cyklistickey magazín";
+
         $view = '../app/Views/Admin/statistics/views.php';
         include '../app/Views/Admin/layout/base.php';
     }

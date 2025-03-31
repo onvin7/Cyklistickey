@@ -1,6 +1,6 @@
     <h1 class="dashboard-title text-center">Admin Dashboard</h1>
 
-    <section class="content-section">
+    <section class="content-section mb-4">
         <div class="section-header">
             <h2><i class="fa-solid fa-newspaper"></i> Nejnovější články</h2>
         </div>
@@ -20,7 +20,7 @@
         </ul>
     </section>
 
-    <section class="content-section">
+    <section class="content-section mb-4">
         <div class="section-header">
             <h2><i class="fa-solid fa-calendar-days"></i> Články z posledních 7 dnů</h2>
         </div>
@@ -61,7 +61,7 @@
         </div>
     </section>
 
-    <section class="content-section">
+    <section class="content-section mb-4">
         <div class="section-header">
             <h2><i class="fa-solid fa-chart-line"></i> Nejčtenější články za posledních 7 dní</h2>
         </div>

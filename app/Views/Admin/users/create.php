@@ -1,12 +1,18 @@
 <div class="ohraniceni new">
     <div class="logo register">
-        <img src="/assets/graphics/logo_text_cyklistickey.png">
+        <img src="/assets/graphics/logo_text_cyklistickey.png" alt="Cyklistickey logo">
     </div>
     <div class="inputy">
         <form method="POST" action="/register/submit">
                 <div class="prvek">
                     <span class="form-title">Registrace</span>
                 </div>
+                <?php if (isset($_SESSION['registration_error'])): ?>
+                <div class="prvek" style="color: red; margin-bottom: 10px;">
+                    <?= $_SESSION['registration_error']; ?>
+                    <?php unset($_SESSION['registration_error']); ?>
+                </div>
+                <?php endif; ?>
                 <div class="prvek">
                     <div class="input-group validator-msg-holder js-validated-element-wrapper">
                         <label class="input-group__label" for="email">EMAIL</label>

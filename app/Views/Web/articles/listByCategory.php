@@ -14,7 +14,7 @@ include '../app/Views/Web/layouts/header.php';
             <?php foreach ($articles as $article): ?>
                 <div class="col-md-4">
                     <div class="card mb-3 h-100">
-                        <img src="/uploads/thumbnails/<?= !empty($article['nahled_foto']) ? htmlspecialchars($article['nahled_foto']) : 'noimage.png' ?>" 
+                        <img src="/uploads/thumbnails/<?= !empty($article['nahled_foto']) ? htmlspecialchars($article['nahled_foto']) : 'noimage.png' ?>" alt="<?= htmlspecialchars($article['nazev'] ?? 'Náhled článku') ?>" 
                              class="card-img-top" 
                              alt="<?= htmlspecialchars($article['nazev']) ?>">
                         <div class="card-body">

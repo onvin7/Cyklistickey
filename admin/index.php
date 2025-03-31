@@ -43,19 +43,19 @@ $routes = [
     'articles' => [ArticleAdminController::class, 'index'],
     'articles/create' => [ArticleAdminController::class, 'create'],
     'articles/store' => [ArticleAdminController::class, 'store', 'data'],
-    'articles/edit' => [ArticleAdminController::class, 'edit', 'id'],
-    'articles/update' => [ArticleAdminController::class, 'update', 'id'],
-    'articles/delete' => [ArticleAdminController::class, 'delete', 'id'],
+    'articles/edit/(\d+)' => [ArticleAdminController::class, 'edit', 'id'],
+    'articles/update/(\d+)' => [ArticleAdminController::class, 'update', 'id'],
+    'articles/delete/(\d+)' => [ArticleAdminController::class, 'delete', 'id'],
     'categories' => [CategoryAdminController::class, 'index'],
     'categories/create' => [CategoryAdminController::class, 'create'],
     'categories/store' => [CategoryAdminController::class, 'store'],
-    'categories/edit' => [CategoryAdminController::class, 'edit', 'id'],
-    'categories/update' => [CategoryAdminController::class, 'update', 'id'],
-    'categories/delete' => [CategoryAdminController::class, 'delete', 'id'],
+    'categories/edit/(\d+)' => [CategoryAdminController::class, 'edit', 'id'],
+    'categories/update/(\d+)' => [CategoryAdminController::class, 'update', 'id'],
+    'categories/delete/(\d+)' => [CategoryAdminController::class, 'delete', 'id'],
     'users' => [UserAdminController::class, 'index'],
-    'users/edit' => [UserAdminController::class, 'edit', 'id'],
-    'users/update' => [UserAdminController::class, 'update', 'id'],
-    'users/delete' => [UserAdminController::class, 'delete', 'id'],
+    'users/edit/(\d+)' => [UserAdminController::class, 'edit', 'id'],
+    'users/update/(\d+)' => [UserAdminController::class, 'update', 'id'],
+    'users/delete/(\d+)' => [UserAdminController::class, 'delete', 'id'],
     'access-control' => [AccessControlAdminController::class, 'index'],
     'access-control/update' => [AccessControlAdminController::class, 'update'],
     'logout' => [LoginController::class, 'logout'],
@@ -77,9 +77,26 @@ $routes = [
 $accessibleRoutes = $_SESSION['accessibleRoutes'] ?? array_keys($routes);
 
 // ✅ **Zpracování URI**
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$uri = str_replace('/admin/', '', $uri);
+$fullUri = $_SERVER['REQUEST_URI'];
+error_log("Full URI: " . $fullUri);
+
+// Odstranění query stringu, pokud existuje
+$uri = parse_url($fullUri, PHP_URL_PATH);
+error_log("URI bez query stringu: " . $uri);
+
+// Odstranění domény a /admin/ z URI
+if (preg_match('#^/[^/]+/admin/(.*)#', $uri, $matches)) {
+    $uri = $matches[1];
+} else {
+    $uri = str_replace('/admin/', '', $uri);
+}
+
 $uri = trim($uri, '/');
+error_log("Finální URI pro routing: " . $uri);
+
+// Debug informace
+error_log("HTTP Metoda: " . $_SERVER['REQUEST_METHOD']);
+error_log("Dostupné routy: " . implode(', ', array_keys($routes)));
 
 // ✅ **Pokud je hlavní stránka, pustíme ji vždy**
 if ($uri === '' || $uri === 'home') {
@@ -91,68 +108,16 @@ if ($uri === '' || $uri === 'home') {
 $routeFound = false;
 
 foreach ($routes as $path => $route) {
-    // Zjistíme, jestli je v cestě přímo regulární výraz
-    if (strpos($path, '(') !== false) {
-        // Použijeme cestu přímo jako vzor
-        $pattern = '#^' . $path . '$#';
-    } else {
-        // Jinak použijeme původní logiku
-        $pattern = '#^' . $path;
-        
-        // Zjistíme, jaký parametr očekáváme
-        $expectedParam = $route[2] ?? 'id';
-        
-        // Přidáme vzor pro parametr do URL
-        if (isset($route[2])) {
-            $pattern .= '(/(\d+))';
-        }
-        
-        $pattern .= '$#';
-    }
+    error_log("Kontroluji routu: " . $path . " proti URI: " . $uri);
     
-    if (preg_match($pattern, $uri, $matches)) {
+    // Přímé porovnání pro přesnou shodu
+    if ($path === $uri) {
         $controllerClass = $route[0];
         $method = $route[1];
-        
-        // Získáme parametr podle toho, jaký typ URL vzoru byl použit
-        if (strpos($path, '(') !== false) {
-            $param = $matches[1] ?? null;
-        } else {
-            $param = $matches[2] ?? null;
-        }
-
-        // ✅ **Kontrola přístupu k dané stránce pro role 1 a 2**
-        if ($accessibleRoutes !== null) {
-            $routeBase = $path;
-            
-            // U cest s regulárními výrazy extrahujeme základní cestu pro kontrolu přístupu
-            if (strpos($path, '(') !== false) {
-                $routeBase = substr($path, 0, strpos($path, '('));
-                $routeBase = rtrim($routeBase, '/');
-            }
-            
-            // Kontrolujeme, zda je základní cesta nebo celá cesta v dostupných cestách
-            if (!in_array($routeBase, $accessibleRoutes) && !in_array($path, $accessibleRoutes)) {
-                echo "<script>alert('Na tuto stránku nemáte přístup.'); window.history.back();</script>";
-                $routeFound = true;
-                break;
-            }
-        }
-
         $controller = new $controllerClass($db);
 
-        // ✅ **Zpracování metod podle HTTP požadavku**
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === 'articles/store') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $controller->$method($_POST);
-        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === 'articles/update') {
-            $controller->$method($param, $_POST);
-        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === 'categories/store') {
-            $controller->$method($_POST);
-        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === 'categories/update') {
-            $controller->$method($param, $_POST);
-        } elseif ($param) {
-            // Zpracování GET parametrů podle očekávaného názvu
-            $controller->$method($param);
         } else {
             $controller->$method();
         }
@@ -160,9 +125,49 @@ foreach ($routes as $path => $route) {
         $routeFound = true;
         break;
     }
+    
+    // Kontrola pro routy s parametry
+    if (strpos($path, '(') !== false) {
+        // Jedná se o routu s regulárním výrazem
+        $pattern = '#^' . $path . '$#';
+    } else {
+        // Běžná routa
+        $pattern = '#^' . preg_quote($path, '#') . '$#';
+    }
+    
+    error_log("Používám pattern: " . $pattern);
+    
+    if (preg_match($pattern, $uri, $matches)) {
+        $controllerClass = $route[0];
+        $method = $route[1];
+        $controller = new $controllerClass($db);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($matches[1])) {
+                $controller->$method($matches[1], $_POST);
+            } else {
+                $controller->$method($_POST);
+            }
+        } else {
+            if (isset($matches[1])) {
+                $controller->$method($matches[1]);
+            } else {
+                $controller->$method();
+            }
+        }
+
+        $routeFound = true;
+        break;
+    }
 }
 
-// ✅ **Pokud routa nebyla nalezena, vypíšeme chybu**
+// ✅ **Pokud routa nebyla nalezena, vypíšeme chybu s více informacemi**
 if (!$routeFound) {
-    die("Err: Stránka nenalezena -> " . $uri);
+    echo "Err: Stránka nenalezena -> " . $uri . "<br>";
+    echo "Debug info:<br>";
+    echo "Původní URL: " . $fullUri . "<br>";
+    echo "Zpracované URI: " . $uri . "<br>";
+    echo "HTTP Metoda: " . $_SERVER['REQUEST_METHOD'] . "<br>";
+    echo "Dostupné routy: " . implode(', ', array_keys($routes)) . "<br>";
+    exit();
 } 

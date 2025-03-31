@@ -12,7 +12,7 @@
         </div>
         <div class="p-3">
             <form id="period-filter" class="row g-3" method="GET">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="input-group">
                         <span class="input-group-text bg-light"><i class="fas fa-calendar me-1"></i></span>
                         <select class="form-select shadow-none border-start-0" id="period" name="period">
@@ -206,7 +206,7 @@
 <!-- Modal pro detail článku -->
 <div class="modal fade" id="articleDetailModal" tabindex="-1" aria-labelledby="articleDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">z
+        <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="articleDetailModalLabel">Detail článku</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
