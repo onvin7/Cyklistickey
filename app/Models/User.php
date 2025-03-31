@@ -4,7 +4,7 @@ namespace App\Models;
 
 class User
 {
-    private $db;
+    public $db;
 
     public function __construct($db)
     {
@@ -65,7 +65,6 @@ class User
         $stmt->bindValue(':surname', $data['surname'], \PDO::PARAM_STR);
         $stmt->bindValue(':role', $data['role'], \PDO::PARAM_INT);
         $stmt->bindValue(':profil_foto', $data['profil_foto'], \PDO::PARAM_STR);
-        $stmt->bindValue(':zahlavi_foto', $data['zahlavi_foto'], \PDO::PARAM_STR);
         $stmt->bindValue(':popis', $data['popis'], \PDO::PARAM_STR);
         return $stmt->execute();
     }
@@ -120,14 +119,18 @@ class User
         try {
             $hashedPassword = password_hash($data['heslo'], PASSWORD_DEFAULT); // Hash hesla pro bezpečnost
             $stmt = $this->db->prepare("
-                INSERT INTO users (email, heslo, role, name, surname)
-                VALUES (:email, :heslo, :role, :name, :surname)
+                INSERT INTO users (email, heslo, role, name, surname, profil_foto, popis)
+                VALUES (:email, :heslo, :role, :name, :surname, :profil_foto, :popis)
             ");
             $stmt->bindParam(':email', $data['email'], \PDO::PARAM_STR);
             $stmt->bindParam(':heslo', $hashedPassword, \PDO::PARAM_STR);
             $stmt->bindParam(':role', $data['role'], \PDO::PARAM_INT); // Výchozí role = 0
             $stmt->bindParam(':name', $data['name'], \PDO::PARAM_STR);
             $stmt->bindParam(':surname', $data['surname'], \PDO::PARAM_STR);
+            $profil_foto = '';
+            $popis = '';
+            $stmt->bindParam(':profil_foto', $profil_foto, \PDO::PARAM_STR);
+            $stmt->bindParam(':popis', $popis, \PDO::PARAM_STR);
             return $stmt->execute(); // Vrátí true, pokud je vložení úspěšné
         } catch (\PDOException $e) {
             error_log("Chyba při vytváření uživatele: " . $e->getMessage());
@@ -165,6 +168,13 @@ class User
     // Uloží reset token do DB
     public function storeResetToken($userId, $email, $token, $expiresAt)
     {
+        // Nejdříve smažeme všechny staré tokeny pro daného uživatele
+        $deleteStmt = $this->db->prepare("
+            DELETE FROM password_resets WHERE user_id = :user_id
+        ");
+        $deleteStmt->execute([':user_id' => $userId]);
+        
+        // Poté vložíme nový token
         $stmt = $this->db->prepare("
             INSERT INTO password_resets (user_id, email, token, expires_at)
             VALUES (:user_id, :email, :token, :expires_at)
@@ -180,14 +190,43 @@ class User
     // Ověří platnost tokenu
     public function getValidResetToken($token)
     {
-        $stmt = $this->db->prepare("
-            SELECT pr.*, u.email 
-            FROM password_resets pr
-            JOIN users u ON pr.user_id = u.id
-            WHERE pr.token = :token AND pr.expires_at >= NOW()
-        ");
-        $stmt->execute([':token' => $token]);  // ✅ Musí odpovídat jen `:token`
-        return $stmt->fetch(\PDO::PARAM_STR);
+        try {
+            error_log("DEBUG: Hledám token v databázi: " . $token);
+            
+            // Změna SQL dotazu - odstraníme podmínku expires_at >= NOW(), která může způsobovat problémy
+            $stmt = $this->db->prepare("
+                SELECT pr.*, u.email 
+                FROM password_resets pr
+                JOIN users u ON pr.user_id = u.id
+                WHERE pr.token = :token
+            ");
+            $stmt->execute([':token' => $token]);
+            
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            
+            if ($result) {
+                error_log("DEBUG: Token nalezen: " . print_r($result, true));
+                
+                // Kontrola expirace mimo SQL pro lepší diagnostiku
+                $expiresAt = strtotime($result['expires_at']);
+                $now = time();
+                
+                error_log("DEBUG: Expirace token: " . date('Y-m-d H:i:s', $expiresAt) . ", Nyní: " . date('Y-m-d H:i:s', $now));
+                
+                if ($expiresAt < $now) {
+                    error_log("DEBUG: Token expiroval, expirace byla: " . $result['expires_at']);
+                    return false;
+                }
+                
+                return $result;
+            } else {
+                error_log("DEBUG: Token nenalezen v databázi: " . $token);
+                return false;
+            }
+        } catch (\PDOException $e) {
+            error_log("ERROR v getValidResetToken: " . $e->getMessage());
+            return false;
+        }
     }
 
     // Aktualizuje heslo uživatele
@@ -208,26 +247,32 @@ class User
         return $stmt->execute([':token' => $token]);
     }
 
-    public function updateUser($id, $name, $surname, $email, $description, $profile_photo, $header_photo)
+    public function updateUser($id, $name, $surname, $email, $description, $profile_photo)
     {
         $query = "UPDATE users SET 
                     name = :name, 
                     surname = :surname, 
                     email = :email, 
-                    popis = :description, 
-                    profil_foto = :profile_photo, 
-                    zahlavi_foto = :header_photo 
-                    WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-        return $stmt->execute([
+                    popis = :description";
+        
+        $params = [
             ':id' => $id,
             ':name' => $name,
             ':surname' => $surname,
             ':email' => $email,
-            ':description' => $description,
-            ':profile_photo' => $profile_photo,
-            ':header_photo' => $header_photo
-        ]);
+            ':description' => $description
+        ];
+        
+        // Přidáme profil_foto pouze pokud je nastaveno
+        if ($profile_photo !== null) {
+            $query .= ", profil_foto = :profile_photo";
+            $params[':profile_photo'] = $profile_photo;
+        }
+        
+        $query .= " WHERE id = :id";
+        
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute($params);
     }
 
     public function getSocials($userId)
@@ -276,5 +321,28 @@ class User
         $stmt->bindParam(':userId', $userId, \PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchColumn();
+    }
+
+    public function getTableInfo($table)
+    {
+        try {
+            // Získání informací o sloupcích tabulky
+            $stmt = $this->db->prepare("DESCRIBE $table");
+            $stmt->execute();
+            $columns = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            // Získání počtu řádků v tabulce
+            $countStmt = $this->db->prepare("SELECT COUNT(*) FROM $table");
+            $countStmt->execute();
+            $rowCount = $countStmt->fetchColumn();
+            
+            return [
+                'columns' => $columns,
+                'rowCount' => $rowCount
+            ];
+        } catch (\PDOException $e) {
+            error_log("Chyba při získávání informací o tabulce $table: " . $e->getMessage());
+            throw $e;
+        }
     }
 }

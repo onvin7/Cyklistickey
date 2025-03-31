@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family: 'Fira Sans Condensed', sans-serif;
+}
+
+body {
+    background: #00000F;
+}
+
+.authors-page-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    padding: 2.5rem;
+    margin-bottom: 10vh;
+    justify-content: center;
+    max-width: 1200px;
+    margin-inline: auto;
+}
+
+.author-card {
+    background: #1a1f2e;
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+    flex-basis: calc(33.333% - 1.67rem);
+    min-width: 200px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.author-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #f1008d, #5000f1);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.author-card:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+}
+
+.author-card:hover::before {
+    opacity: 1;
+}
+
+.author-card .author-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.author-card:hover .author-image {
+    transform: scale(1.05);
+}
+
+.author-card .author-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.author-card .author-info {
+    width: 100%;
+}
+
+.author-card .author-name {
+    color: white;
+    font-size: 1.6rem;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.author-card .author-email {
+    color: #f1008d;
+    font-size: 0.9rem;
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.5px;
+}
+
+.author-card .author-email span {
+    color: #f1008d;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.author-card .author-description {
+    color: #bbc0cc;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+    font-weight: 300;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: left;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    max-height: 6em;
+    min-height: 6em;
+}
+
+.author-card .author-link {
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+.author-card .author-link span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 1rem 1.5rem;
+    background: rgba(80, 0, 241, 0.15);
+    border-radius: 8px;
+    width: 100%;
+    border: 1px solid rgba(80, 0, 241, 0.3);
+    font-size: 0.95rem;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.author-card .author-link:hover span {
+    background: rgba(80, 0, 241, 0.2);
+    border-color: rgba(80, 0, 241, 0.4);
+    color: #f1008d;
+    text-decoration: none;
+}
+
+.author-card .author-link i {
+    transition: transform 0.3s ease;
+    font-size: 0.9rem;
+    margin-top: 1px;
+}
+
+.author-card .author-link:hover i {
+    transform: translateX(5px);
+}
+
+@media screen and (max-width: 1200px) {
+    .author-card {
+        flex-basis: calc(50% - 1.25rem);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .authors-page-container {
+        padding: 1.5rem;
+        gap: 2rem;
+    }
+    
+    .author-card {
+        padding: 2rem 1.5rem;
+        flex-basis: 100%;
+    }
+} 

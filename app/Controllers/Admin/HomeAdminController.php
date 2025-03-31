@@ -29,6 +29,8 @@ class HomeAdminController
         // Třetí výpis - 20 nejčtenějších článků za posledních 7 dní s denními daty pro ApexCharts
         $topArticlesData = $this->statisticsModel->getTopArticlesForPeriod(20, 7);
 
+        $adminTitle = "Dashboard | Admin Panel - Cyklistickey magazín";
+
         $view = '../app/Views/Admin/home/index.php';
         include '../app/Views/Admin/layout/base.php';
     }

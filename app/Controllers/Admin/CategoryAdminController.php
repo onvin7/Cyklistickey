@@ -22,6 +22,8 @@ class CategoryAdminController
         // Načtení kategorií s filtrováním a řazením
         $categories = $this->model->getAllWithSortingAndFiltering($sortBy, $order, $filter);
 
+        $adminTitle = "Kategorie | Admin Panel - Cyklistickey magazín";
+
         // Zobrazení view
         $view = '../app/Views/Admin/categories/index.php';
         include '../app/Views/Admin/layout/base.php';
@@ -30,6 +32,8 @@ class CategoryAdminController
 
     public function create()
     {
+        $adminTitle = "Vytvořit kategorii | Admin Panel - Cyklistickey magazín";
+        
         $view = '../app/Views/Admin/categories/create.php';
         include '../app/Views/Admin/layout/base.php';
     }
@@ -63,6 +67,8 @@ class CategoryAdminController
             echo "Kategorie nenalezena.";
             return;
         }
+
+        $adminTitle = "Upravit kategorii: " . $category['nazev_kategorie'] . " | Admin Panel - Cyklistickey magazín";
 
         $view = '../app/Views/Admin/categories/edit.php';
         include '../app/Views/Admin/layout/base.php';

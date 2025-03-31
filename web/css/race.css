@@ -284,23 +284,35 @@ body {
 
     width: 100%;
 
+    border-collapse: separate;
+
+    border-spacing: 0;
+
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+
 }
 
 
 
 .kategorie table tr th {
 
-    padding-right: 50px;
+    padding: 12px 15px;
 
-    padding-left: 20px;
+    background-color: #3eb7e7;
 
-    padding-block: 10px;
+    color: white;
 
-    border: 3px solid #00000f;
+    font-weight: 500;
 
-    background-color: #ffffff;
+    text-transform: uppercase;
 
-    color: #00000F;
+    font-size: 16px;
+
+    border: none;
 
 }
 
@@ -308,7 +320,7 @@ body {
 
 .kategorie table tr th:first-child {
 
-    width: 100px;
+    width: 120px;
 
 }
 
@@ -316,13 +328,29 @@ body {
 
 .kategorie table tr td {
 
-    padding-right: 50px;
+    padding: 10px 15px;
 
-    padding-left: 20px;
+    border: none;
 
-    padding-block: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
-    border: 3px solid #00000f;
+    font-weight: 300;
+
+}
+
+
+
+.kategorie table tr:last-child td {
+
+    border-bottom: none;
+
+}
+
+
+
+.kategorie table tr:hover td {
+
+    background-color: rgba(255, 255, 255, 0.05);
 
 }
 
@@ -466,23 +494,37 @@ body {
 
     background-color: #171925;
 
+    border-collapse: separate;
+
+    border-spacing: 0;
+
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+
+    margin-bottom: 40px;
+
 }
 
 
 
 .program table tr th {
 
-    padding-right: 50px;
+    padding: 12px 15px;
 
-    padding-left: 20px;
+    background-color: #3eb7e7;
 
-    padding-block: 10px;
+    color: white;
 
-    border: 3px solid #00000f;
+    font-weight: 500;
 
-    background-color: #ffffff;
+    text-transform: uppercase;
 
-    color: #00000F;
+    font-size: 16px;
+
+    border: none;
 
 }
 
@@ -490,13 +532,31 @@ body {
 
 .program table tr td {
 
-    padding-right: 50px;
+    padding: 10px 15px;
 
-    padding-left: 20px;
+    border: none;
 
-    padding-block: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
-    border: 3px solid #00000f;
+    font-weight: 300;
+
+    text-align: center;
+
+}
+
+
+
+.program table tr:last-child td {
+
+    border-bottom: none;
+
+}
+
+
+
+.program table tr:hover td {
+
+    background-color: rgba(255, 255, 255, 0.05);
 
 }
 
@@ -524,6 +584,8 @@ body {
 
     margin-top: 50px;
 
+    margin-bottom: 50px;
+
 }
 
 
@@ -538,6 +600,14 @@ body {
 
     width: 90%;
 
+    background-color: #171925;
+
+    border-radius: 8px;
+
+    padding: 25px;
+
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+
 }
 
 
@@ -548,9 +618,33 @@ body {
 
     text-transform: uppercase;
 
-    font-size: 40px;
+    font-size: 30px;
 
-    margin-top: 50px;
+    margin-top: 25px;
+
+    margin-bottom: 15px;
+
+    position: relative;
+
+    padding-bottom: 5px;
+
+    border-bottom: 2px solid #f1008d;
+
+}
+
+
+
+.startovne .ceny h1:first-child {
+
+    margin-top: 0;
+
+}
+
+
+
+.startovne .ceny h1:after {
+
+    display: none;
 
 }
 
@@ -566,9 +660,17 @@ body {
 
     align-items: center;
 
-    border-bottom: 1px solid #363948;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
-    padding-top: 15px;
+    padding: 12px 0;
+
+}
+
+
+
+.startovne .ceny .cena:hover {
+
+    background-color: rgba(255, 255, 255, 0.05);
 
 }
 
@@ -578,7 +680,7 @@ body {
 
     font-weight: 300;
 
-    font-size: 20px;
+    font-size: 18px;
 
 }
 
@@ -588,15 +690,25 @@ body {
 
     font-weight: 500;
 
-    font-size: 20px;
+    font-size: 18px;
 
-    background-color: white;
+    background-color: #f1008d;
 
-    color: #00000F;
+    color: white;
 
-    padding: 1vh 2vh;
+    padding: 6px 15px;
 
-    border-radius: 25px;
+    border-radius: 20px;
+
+}
+
+
+
+.startovne .ceny .cena:hover p {
+
+    transform: none;
+
+    box-shadow: none;
 
 }
 

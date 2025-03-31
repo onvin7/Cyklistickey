@@ -27,24 +27,23 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="profile_photo" class="form-label"><i class="fas fa-camera me-2"></i>Profilová fotka</label>
-                            <input type="file" class="form-control" id="profile_photo" name="profile_photo" onchange="previewImage(event, 'profile-preview', 'profile-container')">
-                            <div id="profile-container" class="mt-3">
-                                <?php if (!empty($_SESSION['profile_photo'])): ?>
-                                    <p class="mt-2">Aktuální:</p>
-                                    <img id="profile-preview" src="/uploads/users/thumbnails/<?= htmlspecialchars($_SESSION['profile_photo']) ?>" alt="Profilový náhled" style="max-width: 200px;">
-                                <?php endif; ?>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="header_photo" class="form-label"><i class="fas fa-image me-2"></i>Záhlaví profilu</label>
-                            <input type="file" class="form-control" id="header_photo" name="header_photo" onchange="previewImage(event, 'header-preview', 'header-container')">
-                            <div id="header-container" class="mt-3">
-                                <?php if (!empty($_SESSION['header_photo'])): ?>
-                                    <p class="mt-2">Aktuální:</p>
-                                    <img id="header-preview" src="/uploads/users/background/<?= htmlspecialchars($_SESSION['header_photo']) ?>" alt="Background náhled" style="max-width: 400px;">
-                                <?php endif; ?>
+                            <label for="profil_foto" class="form-label"><i class="fas fa-camera me-2"></i>Profilová fotka</label>
+                            <input type="file" class="form-control" id="profil_foto" name="profil_foto" accept="image/jpeg, image/png, image/gif" onchange="previewImage(event)">
+                            
+                            <div id="photo-previews" class="mt-3">
+                                <div class="preview-box" id="existing-preview">
+                                    <?php if (!empty($user['profil_foto'])): ?>
+                                        <div class="text-center">
+                                            <p class="mb-2 text-muted small">Aktuální fotka:</p>
+                                            <img src="/uploads/users/thumbnails/<?= htmlspecialchars($user['profil_foto']) ?>" alt="Náhled" class="img-thumbnail shadow-sm" style="max-width: 100%; max-height: 200px;">
+                                            <input type="hidden" name="current_foto" value="<?= htmlspecialchars($user['profil_foto']) ?>">
+                                        </div>
+                                    <?php else: ?>
+                                        <p class="text-muted small text-center">Uživatel nemá nahranou žádnou profilovou fotku</p>
+                                    <?php endif; ?>
+                                </div>
+                                
+                                <div id="preview-container" class="mt-3 text-center"></div>
                             </div>
                         </div>
 
@@ -58,25 +57,22 @@
                 <div class="card mt-4">
                     <div class="card-header"><i class="fas fa-share-alt me-2"></i>Sociální sítě</div>
                     <div class="card-body" id="social-links">
-                        <form method="POST" action="/admin/social-sites/save">
-                            <?php foreach ($social_links as $social): ?>
-                                <div class="d-flex mb-2 social-entry">
-                                    <select class="form-select me-2" name="social_id[]">
-                                        <option value="">Vyber sociální síť</option>
-                                        <?php foreach ($available_socials as $site): ?>
-                                            <option value="<?= $site['id'] ?>" <?= $social['social_id'] == $site['id'] ? 'selected' : '' ?>>
-                                                <?php echo htmlspecialchars($site['nazev']); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <input type="text" class="form-control me-2" name="link[]" placeholder="Odkaz" value="<?= htmlspecialchars($social['link']) ?>" required>
-                                    <button type="button" class="btn btn-danger remove-social"><i class="fas fa-times"></i></button>
-                                </div>
-                            <?php endforeach; ?>
+                        <?php foreach ($social_links as $social): ?>
+                            <div class="d-flex mb-2 social-entry">
+                                <select class="form-select me-2" name="social_id[]">
+                                    <option value="">Vyber sociální síť</option>
+                                    <?php foreach ($available_socials as $site): ?>
+                                        <option value="<?= $site['id'] ?>" <?= $social['social_id'] == $site['id'] ? 'selected' : '' ?>>
+                                            <?php echo htmlspecialchars($site['nazev']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <input type="text" class="form-control me-2" name="link[]" placeholder="Odkaz" value="<?= htmlspecialchars($social['link']) ?>" required>
+                                <button type="button" class="btn btn-danger remove-social"><i class="fas fa-times"></i></button>
+                            </div>
+                        <?php endforeach; ?>
 
-                            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Uložit</button>
-                            <button type="button" class="btn btn-success" id="add-social"><i class="fas fa-plus me-2"></i>Přidat sociální síť</button>
-                        </form>
+                        <button type="button" class="btn btn-success mt-3" id="add-social"><i class="fas fa-plus me-2"></i>Přidat sociální síť</button>
                     </div>
                 </div>
 
@@ -101,6 +97,15 @@
     .tox-tinymce {
         border-radius: 0.25rem !important;
     }
+
+    /* Styly pro náhledy fotek */
+    #photo-previews {
+        position: relative;
+    }
+    
+    .preview-box, #preview-container {
+        transition: all 0.3s ease;
+    }
 </style>
 
 <!-- TinyMCE + konfigurace -->
@@ -110,11 +115,11 @@
         if (typeof tinymce !== 'undefined') {
             tinymce.init({
                 selector: '#editor',
-                height: 400,
+                height: 500,
                 setup: function(editor) {
                     editor.on('init', function() {
-                        document.querySelector('.tox-tinymce').style.height = '400px';
-                        document.querySelector('.tox-edit-area').style.height = '330px';
+                        document.querySelector('.tox-tinymce').style.height = '500px';
+                        document.querySelector('.tox-edit-area').style.height = '430px';
                     });
                 }
             });
@@ -141,16 +146,7 @@
         let existingSocials = [...document.querySelectorAll('select[name="social_id[]"]')]
             .map(select => select.value);
 
-        let availableSocials = <?php echo json_encode(array_map(function ($site) {
-                                    return ["id" => $site['id'], "name" => htmlspecialchars($site['name'])];
-                                }, $available_socials)); ?>;
-
-        let filteredSocials = availableSocials.filter(site => !existingSocials.includes(site.id.toString()));
-
-        if (filteredSocials.length === 0) {
-            alert("❌ Nelze přidat více sociálních sítí, všechny dostupné jsou již vybrány.");
-            return;
-        }
+        let availableSocials = <?php echo json_encode($available_socials); ?>;
 
         let div = document.createElement('div');
         div.classList.add('d-flex', 'mb-2', 'social-entry');
@@ -168,7 +164,10 @@
         availableSocials.forEach(site => {
             let option = document.createElement('option');
             option.value = site.id;
-            option.text = site.name;
+            option.text = site.nazev;
+            if (existingSocials.includes(site.id.toString())) {
+                option.disabled = true;
+            }
             select.appendChild(option);
         });
 
@@ -176,13 +175,13 @@
         input.type = 'text';
         input.classList.add('form-control', 'me-2');
         input.name = 'link[]';
-        input.placeholder = 'Uživatelské jméno.';
+        input.placeholder = 'Odkaz';
         input.required = true;
 
         let button = document.createElement('button');
         button.type = 'button';
         button.classList.add('btn', 'btn-danger', 'remove-social');
-        button.innerHTML = '✖️';
+        button.innerHTML = '<i class="fas fa-times"></i>';
         button.addEventListener('click', function(event) {
             event.preventDefault();
             div.remove();
@@ -192,17 +191,57 @@
         div.appendChild(select);
         div.appendChild(input);
         div.appendChild(button);
+        
+        // Vložíme nový řádek před tlačítko
         container.insertBefore(div, document.getElementById('add-social'));
         filterAvailableSocials();
     });
 
     document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('remove-social')) {
+        if (event.target.classList.contains('remove-social') || 
+            event.target.closest('.remove-social')) {
             event.preventDefault();
-            event.target.parentElement.remove();
-            filterAvailableSocials();
+            let socialEntry = event.target.closest('.social-entry');
+            if (socialEntry) {
+                socialEntry.remove();
+                filterAvailableSocials();
+            }
         }
     });
 
     filterAvailableSocials();
+</script>
+
+<!-- Přidání JavaScriptu pro náhled fotografií -->
+<script>
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('preview-container');
+        const existingPreview = document.querySelector('.preview-box');
+        
+        if (file) {
+            // Skryj existující náhled
+            if (existingPreview) {
+                existingPreview.style.display = 'none';
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.innerHTML = `
+                    <div class="p-3 rounded border text-center">
+                        <p class="mb-2 text-success">Nová fotka:</p>
+                        <div class="image-preview-container">
+                            <img src="${e.target.result}" alt="Náhled" class="img-thumbnail shadow-sm" style="max-width: 100%; max-height: 300px;">
+                        </div>
+                    </div>`;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.innerHTML = '';
+            // Znovu zobraz existující náhled
+            if (existingPreview) {
+                existingPreview.style.display = 'block';
+            }
+        }
+    }
 </script>

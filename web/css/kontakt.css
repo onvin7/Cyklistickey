@@ -195,10 +195,28 @@ body {
     -webkit-overflow-scrolling: touch;
     margin-block: 50px;
     padding-left: 10%;
+    cursor: default;
 }
 
 .galerie.team {
     width: 100%;
+    cursor: grab;
+    overflow-x: auto;
+    user-select: none;
+    scrollbar-width: none; /* Pro Firefox */
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.galerie.team::-webkit-scrollbar {
+    display: none; /* Pro Chrome, Safari a Opera */
+}
+
+.galerie.team:active,
+.galerie.team.active {
+    cursor: grabbing;
+    scale: 0.99;
+    opacity: 0.98;
 }
 
 .galerie img:nth-child(1) {
@@ -222,6 +240,8 @@ body {
 .galerie .obrazky {
 
     display: inline-block;
+
+    user-select: none;
 
 }
 

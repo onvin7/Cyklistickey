@@ -1,11 +1,18 @@
-<div class="ohraniceni">
+<div class="ohraniceni new">
     <div class="logo">
-        <img src="/assets/graphics/logo_text_cyklistickey.png">
+        <img src="/assets/graphics/logo_text_cyklistickey.png" alt="Cyklistickey logo">
     </div>
     <div class="inputy">
         <form method="POST" action="/reset-password/save" class="input-wrapper">
-            <input type="hidden" name="token" value="<?= htmlspecialchars($_GET['token']); ?>">
-            <div class="prvek">
+            <?php 
+            // Bezpečné získání tokenu z URL a zobrazení ve formuláři
+            $token = isset($_GET['token']) ? htmlspecialchars($_GET['token']) : '';
+            if (empty($token)) {
+                echo '<div class="prvek alert alert-danger">Chybí token pro reset hesla!</div>';
+            }
+            ?>
+            <input type="hidden" name="token" value="<?= $token ?>">
+            <div class="prvek" style="margin-top: 10px;">
                 <span class="form-title">Obnova hesla</span>
             </div>
             <div class="prvek">

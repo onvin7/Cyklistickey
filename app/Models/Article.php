@@ -15,10 +15,18 @@ class Article
     public function getAll()
     {
         $query = "
-            SELECT clanky.id, clanky.nazev, clanky.datum, clanky.viditelnost, users.name AS autor_jmeno, users.surname AS autor_prijmeni
+            SELECT clanky.id, clanky.nazev, clanky.datum, clanky.viditelnost, users.name AS autor_jmeno, users.surname AS autor_prijmeni,
+                  (SELECT COUNT(*) FROM propagace WHERE propagace.id_clanku = clanky.id AND propagace.zacatek <= NOW() AND propagace.konec >= NOW()) AS is_promoted
             FROM clanky
             LEFT JOIN users ON clanky.user_id = users.id
-            ORDER BY clanky.datum DESC
+            WHERE (clanky.viditelnost = 1 AND clanky.datum <= NOW())
+               OR EXISTS (
+                  SELECT 1 FROM propagace 
+                  WHERE propagace.id_clanku = clanky.id 
+                  AND propagace.zacatek <= NOW() 
+                  AND propagace.konec >= NOW()
+               )
+            ORDER BY is_promoted DESC, clanky.datum DESC
         ";
 
         $stmt = $this->db->prepare($query);
@@ -54,8 +62,15 @@ class Article
                     LEFT JOIN users ON clanky.user_id = users.id
                     LEFT JOIN clanky_kategorie ON clanky.id = clanky_kategorie.id_clanku
                     WHERE clanky.id = :id  
-                    AND clanky.viditelnost = 1 
-                    AND clanky.datum <= NOW()";
+                    AND (
+                        (clanky.viditelnost = 1 AND clanky.datum <= NOW())
+                        OR EXISTS (
+                            SELECT 1 FROM propagace 
+                            WHERE propagace.id_clanku = clanky.id 
+                            AND propagace.zacatek <= NOW() 
+                            AND propagace.konec >= NOW()
+                        )
+                    )";
 
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
@@ -67,14 +82,23 @@ class Article
     {
         $query = "SELECT DISTINCT c.id, c.nazev, c.nahled_foto, c.datum, c.url,
                    GROUP_CONCAT(DISTINCT k.nazev_kategorie) as kategorie_nazvy,
-                   GROUP_CONCAT(DISTINCT k.url) as kategorie_urls
+                   GROUP_CONCAT(DISTINCT k.url) as kategorie_urls,
+                   (SELECT COUNT(*) FROM propagace WHERE propagace.id_clanku = c.id AND propagace.zacatek <= NOW() AND propagace.konec >= NOW()) AS is_promoted
             FROM clanky c
             LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
             LEFT JOIN kategorie k ON ck.id_kategorie = k.id
             WHERE c.user_id = :userId
-            AND c.viditelnost = 1
+            AND (
+                (c.viditelnost = 1 AND c.datum <= NOW())
+                OR EXISTS (
+                    SELECT 1 FROM propagace 
+                    WHERE propagace.id_clanku = c.id 
+                    AND propagace.zacatek <= NOW() 
+                    AND propagace.konec >= NOW()
+                )
+            )
             GROUP BY c.id, c.nazev, c.nahled_foto, c.datum, c.url
-            ORDER BY c.datum DESC";
+            ORDER BY is_promoted DESC, c.datum DESC";
         
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':userId', $userId, \PDO::PARAM_INT);
@@ -119,17 +143,25 @@ class Article
                         users.surname AS autor_prijmeni,
                         GROUP_CONCAT(DISTINCT kategorie.nazev_kategorie) as kategorie_nazvy,
                         GROUP_CONCAT(DISTINCT kategorie.url) as kategorie_urls,
-                        COALESCE(views.pocet, 0) as views_count
+                        COALESCE(views.pocet, 0) as views_count,
+                        (SELECT COUNT(*) FROM propagace WHERE propagace.id_clanku = clanky.id AND propagace.zacatek <= NOW() AND propagace.konec >= NOW()) AS is_promoted
                     FROM clanky
                     LEFT JOIN users ON clanky.user_id = users.id
                     LEFT JOIN clanky_kategorie ON clanky.id = clanky_kategorie.id_clanku
                     LEFT JOIN kategorie ON clanky_kategorie.id_kategorie = kategorie.id
                     LEFT JOIN views_clanku views ON clanky.id = views.id_clanku
                     WHERE clanky.user_id = :userId
-                        AND clanky.viditelnost = 1 
-                        AND clanky.datum <= NOW()
+                        AND (
+                            (clanky.viditelnost = 1 AND clanky.datum <= NOW())
+                            OR EXISTS (
+                                SELECT 1 FROM propagace 
+                                WHERE propagace.id_clanku = clanky.id 
+                                AND propagace.zacatek <= NOW() 
+                                AND propagace.konec >= NOW()
+                            )
+                        )
                     GROUP BY clanky.id
-                    ORDER BY views_count DESC, clanky.datum DESC";
+                    ORDER BY is_promoted DESC, views_count DESC, clanky.datum DESC";
 
         if ($limit !== null) {
             $query .= " LIMIT :limit";
@@ -163,24 +195,47 @@ class Article
     }
 
     // Získání kategorií článku
-    public function getCategories($articleId)
+    public function getArticleCategories($articleId)
     {
-        $query = "SELECT kategorie.nazev_kategorie FROM clanky_kategorie 
-                  JOIN kategorie ON clanky_kategorie.id_kategorie = kategorie.id 
-                  WHERE clanky_kategorie.id_clanku = :articleId";
+        $query = "SELECT id_clanku, id_kategorie FROM clanky_kategorie 
+                  WHERE id_clanku = :articleId";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':articleId', $articleId, \PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    // Přidání kategorie k článku
-    public function addCategory($articleId, $categoryId)
+    // Přidání kategorií k článku
+    public function addCategories($articleId, $categoryIds)
     {
-        $query = "INSERT INTO clanky_kategorie (id_clanku, id_kategorie) VALUES (:articleId, :categoryId)";
-        $stmt = $this->db->prepare($query);
+        // Nejprve odstraníme všechny existující kategorie pro daný článek
+        $deleteQuery = "DELETE FROM clanky_kategorie WHERE id_clanku = :articleId";
+        $stmt = $this->db->prepare($deleteQuery);
         $stmt->bindParam(':articleId', $articleId, \PDO::PARAM_INT);
-        $stmt->bindParam(':categoryId', $categoryId, \PDO::PARAM_INT);
+        $stmt->execute();
+        
+        // Pokud není žádná kategorie vybrána, končíme
+        if (empty($categoryIds)) {
+            return true;
+        }
+        
+        // Nyní přidáme vybrané kategorie
+        $values = [];
+        $params = [];
+        
+        foreach ($categoryIds as $index => $categoryId) {
+            $values[] = "(:articleId, :categoryId{$index})";
+            $params["articleId"] = $articleId;
+            $params["categoryId{$index}"] = $categoryId;
+        }
+        
+        $query = "INSERT INTO clanky_kategorie (id_clanku, id_kategorie) VALUES " . implode(', ', $values);
+        $stmt = $this->db->prepare($query);
+        
+        foreach ($params as $param => $value) {
+            $stmt->bindValue(":{$param}", $value, \PDO::PARAM_INT);
+        }
+        
         return $stmt->execute();
     }
 
@@ -236,10 +291,43 @@ class Article
     // Odstranění článku
     public function delete($articleId)
     {
-        $query = "DELETE FROM clanky WHERE id = :articleId";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':articleId', $articleId, \PDO::PARAM_INT);
-        return $stmt->execute();
+        try {
+            // Zahájení transakce
+            $this->db->beginTransaction();
+
+            // 1. Nejprve smažeme záznamy z views_clanku
+            $query = "DELETE FROM views_clanku WHERE id_clanku = :articleId";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':articleId', $articleId, \PDO::PARAM_INT);
+            $stmt->execute();
+
+            // 2. Smažeme záznamy z clanky_kategorie
+            $query = "DELETE FROM clanky_kategorie WHERE id_clanku = :articleId";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':articleId', $articleId, \PDO::PARAM_INT);
+            $stmt->execute();
+
+            // 3. Smažeme záznamy z propagace
+            $query = "DELETE FROM propagace WHERE id_clanku = :articleId";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':articleId', $articleId, \PDO::PARAM_INT);
+            $stmt->execute();
+
+            // 4. Nakonec smažeme samotný článek
+            $query = "DELETE FROM clanky WHERE id = :articleId";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':articleId', $articleId, \PDO::PARAM_INT);
+            $stmt->execute();
+
+            // Potvrzení transakce
+            $this->db->commit();
+            return true;
+        } catch (\PDOException $e) {
+            // Pokud nastane chyba, vrátíme změny zpět
+            $this->db->rollBack();
+            error_log("Chyba při mazání článku ID $articleId: " . $e->getMessage());
+            return false;
+        }
     }
 
     // Aktualizace článku
@@ -252,7 +340,6 @@ class Article
                       viditelnost = :viditelnost, 
                       nahled_foto = :nahled_foto, 
                       user_id = :user_id, 
-                      autor = :autor, 
                       url = :url 
                   WHERE id = :id";
 
@@ -264,7 +351,6 @@ class Article
         $stmt->bindValue(':viditelnost', $data['viditelnost'], \PDO::PARAM_INT);
         $stmt->bindValue(':nahled_foto', $data['nahled_foto']);
         $stmt->bindValue(':user_id', $data['user_id'], \PDO::PARAM_INT);
-        $stmt->bindValue(':autor', $data['autor'], \PDO::PARAM_INT);
         $stmt->bindValue(':url', $data['url']);
         $stmt->bindValue(':id', $data['id'], \PDO::PARAM_INT);
 
@@ -275,21 +361,23 @@ class Article
     // Vytvoření nového článku
     public function create($data)
     {
-        $query = "INSERT INTO clanky (nazev, obsah, viditelnost, nahled_foto, user_id, autor, url, datum)
-                    VALUES (:nazev, :obsah, :viditelnost, :nahled_foto, :user_id, :autor, :url, :datum)";
-
+        $query = "INSERT INTO clanky (nazev, obsah, viditelnost, nahled_foto, user_id, url, datum) 
+                  VALUES (:nazev, :obsah, :viditelnost, :nahled_foto, :user_id, :url, :datum)";
+        
         $stmt = $this->db->prepare($query);
-
-        $stmt->bindValue(':nazev', $data['nazev'], \PDO::PARAM_STR);
-        $stmt->bindValue(':obsah', $data['obsah'], \PDO::PARAM_STR);
-        $stmt->bindValue(':viditelnost', $data['viditelnost'], \PDO::PARAM_INT);
-        $stmt->bindValue(':nahled_foto', $data['nahled_foto'], \PDO::PARAM_STR);
-        $stmt->bindValue(':user_id', $data['user_id'], \PDO::PARAM_INT);
-        $stmt->bindValue(':autor', $data['autor'], \PDO::PARAM_INT);
-        $stmt->bindValue(':url', $data['url'], \PDO::PARAM_STR);
-        $stmt->bindValue(':datum', $data['datum'], \PDO::PARAM_STR);
-
-        return $stmt->execute();
+        $stmt->bindParam(':nazev', $data['nazev']);
+        $stmt->bindParam(':obsah', $data['obsah']);
+        $stmt->bindParam(':viditelnost', $data['viditelnost']);
+        $stmt->bindParam(':nahled_foto', $data['nahled_foto']);
+        $stmt->bindParam(':user_id', $data['user_id']);
+        $stmt->bindParam(':url', $data['url']);
+        $stmt->bindParam(':datum', $data['datum']);
+        
+        if ($stmt->execute()) {
+            return $this->db->lastInsertId();
+        }
+        
+        return false;
     }
 
     public function store($postData)
@@ -310,8 +398,8 @@ class Article
         }
 
         // Vložení dat do databáze
-        $query = "INSERT INTO clanky (nazev, id_kategorie, datum, viditelnost, nahled_foto, obsah, autor)
-                    VALUES (:title, :category, :publishDate, :isPublic, :thumbnail, :content, :showAuthor)";
+        $query = "INSERT INTO clanky (nazev, id_kategorie, datum, viditelnost, nahled_foto, obsah)
+                    VALUES (:title, :category, :publishDate, :isPublic, :thumbnail, :content)";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':category', $category);
@@ -319,7 +407,6 @@ class Article
         $stmt->bindParam(':isPublic', $isPublic, \PDO::PARAM_INT);
         $stmt->bindParam(':thumbnail', $thumbnail);
         $stmt->bindParam(':content', $content);
-        $stmt->bindParam(':showAuthor', $showAuthor, \PDO::PARAM_INT);
 
         if ($stmt->execute()) {
             header('Location: /admin/articles');
@@ -332,13 +419,24 @@ class Article
     public function getNewestArticle()
     {
         $stmt = $this->db->prepare("
-            SELECT c.*, GROUP_CONCAT(k.nazev_kategorie SEPARATOR ', ') AS kategorie
+            SELECT c.*, 
+                   GROUP_CONCAT(k.nazev_kategorie SEPARATOR ', ') AS kategorie,
+                   (SELECT COUNT(*) FROM propagace WHERE propagace.id_clanku = c.id AND propagace.zacatek <= NOW() AND propagace.konec >= NOW()) AS is_promoted
             FROM clanky c
             LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
             LEFT JOIN kategorie k ON ck.id_kategorie = k.id
-            WHERE c.viditelnost = 1 AND c.datum <= NOW()
+            WHERE (
+                (c.viditelnost = 1 AND c.datum <= NOW())
+                OR EXISTS (
+                    SELECT 1 FROM propagace 
+                    WHERE propagace.id_clanku = c.id 
+                    AND propagace.zacatek <= NOW() 
+                    AND propagace.konec >= NOW()
+                )
+            )
             GROUP BY c.id
-            ORDER BY c.datum DESC LIMIT 1
+            ORDER BY is_promoted DESC, c.datum DESC 
+            LIMIT 1
         ");
         $stmt->execute();
         return $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -351,13 +449,22 @@ class Article
             SELECT c.*, 
                    GROUP_CONCAT(k.nazev_kategorie) as kategorie_nazvy,
                    GROUP_CONCAT(k.id) as kategorie_ids,
-                   GROUP_CONCAT(k.url) as kategorie_urls
+                   GROUP_CONCAT(k.url) as kategorie_urls,
+                   (SELECT COUNT(*) FROM propagace WHERE propagace.id_clanku = c.id AND propagace.zacatek <= NOW() AND propagace.konec >= NOW()) AS is_promoted
             FROM clanky c
             LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
             LEFT JOIN kategorie k ON ck.id_kategorie = k.id
-            WHERE c.viditelnost = 1 AND c.datum <= NOW()
+            WHERE (
+                (c.viditelnost = 1 AND c.datum <= NOW())
+                OR EXISTS (
+                    SELECT 1 FROM propagace 
+                    WHERE propagace.id_clanku = c.id 
+                    AND propagace.zacatek <= NOW() 
+                    AND propagace.konec >= NOW()
+                )
+            )
             GROUP BY c.id
-            ORDER BY c.datum DESC
+            ORDER BY is_promoted DESC, c.datum DESC
             LIMIT :offset, :limit
         ");
         $stmt->bindValue(':offset', (int)$offset, \PDO::PARAM_INT);
@@ -400,7 +507,15 @@ class Article
             FROM kategorie k
             LEFT JOIN clanky_kategorie ck ON k.id = ck.id_kategorie
             LEFT JOIN clanky c ON ck.id_clanku = c.id
-            WHERE c.viditelnost = 1 AND c.datum <= NOW()
+            WHERE (
+                (c.viditelnost = 1 AND c.datum <= NOW())
+                OR EXISTS (
+                    SELECT 1 FROM propagace 
+                    WHERE propagace.id_clanku = c.id 
+                    AND propagace.zacatek <= NOW() 
+                    AND propagace.konec >= NOW()
+                )
+            )
             GROUP BY k.id
             ORDER BY posledni_clanek DESC
         ");
@@ -409,11 +524,21 @@ class Article
 
         foreach ($categories as &$category) {
             $articlesStmt = $this->db->prepare("
-                SELECT c.*
+                SELECT c.*,
+                       (SELECT COUNT(*) FROM propagace WHERE propagace.id_clanku = c.id AND propagace.zacatek <= NOW() AND propagace.konec >= NOW()) AS is_promoted
                 FROM clanky c
                 LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
-                WHERE ck.id_kategorie = :id AND c.viditelnost = 1 AND c.datum <= NOW()
-                ORDER BY c.datum DESC
+                WHERE ck.id_kategorie = :id 
+                AND (
+                    (c.viditelnost = 1 AND c.datum <= NOW())
+                    OR EXISTS (
+                        SELECT 1 FROM propagace 
+                        WHERE propagace.id_clanku = c.id 
+                        AND propagace.zacatek <= NOW() 
+                        AND propagace.konec >= NOW()
+                    )
+                )
+                ORDER BY is_promoted DESC, c.datum DESC
                 LIMIT 3
             ");
             $articlesStmt->execute(['id' => $category['id']]);
@@ -433,8 +558,15 @@ class Article
                   LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
                   LEFT JOIN kategorie k ON ck.id_kategorie = k.id
                   WHERE c.url = :url 
-                  AND c.viditelnost = 1 
-                  AND c.datum <= NOW()
+                  AND (
+                      (c.viditelnost = 1 AND c.datum <= NOW())
+                      OR EXISTS (
+                          SELECT 1 FROM propagace 
+                          WHERE propagace.id_clanku = c.id 
+                          AND propagace.zacatek <= NOW() 
+                          AND propagace.konec >= NOW()
+                      )
+                  )
                   GROUP BY c.id";
 
         $stmt = $this->db->prepare($query);
@@ -530,8 +662,15 @@ class Article
                 WHERE id_clanku = :articleId
             )
             AND c.id != :articleId
-            AND c.viditelnost = 1 
-            AND c.datum <= NOW()
+            AND (
+                (c.viditelnost = 1 AND c.datum <= NOW())
+                OR EXISTS (
+                    SELECT 1 FROM propagace 
+                    WHERE propagace.id_clanku = c.id 
+                    AND propagace.zacatek <= NOW() 
+                    AND propagace.konec >= NOW()
+                )
+            )
             GROUP BY c.id
             ORDER BY c.datum DESC
             LIMIT 10";  // Nejdřív vybereme 10 nejnovějších
@@ -568,12 +707,20 @@ class Article
 
     public function getAllWithAuthors()
     {
-        $sql = "SELECT c.*, u.name as author_name, u.surname as author_surname 
+        $sql = "SELECT c.*, u.name as author_name, u.surname as author_surname,
+                      (SELECT COUNT(*) FROM propagace WHERE propagace.id_clanku = c.id AND propagace.zacatek <= NOW() AND propagace.konec >= NOW()) AS is_promoted
                 FROM clanky c 
                 LEFT JOIN users u ON c.user_id = u.id 
-                WHERE c.viditelnost = 1
-                AND c.datum <= NOW()
-                ORDER BY c.datum DESC";
+                WHERE (
+                    (c.viditelnost = 1 AND c.datum <= NOW())
+                    OR EXISTS (
+                        SELECT 1 FROM propagace 
+                        WHERE propagace.id_clanku = c.id 
+                        AND propagace.zacatek <= NOW() 
+                        AND propagace.konec >= NOW()
+                    )
+                )
+                ORDER BY is_promoted DESC, c.datum DESC";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
@@ -594,5 +741,37 @@ class Article
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    // Aktualizace informace o audio souboru u článku
+    public function updateAudioField($articleId, $audioFilename)
+    {
+        $query = "UPDATE clanky SET audio_file = :audioFile WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':audioFile', $audioFilename);
+        $stmt->bindParam(':id', $articleId, \PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    // Získání názvů kategorií článku (pro zpětnou kompatibilitu)
+    public function getCategories($articleId)
+    {
+        $query = "SELECT kategorie.nazev_kategorie FROM clanky_kategorie 
+                  JOIN kategorie ON clanky_kategorie.id_kategorie = kategorie.id 
+                  WHERE clanky_kategorie.id_clanku = :articleId";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':articleId', $articleId, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+    
+    // Přidání kategorie k článku (pro zpětnou kompatibilitu)
+    public function addCategory($articleId, $categoryId)
+    {
+        $query = "INSERT INTO clanky_kategorie (id_clanku, id_kategorie) VALUES (:articleId, :categoryId)";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':articleId', $articleId, \PDO::PARAM_INT);
+        $stmt->bindParam(':categoryId', $categoryId, \PDO::PARAM_INT);
+        return $stmt->execute();
     }
 }

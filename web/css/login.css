@@ -258,6 +258,7 @@ button:active {
   background-color: #212121;
   display: flex;    
   border-radius: 20px;
+  align-items: center;
 }
 
 

@@ -29,6 +29,7 @@ class LoginController
         $disableNavbar = true;
         $disableBootstrap = true;
         $css = ['login'];
+        $adminTitle = "Přihlášení | Admin Panel - Cyklistickey magazín";
         $view = '../app/Views/login.php';
         include '../app/Views/Admin/layout/base.php';
     }
@@ -82,6 +83,7 @@ class LoginController
         $disableNavbar = true;
         $disableBootstrap = true;
         $css = ['login'];
+        $adminTitle = "Registrace | Admin Panel - Cyklistickey magazín";
         
         $view = '../app/Views/Admin/users/create.php';
         include '../app/Views/Admin/layout/base.php';
@@ -90,6 +92,10 @@ class LoginController
     // Zpracování registrace
     public function store()
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         $data = [
             'email' => trim($_POST['email']),
             'heslo' => trim($_POST['heslo']),
@@ -101,27 +107,34 @@ class LoginController
 
         // Validace povinných polí
         if (empty($data['email']) || empty($data['heslo']) || empty($data['confirm_heslo']) || empty($data['name']) || empty($data['surname'])) {
-            echo "<script>alert('Vyplňte všechna povinná pole.'); window.location.href='/register';</script>";
-            return;
+            $_SESSION['registration_error'] = 'Vyplňte všechna povinná pole.';
+            header('Location: /register');
+            exit;
         }
 
         // Ověření shody hesel
         if ($data['heslo'] !== $data['confirm_heslo']) {
-            echo "<script>alert('Hesla se neshodují.'); window.location.href='/register';</script>";
-            return;
+            $_SESSION['registration_error'] = 'Hesla se neshodují.';
+            header('Location: /register');
+            exit;
         }
 
         // Kontrola, zda e-mail již existuje
         if ($this->model->checkEmailExists($data['email'])) {
-            echo "<script>alert('Účet s tímto e-mailem již existuje.'); window.location.href='/register';</script>";
-            return;
+            $_SESSION['registration_error'] = 'Účet s tímto e-mailem již existuje.';
+            header('Location: /register');
+            exit;
         }
 
         // Uložení uživatele do databáze
         if ($this->model->createUser($data)) {
-            echo "<script>alert('Registrace byla úspěšná.'); window.location.href='/login';</script>";
+            $_SESSION['login_success'] = 'Registrace byla úspěšná.';
+            header('Location: /login');
+            exit;
         } else {
-            echo "<script>alert('Chyba při registraci. Zkuste to znovu.'); window.location.href='/register';</script>";
+            $_SESSION['registration_error'] = 'Chyba při registraci. Zkuste to znovu.';
+            header('Location: /register');
+            exit;
         }
     }
 
@@ -131,6 +144,7 @@ class LoginController
         $disableNavbar = true;
         $disableBootstrap = true;
         $css = ['login'];
+        $adminTitle = "Reset hesla | Admin Panel - Cyklistickey magazín";
         
         $view = '../app/Views/Admin/users/reset_password.php';
         include '../app/Views/Admin/layout/base.php';
@@ -140,72 +154,100 @@ class LoginController
     public function resetPassword()
     {
         $email = trim($_POST['email']);
+        
+        error_log("DEBUG: Začínám reset hesla pro email: " . $email);
+        
         $user = $this->model->getByEmail($email);
 
         if (!$user) {
+            error_log("ERROR: Uživatel s emailem " . $email . " neexistuje");
             echo "<script>alert('Účet s tímto e-mailem neexistuje.'); window.location.href='/reset-password';</script>";
             return;
         }
 
+        error_log("DEBUG: Uživatel nalezen, ID: " . $user['id']);
+
+        // Vygenerujeme token a čas expirace
         $token = bin2hex(random_bytes(32));
         $expiresAt = date('Y-m-d H:i:s', strtotime('+1 hour'));
 
-        if ($this->model->storeResetToken($user['id'], $email, $token, $expiresAt)) {
-            $resetLink = "http://" . $_SERVER['HTTP_HOST'] . "/reset-password?token=" . $token;
+        error_log("DEBUG: Vygenerován token: " . $token . ", expirace: " . $expiresAt);
 
-            // ✅ Cesta k JSON logu
-            $logFile = __DIR__ . '/../../email_log.json';
-
-            // ✅ Nový záznam
-            $logEntry = [
-                'datum' => date('Y-m-d H:i:s'),
-                'email' => $email,
-                'token' => $token,
-                'expires_at' => $expiresAt,
-                'reset_link' => $resetLink,
-                'popis' => 'Odeslání odkazu pro reset hesla'
-            ];
-
-            // ✅ Načtení stávajících dat, pokud existují
-            $existingLogs = [];
-            if (file_exists($logFile)) {
-                $existingContent = file_get_contents($logFile);
-                $existingLogs = json_decode($existingContent, true) ?? [];
-            }
-
-            // ✅ Přidání nového záznamu do pole
-            $existingLogs[] = $logEntry;
-
-            // ✅ Zápis zpět do souboru v krásném formátu a s podporou češtiny
-            file_put_contents($logFile, json_encode($existingLogs, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-
-            echo "<script>alert('Odkaz pro reset hesla uložen do logu.'); window.location.href='/login';</script>";
-        } else {
-            echo "<script>alert('Chyba při generování odkazu.'); window.location.href='/reset-password';</script>";
-        }
-    }
-
-    // Potvrdí reset hesla
-    public function confirmResetPassword($token = null)
-    {
-        if (!$token) {
-            $token = $_GET['token'] ?? null;
+        // Nejprve zkontrolujeme, zda token byl úspěšně uložen do databáze
+        $tokenSaved = $this->model->storeResetToken($user['id'], $email, $token, $expiresAt);
+        
+        if (!$tokenSaved) {
+            error_log("ERROR: Chyba při ukládání tokenu do databáze");
+            echo "<script>alert('Chyba při ukládání tokenu do databáze.'); window.location.href='/reset-password';</script>";
+            return;
         }
         
-        if (!$token) {
-            echo "<script>alert('Token nebyl poskytnut.'); window.location.href='/login';</script>";
-            return;
-        }
+        // Pro účely ladění vypíšeme informace do error_log
+        error_log("DEBUG: Token úspěšně uložen do DB: " . $token . " pro uživatele ID: " . $user['id'] . ", email: " . $email);
+        
+        // Nyní, když víme, že token byl uložen, vytvoříme odkaz
+        $resetLink = "http://" . $_SERVER['HTTP_HOST'] . "/reset-password?token=" . urlencode($token);
+        
+        error_log("DEBUG: Vytvořen reset link: " . $resetLink);
 
-        $resetData = $this->model->getValidResetToken($token);
-        if (!$resetData) {
-            echo "<script>alert('Token je neplatný nebo expirovaný.'); window.location.href='/reset-password';</script>";
-            return;
+        // Místo echo HTML stránky, uložíme odkaz do session a přesměrujeme
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
+        $_SESSION['reset_link'] = $resetLink;
+        
+        // Přesměrování na novou stránku, která zobrazí resetovací odkaz
+        header('Location: /reset-password/link');
+        exit;
+    }
 
+    // Zobrazení stránky s odkazem pro reset hesla
+    public function showResetLink()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        if (!isset($_SESSION['reset_link'])) {
+            header('Location: /reset-password');
+            exit;
+        }
+        
+        $resetLink = $_SESSION['reset_link'];
+        unset($_SESSION['reset_link']); // Smažeme link ze session po zobrazení
+        
         $disableNavbar = true;
         $disableBootstrap = true;
         $css = ['login'];
+        $adminTitle = "Odkaz pro reset hesla | Admin Panel - Cyklistickey magazín";
+        
+        $view = '../app/Views/Admin/users/reset_link.php';
+        include '../app/Views/Admin/layout/base.php';
+    }
+
+    // Zobrazení formuláře pro nastavení nového hesla
+    public function confirmResetPassword()
+    {
+        $token = $_GET['token'] ?? '';
+        
+        if (empty($token)) {
+            header('Location: /reset-password');
+            exit;
+        }
+        
+        // Ověření platnosti tokenu
+        $resetInfo = $this->model->getValidResetToken($token);
+        
+        if (!$resetInfo) {
+            echo "<script>alert('Neplatný nebo expirovaný token pro reset hesla.'); window.location.href='/reset-password';</script>";
+            exit;
+        }
+        
+        $disableNavbar = true;
+        $disableBootstrap = true;
+        $css = ['login'];
+        $adminTitle = "Nastavení nového hesla | Admin Panel - Cyklistickey magazín";
+        
         $view = '../app/Views/Admin/users/new_password.php';
         include '../app/Views/Admin/layout/base.php';
     }
@@ -216,35 +258,53 @@ class LoginController
         $newPassword = $_POST['new_password'] ?? null;
         $confirmPassword = $_POST['confirm_password'] ?? null;
 
-        if (!$token || !$newPassword || !$confirmPassword) {
-            echo "<script>alert('Chybí token nebo heslo.'); window.location.href='/reset-password';</script>";
+        // Kontrola přítomnosti povinných údajů
+        if (empty($token)) {
+            error_log("ERROR: Chybí token v požadavku pro reset hesla.");
+            echo "<script>alert('Chybí token pro změnu hesla.'); window.location.href='/reset-password';</script>";
+            return;
+        }
+
+        if (empty($newPassword) || empty($confirmPassword)) {
+            error_log("ERROR: Chybí heslo v požadavku pro reset hesla. Token: " . $token);
+            echo "<script>alert('Prosím vyplňte obě pole s heslem.'); window.history.back();</script>";
             return;
         }
 
         if ($newPassword !== $confirmPassword) {
+            error_log("ERROR: Hesla se neshodují při resetu hesla. Token: " . $token);
             echo "<script>alert('Hesla se neshodují.'); window.history.back();</script>";
             return;
         }
 
+        // Získání dat o resetu hesla
         $resetData = $this->model->getValidResetToken($token);
+        
         if (!$resetData) {
+            error_log("ERROR: Token pro reset hesla nebyl nalezen v databázi nebo expiroval: " . $token);
             echo "<script>alert('Token je neplatný nebo expirovaný.'); window.location.href='/reset-password';</script>";
             return;
         }
 
-        // ✅ Kontrola, zda e-mail opravdu existuje v DB
+        // Kontrola, zda e-mail existuje v DB
         $user = $this->model->getByEmail($resetData['email']);
         if (!$user) {
+            error_log("ERROR: Uživatel s emailem " . $resetData['email'] . " nebyl nalezen.");
             echo "<script>alert('Účet s tímto e-mailem neexistuje.'); window.location.href='/reset-password';</script>";
             return;
         }
 
-        // ✅ Aktualizace hesla podle user_id
+        // Aktualizace hesla podle user_id
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-        if ($this->model->updatePassword($user['id'], $hashedPassword)) {
+        $updated = $this->model->updatePassword($user['id'], $hashedPassword);
+        
+        if ($updated) {
+            // Smazání použitého tokenu
             $this->model->deleteResetToken($token);
+            error_log("SUCCESS: Heslo bylo úspěšně změněno pro uživatele ID: " . $user['id']);
             echo "<script>alert('Heslo bylo úspěšně změněno.'); window.location.href='/login';</script>";
         } else {
+            error_log("ERROR: Chyba při změně hesla pro uživatele ID: " . $user['id']);
             echo "<script>alert('Chyba při změně hesla.'); window.location.href='/reset-password';</script>";
         }
     }

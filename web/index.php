@@ -48,6 +48,7 @@ $routes = [
     '/register/submit' => [LoginController::class, 'store'],
     '/reset-password' => [LoginController::class, isset($_GET['token']) ? 'confirmResetPassword' : 'reset'],
     '/reset-password/submit' => [LoginController::class, 'resetPassword'],
+    '/reset-password/link' => [LoginController::class, 'showResetLink'],
     '/reset-password/save' => [LoginController::class, 'saveNewPassword'],
     '/user/([^/]+)' => [UserController::class, 'userDetail'],
     '/user/([^/]+)/articles' => [UserController::class, 'userArticles'],

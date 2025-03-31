@@ -1,6 +1,6 @@
     <div class="ohraniceni">
         <div class="logo">
-            <img src="/assets/graphics/logo_text_cyklistickey.png">
+            <img src="/assets/graphics/logo_text_cyklistickey.png" alt="Cyklistickey logo">
         </div>
         <div class="inputy">
             <form method="POST" action="/reset-password/submit" class="input-wrapper">

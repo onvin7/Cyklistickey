@@ -1,8 +1,20 @@
 let script = document.createElement('script');
-script.src = "https://cdn.tiny.cloud/1/l1vyo5rc4lr9bndoweby2luoq845e7lw20i4gb1rtwn0xify/tinymce/7/tinymce.min.js";
+script.src = "https://cdn.tiny.cloud/1/4zya77m9f7cxct4wa90s8vckad17auk31vflx884mx6xu1a3/tinymce/7/tinymce.min.js";
 script.referrerPolicy = "origin";
 
-script.onload = function() {
+// Zaznamenat selhání načtení API klíče
+script.onerror = function() {
+    console.error("Nepodařilo se načíst TinyMCE z cloudu - přepínám na lokální CDN...");
+    // Pokud selže načtení, použij CDN verzi bez API klíče
+    const fallbackScript = document.createElement('script');
+    fallbackScript.src = "https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.6.2/tinymce.min.js";
+    fallbackScript.onload = initTinyMCE;
+    document.head.appendChild(fallbackScript);
+};
+
+script.onload = initTinyMCE;
+
+function initTinyMCE() {
     tinymce.init({
         selector: '#editor',
         plugins: 'image link lists code',
@@ -11,6 +23,7 @@ script.onload = function() {
         automatic_uploads: true,
         file_picker_types: 'image',
         images_upload_url: '/admin/upload-image',
+        document_base_url: window.location.origin, // Explicitně nastavíme base URL
 
         images_upload_handler: function (blobInfo, progress) {
             return new Promise((resolve, reject) => {
@@ -24,7 +37,7 @@ script.onload = function() {
                 .then(response => response.json())
                 .then(result => {
                     if (result && result.location) {
-                        resolve(result.location);  // ✅ Správná cesta k obrázku
+                        resolve(result.location);
                     } else {
                         reject('Chybí "location" v odpovědi serveru.');
                     }
@@ -33,6 +46,6 @@ script.onload = function() {
             });
         },
     });
-};
+}
 
 document.head.appendChild(script);

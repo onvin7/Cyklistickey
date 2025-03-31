@@ -46,7 +46,7 @@
 
             <div class="team-image">
 
-                <img id="kategorie" src="/assets/graphics/ceo.png" alt="">
+                <img id="kategorie" src="/assets/graphics/ceo.png" alt="CEO tým Cyklistickey">
 
             </div>
 
@@ -54,7 +54,7 @@
 
                 <h2>Jakub</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (13).png" alt="">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (13).png" alt="Jakub - člen týmu">
 
             </div>
 
@@ -62,13 +62,13 @@
 
                 <h2>Dominik</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (5).png" alt="">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (5).png" alt="Dominik - člen týmu">
 
             </div>
 
             <div class="team-image">
 
-                <img id="kategorie" src="/assets/graphics/TOMAS.png" alt="">
+                <img id="kategorie" src="/assets/graphics/TOMAS.png" alt="Redakční sekce">
 
             </div>
 
@@ -76,13 +76,13 @@
 
                 <h2>Tomáš</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (10).png" alt="">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (10).png" alt="Tomáš - člen týmu">
 
             </div>
 
             <div class="team-image">
 
-                <img id="kategorie" src="/assets/graphics/redakce.png" alt="">
+                <img id="kategorie" src="/assets/graphics/redakce.png" alt="Redakční tým">
 
             </div>
 
@@ -90,7 +90,7 @@
 
                 <h2>Véna</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (8).png" alt="">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (8).png" alt="Véna - člen týmu">
 
             </div>
 
@@ -98,13 +98,13 @@
 
                 <h2>Vašek</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (6).png" alt="">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (6).png" alt="Vašek - člen týmu">
 
             </div>
 
             <div class="team-image">
 
-                <img id="kategorie" src="/assets/graphics/itguys.png" alt="">
+                <img id="kategorie" src="/assets/graphics/itguys.png" alt="IT tým">
 
             </div>
 
@@ -112,7 +112,7 @@
 
                 <h2>Ondra</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (17).png" alt="">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (17).png" alt="Ondra - člen týmu">
 
             </div>
 
@@ -120,13 +120,13 @@
 
                 <h2>Steve</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (14).png" alt="">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (14).png" alt="Steve - člen týmu">
 
             </div>
 
             <div class="team-image">
 
-                <img id="kategorie" src="/assets/graphics/kamera.png" alt="">
+                <img id="kategorie" src="/assets/graphics/kamera.png" alt="Kamera tým">
 
             </div>
 
@@ -134,7 +134,7 @@
 
                 <h2>Filip</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (11).png" alt="">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (11).png" alt="Filip - člen týmu">
 
             </div>
 
@@ -142,13 +142,13 @@
 
                 <h2>Jonáš</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (12).png" alt="">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (12).png" alt="Jonáš - člen týmu">
 
             </div>
 
             <div class="team-image">
 
-                <img id="kategorie" src="/assets/graphics/BIKELAB.png" alt="">
+                <img id="kategorie" src="/assets/graphics/BIKELAB.png" alt="Bikelab tým">
 
             </div>
 
@@ -156,7 +156,7 @@
 
                 <h2>Tomáš</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (16).png" alt="">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (16).png" alt="Tomáš - člen týmu">
 
             </div>
 
@@ -164,7 +164,7 @@
 
                 <h2>Filip</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (15).png" alt="">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (15).png" alt="Filip - člen týmu">
 
             </div>
 
@@ -188,11 +188,11 @@
 
         <div class="obrazky">
 
-            <img src="/assets/graphics/cycli.png" alt="">
+            <img src="/assets/graphics/cycli.png" alt="Cycli - obchod">
 
-            <img src="/assets/graphics/cycli-1.png" alt="">
+            <img src="/assets/graphics/cycli-1.png" alt="Cycli - prodej kol">
 
-            <img src="/assets/graphics/cycli-2.png" alt="">
+            <img src="/assets/graphics/cycli-2.png" alt="Cycli - detail">
 
         </div>
 
@@ -208,7 +208,7 @@
 
     <div class="idnes">
 
-        <img src="/assets/graphics/idnes.png" alt="">
+        <img src="/assets/graphics/idnes.png" alt="Článek na iDnes">
 
     </div>
 
@@ -222,13 +222,13 @@
 
     <div class="partneri">
 
-        <img src="/assets/graphics/forbikes.png" alt="">
+        <img src="/assets/graphics/forbikes.png" alt="Partner FOR BIKES">
 
-        <img src="/assets/graphics/roadclassics.png" alt="">
+        <img src="/assets/graphics/roadclassics.png" alt="Partner Road Classics">
 
-        <img src="/assets/graphics/kpz.png" alt="">
+        <img src="/assets/graphics/kpz.png" alt="Partner KOLO PRO ŽIVOT">
 
-        <img src="/assets/graphics/bikefest.png" alt="">
+        <img src="/assets/graphics/bikefest.png" alt="Partner Prague Bike Fest">
 
     </div>
 
@@ -268,7 +268,37 @@
             });
 
         });
+        
+        // Drag-scroll funkce pro galerii týmu
+        const slider = document.querySelector('.galerie.team');
+        let isDown = false;
+        let startX;
+        let scrollLeft;
 
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            slider.classList.add('active');
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+        });
+
+        slider.addEventListener('mouseleave', () => {
+            isDown = false;
+            slider.classList.remove('active');
+        });
+
+        slider.addEventListener('mouseup', () => {
+            isDown = false;
+            slider.classList.remove('active');
+        });
+
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 2; // Násobitel určuje rychlost scrollování
+            slider.scrollLeft = scrollLeft - walk;
+        });
     });
 
 

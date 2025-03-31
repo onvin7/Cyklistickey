@@ -19,6 +19,8 @@ class AccessControlAdminController
         $pages = $this->model->getAllPages();
         $accessibleLinks = $this->getAccessibleSections($_SESSION['role'] ?? 0); // Načteme dostupné sekce
 
+        $adminTitle = "Správa přístupů | Admin Panel - Cyklistickey magazín";
+
         $view = '../app/Views/Admin/access_control/index.php';
         include '../app/Views/Admin/layout/base.php';
     }

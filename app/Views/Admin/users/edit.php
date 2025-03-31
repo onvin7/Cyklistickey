@@ -67,11 +67,11 @@
         if (typeof tinymce !== 'undefined') {
             tinymce.init({
                 selector: '#editor',
-                height: 500,
+                height: 750,
                 setup: function(editor) {
                     editor.on('init', function() {
-                        document.querySelector('.tox-tinymce').style.height = '500px';
-                        document.querySelector('.tox-edit-area').style.height = '430px';
+                        document.querySelector('.tox-tinymce').style.height = '750px';
+                        document.querySelector('.tox-edit-area').style.height = '680px';
                     });
                 }
             });

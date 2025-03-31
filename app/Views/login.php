@@ -1,9 +1,15 @@
 <form method="POST" action="/login/submit">
     <div class="container">
-        <div class="ohraniceni">
-            <div class="logo"><img src="/assets/graphics/logo_text_cyklistickey.png">
+        <div class="ohraniceni new">
+            <div class="logo"><img src="/assets/graphics/logo_text_cyklistickey.png" alt="Cyklistickey logo">
             </div>
             <div class="inputy">
+            <?php if (isset($_SESSION['login_success'])): ?>
+                <div class="prvek" style="color: green; margin-bottom: 10px;">
+                    <?= $_SESSION['login_success']; ?>
+                    <?php unset($_SESSION['login_success']); ?>
+                </div>
+                <?php endif; ?>
                 <div class="input-wrapper">
                     <div class="prvek">
                         <div class="input-group validator-msg-holder js-validated-element-wrapper">
@@ -19,16 +25,16 @@
                         </div>
                     </div>
 
-                    <input type="submit" value="Přihlásit se">
+                <input type="submit" value="Přihlásit se">
 
-                    <div class="prvek">
-                        <a href="/reset-password">Zapomněl jsi heslo? Nechtěl bych...</a>
-                    </div>
-                    
-                    <div class="prvek">
-                        <a href="/register">Nemáš účet? Tak co tady děláš...</a>
-                    </div>
+                <div class="prvek">
+                    <a href="/reset-password">Zapomněl jsi heslo? Nechtěl bych...</a>
                 </div>
+                
+                <div class="prvek">
+                    <a href="/register">Nemáš účet? Tak co tady děláš...</a>
+                </div>
+            </div>
 
             </div>
         </div>

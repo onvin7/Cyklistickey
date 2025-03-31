@@ -1,15 +1,11 @@
-<?php
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
-?>
 <!DOCTYPE html>
 <html lang="cs">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <meta name="robots" content="noindex, nofollow">
+    <title><?= htmlspecialchars($adminTitle ?? 'Admin Panel - Cyklistickey magazín') ?></title>
     <?php if (!isset($disableBootstrap) || !$disableBootstrap): ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <?php endif; ?>
@@ -32,7 +28,7 @@ header("Pragma: no-cache");
 
     <?php if (isset($css) && is_array($css)): ?>
         <?php foreach ($css as $i): ?>
-            <link rel="stylesheet" href="/css/<?php echo $i; ?>.css?v=<?php echo time(); ?>">
+            <link rel="stylesheet" href="/css/<?php echo $i; ?>.css">
         <?php endforeach; ?>
     <?php endif; ?>
 

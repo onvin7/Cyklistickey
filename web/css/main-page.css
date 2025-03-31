@@ -84,6 +84,18 @@ body {
 
     height: max-content;
 
+    transition: none;
+
+}
+
+
+
+.container-clanky .card:hover {
+
+    transform: none;
+
+    box-shadow: none;
+
 }
 
 
@@ -194,13 +206,27 @@ body {
 
 
 
+.container-clanky .card .image-container {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+}
+
+
+
 .container-clanky .card img {
     width: 100%;
     object-fit: cover;
     display: block;
     aspect-ratio: 16/9;
-    transition: 0.5s;
+    transition: transform 0.5s ease;
     overflow: hidden;
+}
+
+
+
+.container-clanky .card:hover img {
+    transform: scale(1.1);
 }
 
 
@@ -390,7 +416,7 @@ body {
 }
 
 
-
+/*
 .container-clanky-kategorie .card .card-body .gradient {
 
     position: relative;
@@ -428,7 +454,7 @@ body {
     pointer-events: none;
 
 }
-
+*/
 /* Přidáme třídu pro datum */
 .container-clanky-kategorie .card .card-body .datum, .container-clanky .card .card-body .datum  {
     color: rgba(255, 255, 255, 0.6);
@@ -710,11 +736,11 @@ body {
 }
 
 .card.clanek img {
-    transition: transform 0.3s ease, filter 0.3s ease;
+    transition: transform 0.5s ease;
 }
 
 .card.clanek:hover img {
-    transform: scale(1.02);
+    transform: scale(1.1);
 }
 
 .podkategorie-container .text h1 {
@@ -985,4 +1011,39 @@ div.podobne_clanky {
         width: 100%;
         height: auto;
     }
+}
+
+.container-clanky-kategorie .card.clanek {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #00000F;
+    overflow: hidden;
+    transition: none;
+}
+
+.container-clanky-kategorie .card.clanek:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.container-clanky-kategorie .card.clanek a {
+    overflow: hidden;
+}
+
+.container-clanky-kategorie .card.clanek .image-container {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+}
+
+.container-clanky-kategorie .card.clanek img {
+    width: 100%;
+    object-fit: cover;
+    aspect-ratio: 16/9;
+    transition: transform 0.5s ease;
+}
+
+.container-clanky-kategorie .card.clanek:hover img {
+    transform: scale(1.1);
 }

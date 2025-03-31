@@ -1,0 +1,311 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: 'Fira Sans Condensed', sans-serif;
+}
+
+::-webkit-scrollbar {
+  background-color: #00000F;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #171925;
+  border-radius: 25px;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: rgb(18, 18, 18);
+  color: white;
+  overflow: hidden;
+}
+
+.container-login {
+  width: 50%;
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.container-login h1 {
+  text-transform: uppercase;
+  font-weight: 100;
+  margin-bottom: 0;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 300px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #ffffff;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  background-color: #2c2f3f;
+  color: #ffffff;
+  border-radius: 4px;
+}
+
+.form-group input:focus {
+  outline: none;
+  background-color: #2c2f3f;
+}
+
+button {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #f1008d;
+  color: #ffffff;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #c7007a;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+
+
+.container {
+  display: flex;
+  background-color: rgb(18, 18, 18);
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;}
+
+.container .ohraniceni {
+  background-color: #212121;
+  height: 300px;
+  width: 650px;
+  display: flex;    
+  border-radius: 20px;
+}
+
+.container .ohraniceni .inputy {
+  width: 50%;
+  height: 100%;
+  background-color: #212121;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+}
+
+.container .ohraniceni .inputy .prvek a {
+  width: 100%;
+  display: block;
+  color: white;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 12px;
+}
+
+.container .ohraniceni .inputy .prvek {
+  margin-bottom: 20px;
+}
+
+.container .ohraniceni .inputy .prvek:nth-child(1) {
+  margin-top: 20px;
+}
+
+.container .ohraniceni .inputy input[type="submit"] {
+  background-color: white;
+  border-radius: 20px;
+  padding: 0.8em 1em;
+  border: none;
+  width: 262px;
+  cursor: pointer;
+  border: 0.25em solid white;
+}
+
+.container .ohraniceni .inputy input[type="submit"]:hover {
+  background-color: rgb(232, 232, 232);
+}
+
+.container .ohraniceni .logo {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container .ohraniceni .logo.register {
+  height: auto;
+}
+
+.container .ohraniceni .logo img {
+  width: 400px;
+}
+
+/*-------------emial-styles-----------*/
+
+.input-group {
+  width: max-content;
+  min-width: 200px;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  justify-content: center !important;
+}
+
+.input-group__label {
+  padding: 0 0.5em;
+  margin-bottom: 0.5em;
+  text-transform: uppercase;
+  font-size: 0.875em;
+  letter-spacing: 0.1em;
+  color: #ccd;
+  color: rgba(255, 220, 255, 0.6);
+  cursor: pointer;
+}
+
+.input-group__input {
+  color: #fff;
+  font-size: 1.25rem;
+  line-height: 1;
+  border-style: none;
+  outline: none;
+  height: calc(1em + 1.6em + 0.5em);
+  width: 100%;
+  padding: 0.8em 1em;
+  border: 0.25em solid transparent;
+  background-image: linear-gradient(#000, #000), linear-gradient(to right, rgb(229, 7, 126), rgb(154, 31, 106), rgb(4, 142, 206), rgb(4, 142, 206), rgb(99, 195, 208));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  border-radius: 1.8em;
+  background-size: 200% 100%;
+  transition: background-position 0.8s ease-out;
+  font-size: 16px;
+}
+
+.input-group__input2 {
+  color: #fff;
+  font-size: 1.25rem;
+  line-height: 1;
+  border-style: none;
+  outline: none;  
+  height: calc(1em + 1.6em + 0.5em);
+  width: 100%;
+  padding: 0.8em 1em;
+  border: 0.25em solid transparent;
+  background-image: linear-gradient(#000, #000), linear-gradient(to left, rgb(99, 195, 208), rgb(4, 142, 206), rgb(4, 142, 206), rgb(229, 7, 126));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  border-radius: 1.8em;
+  background-size: 200% 100%;
+  transition: background-position 0.8s ease-out;
+  font-size: 16px;
+}
+
+.input-group__input:hover {
+  background-position: 100% 0;
+}
+
+.input-group__input2:hover {
+  background-position: 100% 0;
+}
+
+@supports (mix-blend-mode: darken) {
+  .input-group {
+    position: relative;
+    mix-blend-mode: lighten;
+  }
+
+  .input-group__label {
+    position: absolute;
+    left: 3em;
+    top: -0.28em;
+    background: #000;
+  }
+}
+
+.container .ohraniceni.new {
+  height: auto;
+  background-color: #212121;
+  display: flex;    
+  border-radius: 20px;
+}
+
+
+
+.prvek span.form-title {
+  display: block;
+  color: white;
+  font-size: 28px;
+  font-weight: 300;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+  text-align: center;
+  background: linear-gradient(to left, rgb(229, 7, 126), rgb(4, 142, 206));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@media screen and (max-width: 768px) {
+  .container-login {
+    width: 90%;
+  }
+
+  .container .ohraniceni,
+  .container .ohraniceni.new {
+    width: 90%;
+    flex-flow: column;
+    align-items: center;
+    height: auto; 
+  }
+
+  .container .ohraniceni .logo img {
+    width: 300px;
+  }
+}
+
+@media screen and (max-height: 700px) {
+  .container .ohraniceni.new {
+    margin: 20px 0;
+  }
+
+  .container {
+    height: auto;
+    min-height: 100vh;
+    padding: 0;
+  }
+  body {
+        overflow-y: auto;
+  }
+}

@@ -18,37 +18,36 @@ use App\Helpers\TextHelper;
         <div class="categories">
             <div class="output">
                 <?php
-                foreach ($article['kategorie'] as $kategorie) {
+                if (isset($article['kategorie']) && is_array($article['kategorie'])) {
+                    foreach ($article['kategorie'] as $kategorie) {
                 ?>
                     <div class='kategorie'>
                         <a id='kategorie' href='/category/<?php echo $kategorie['url']; ?>/'>
                             <p><?php echo htmlspecialchars($kategorie['nazev_kategorie']); ?></p>
                         </a>
                     </div>
-                <?php } ?>
+                <?php 
+                    }
+                } 
+                ?>
             </div>
         </div>
 
         <h1><?php echo htmlspecialchars($article["nazev"], ENT_QUOTES); ?></h1>
         <h3><?php echo \App\Helpers\TimeHelper::getRelativeTime($article["datum"], true); ?></h3>
-        <?php
-        if (!empty($audioFiles)) : ?>
-            <?php foreach ($audioFiles as $audioFileName) : ?>
-                <?php if ($audioFileName !== 'default.mp3') : ?>
-                    <div class="prehravac">
-                        <audio controls>
-                            <source src='uploads/audio/clanek_<?php echo $article['id']; ?>.mp3' type='audio/mpeg'>
-                            Váš prohlížeč nepodporuje prvek audio.
-                        </audio>
-                    </div>
-                <?php endif; ?>
-            <?php endforeach; ?>
+
+        <?php if (isset($audioUrl) && $audioUrl): ?>
+            <div class="prehravac">
+                <audio controls>
+                    <source src='<?php echo $audioUrl; ?>' type='audio/mpeg'>
+                    Váš prohlížeč nepodporuje prvek audio.
+                </audio>
+            </div>
+                    
         <?php endif; ?>
 
         <div class="text-editor">
             <?php
-
-
             if (isset($article['obsah'])) {
                 echo $article['obsah'];
             } else {
@@ -56,6 +55,23 @@ use App\Helpers\TextHelper;
             }
             ?>
         </div>
+        <script>
+            // Oprava relativních cest k obrázkům
+            document.addEventListener('DOMContentLoaded', function() {
+                const contentImages = document.querySelectorAll('.text-editor img');
+                
+                contentImages.forEach(function(img) {
+                    const src = img.getAttribute('src');
+                    
+                    // Hledání /uploads/articles/ v cestě
+                    if (src && src.includes('/uploads/articles/')) {
+                        // Získáme část cesty začínající /uploads/articles/
+                        const newSrc = '/uploads/articles/' + src.split('/uploads/articles/')[1];
+                        img.setAttribute('src', newSrc);
+                    }
+                });
+            });
+        </script>
     </div>
 </div>
 <script>
@@ -102,21 +118,21 @@ use App\Helpers\TextHelper;
 <div class="container-autor">
     <div class="text">
         <div class="image">
-            <img loading="lazy" src="/uploads/users/thumbnails/<?php echo !empty($author['profil_foto']) ? $author['profil_foto'] : 'noimage.png'; ?>">
+            <img loading="lazy" src="/uploads/users/thumbnails/<?php echo !empty($author['profil_foto']) ? $author['profil_foto'] : 'noimage.png'; ?>" alt="<?php echo htmlspecialchars($author['name'] . ' ' . $author['surname']); ?>">
         </div>
         <div class="container-popis">
             <div class="popis">
                 <div>
-                    <h5><?php echo htmlspecialchars($author["name"], ENT_QUOTES); ?>&nbsp;<?php echo htmlspecialchars($author["surname"], ENT_QUOTES); ?>
+                    <h5><?php echo isset($author["name"]) ? htmlspecialchars($author["name"], ENT_QUOTES) : ''; ?>&nbsp;<?php echo isset($author["surname"]) ? htmlspecialchars($author["surname"], ENT_QUOTES) : ''; ?>
                     </h5>
-                    <h6><a href="mailto:<?php echo htmlspecialchars($author["email"], ENT_QUOTES); ?>"><?php echo htmlspecialchars($author["email"], ENT_QUOTES); ?></a>
+                    <h6><a href="mailto:<?php echo isset($author["email"]) ? htmlspecialchars($author["email"], ENT_QUOTES) : ''; ?>"><?php echo isset($author["email"]) ? htmlspecialchars($author["email"], ENT_QUOTES) : ''; ?></a>
                     </h6>
                 </div>
-                <p><?php echo TextHelper::truncate($author['popis'], 220); ?></p>
+                <p><?php echo isset($author['popis']) && is_string($author['popis']) ? TextHelper::truncate($author['popis'], 220) : ''; ?></p>
             </div>
         </div>
         <div class="odkaz">
-            <a href="/user/<?php echo (TextHelper::generateFriendlyUrl($author['name']) . "-" . TextHelper::generateFriendlyUrl($author['surname'])); ?>/">
+            <a href="/user/<?php echo (isset($author['name']) ? TextHelper::generateFriendlyUrl($author['name']) : '') . "-" . (isset($author['surname']) ? TextHelper::generateFriendlyUrl($author['surname']) : ''); ?>/">
                 <p>Zobrazit profil</p><i class="fa-solid fa-angle-right"></i>
             </a>
         </div>
@@ -127,24 +143,24 @@ use App\Helpers\TextHelper;
     <div class="text">
         <div class="fotka-text">
             <div>
-                <div class="img" style="background-image: url('/uploads/users/thumbnails/<?php echo !empty($author["profil_foto"]) ? $author["profil_foto"] : 'noimage.png'; ?>')">
+                <div class="img" style="background-image: url('/uploads/users/thumbnails/<?php echo isset($author["profil_foto"]) && !empty($author["profil_foto"]) ? $author["profil_foto"] : 'noimage.png'; ?>')">
                 </div>
             </div>
             <div class="container-popis">
                 <div class="popis">
                     <div>
-                        <h5><?php echo htmlspecialchars($author["name"], ENT_QUOTES); ?><br><?php echo htmlspecialchars($author["surname"], ENT_QUOTES); ?>
+                        <h5><?php echo isset($author["name"]) ? htmlspecialchars($author["name"], ENT_QUOTES) : ''; ?><br><?php echo isset($author["surname"]) ? htmlspecialchars($author["surname"], ENT_QUOTES) : ''; ?>
                         </h5>
-                        <h6><a href="mailto:<?php echo htmlspecialchars($author["email"], ENT_QUOTES); ?>"><?php echo htmlspecialchars($author["email"], ENT_QUOTES); ?></a>
+                        <h6><a href="mailto:<?php echo isset($author["email"]) ? htmlspecialchars($author["email"], ENT_QUOTES) : ''; ?>"><?php echo isset($author["email"]) ? htmlspecialchars($author["email"], ENT_QUOTES) : ''; ?></a>
                         </h6>
                     </div>
 
                 </div>
             </div>
         </div>
-        <p><?php echo TextHelper::truncate($author['popis'], 220); ?></p>
+        <p><?php echo isset($author['popis']) && is_string($author['popis']) ? TextHelper::truncate($author['popis'], 220) : ''; ?></p>
         <div class="odkaz">
-            <a href="/autor/<?php echo (TextHelper::generateFriendlyUrl($author['name']) . "-" . TextHelper::generateFriendlyUrl($author['surname'])); ?>/">
+            <a href="/user/<?php echo (isset($author['name']) ? TextHelper::generateFriendlyUrl($author['name']) : '') . "-" . (isset($author['surname']) ? TextHelper::generateFriendlyUrl($author['surname']) : ''); ?>/">
                 <p>Zobrazit profil</p><i class="fa-solid fa-angle-right"></i>
             </a>
         </div>
@@ -154,25 +170,29 @@ use App\Helpers\TextHelper;
 
 
 <div class="container-clanky">
-    <?php foreach ($relatedArticles as $result): ?>
-        <a href="/article/<?php echo ($result['url']); ?>/">
-            <div class="card">
-                <img loading="lazy" src="/uploads/thumbnails/male/<?php echo !empty($result["nahled_foto"]) ? htmlspecialchars($result["nahled_foto"]) : 'noimage.png'; ?>" alt="<?php echo htmlspecialchars($result["nazev"]); ?>">
-                <div class="card-body">
-                    <div class="kategorie">
-                        <?php foreach ($result['kategorie'] as $kategorie): ?>
-                            <a href="/category/<?php echo htmlspecialchars($kategorie["url"]); ?>/">
-                                <p><?php echo htmlspecialchars($kategorie["nazev_kategorie"]); ?></p>
-                            </a>
-                        <?php endforeach; ?>
+    <?php if (is_array($relatedArticles) && !empty($relatedArticles)): ?>
+        <?php foreach ($relatedArticles as $result): ?>
+            <a href="/article/<?php echo ($result['url']); ?>/">
+                <div class="card">
+                    <img loading="lazy" src="/uploads/thumbnails/male/<?php echo !empty($result["nahled_foto"]) ? htmlspecialchars($result["nahled_foto"]) : 'noimage.png'; ?>" alt="<?php echo htmlspecialchars($result["nazev"]); ?>">
+                    <div class="card-body">
+                        <div class="kategorie">
+                            <?php if (isset($result['kategorie']) && is_array($result['kategorie'])): ?>
+                                <?php foreach ($result['kategorie'] as $kategorie): ?>
+                                    <a href="/category/<?php echo htmlspecialchars($kategorie["url"]); ?>/">
+                                        <p><?php echo htmlspecialchars($kategorie["nazev_kategorie"]); ?></p>
+                                    </a>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                        <a href="/articles/<?php echo $result['url']; ?>/">
+                            <h5><?php echo htmlspecialchars($result["nazev"]); ?></h5>
+                        </a>
                     </div>
-                    <a href="/articles/<?php echo $result['url']; ?>/">
-                        <h5><?php echo htmlspecialchars($result["nazev"]); ?></h5>
-                    </a>
                 </div>
-            </div>
-        </a>
-    <?php endforeach; ?>
+            </a>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </div>
 
 <script>
