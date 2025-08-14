@@ -117,4 +117,32 @@ class HomeController
         $view = '../app/Views/Web/race/bezeckey_race.php';
         require '../app/Views/Web/layouts/base.php';
     }
+
+    public function events()
+    {
+        // SEO nastavení
+        $title = "Events | Cyklistický magazín";
+        $description = "Přehled všech akcí a událostí souvisejících s cyklistikou - závody, výstavy, workshopy a další.";
+        $ogTitle = "Events - Cyklistické akce a události";
+        $ogDescription = "Kalendář cyklistických akcí, závodů, výstav a dalších událostí pro všechny milovníky cyklistiky.";
+        $canonicalUrl = "https://vincenon21.mp.spse-net.cz/events";
+        $css = ['race', 'race-main'];
+
+        $view = '../app/Views/Web/race/race.php';
+        require '../app/Views/Web/layouts/base.php';
+    }
+
+    public function appka()
+    {
+        // SEO nastavení
+        $title = "Appka | Cyklistickey";
+        $description = "Články a aktuality ze všech koutů cyklistiky. Vše hezky na jednom místě.";
+        $ogTitle = "Cyklistickey App - Mobilní aplikace pro cyklisty";
+        $ogDescription = "Mobilní aplikace Cyklistickey - novinky, trasy, závody a vše o cyklistice na jednom místě.";
+        $canonicalUrl = "https://vincenon21.mp.spse-net.cz/appka";
+        $css = ['appka'];
+
+        $view = '../app/Views/Web/home/appka.php';
+        require '../app/Views/Web/layouts/base.php';
+    }
 }

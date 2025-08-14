@@ -31,7 +31,7 @@
         <div class="menu">
             <h2>menu</h2>
             <ul>
-                <?php echo $links; ?>
+                <?php echo $footerLinks; ?>
             </ul>
         </div>
 
@@ -72,7 +72,7 @@
     <div class="menu">
         <h2>menu</h2>
         <ul>
-            <?php echo $links; ?>
+            <?php echo $footerLinks; ?>
         </ul>
     </div>
 </div>
