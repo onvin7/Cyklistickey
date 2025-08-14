@@ -113,17 +113,29 @@
     {
         $html = '';
         foreach ($links as $link) {
-            $html .= '<li><a href="' . $link['url'] . '">' . $link['text'] . '</a></li>';
+            $target = isset($link['target']) ? ' target="' . $link['target'] . '"' : '';
+            $html .= '<li><a href="' . $link['url'] . '"' . $target . '>' . $link['text'] . '</a></li>';
         }
         return $html;
     }
 
     $links = generateLinks([
         ['url' => '/', 'text' => 'DOMŮ'],
-        ['url' => '/race/', 'text' => 'RACE'],
+        ['url' => 'https://www.cycli.cz/vyhledavani?controller=search&s=cyklistickey', 'text' => 'ESHOP', 'target' => '_blank'],
         ['url' => '/categories/', 'text' => 'KATEGORIE'],
         ['url' => '/authors/', 'text' => 'REDAKCE'],
+        ['url' => '/events', 'text' => 'EVENTS'],
         ['url' => '/kontakt/', 'text' => 'O NÁS']
+    ]);
+    
+    $footerLinks = generateLinks([
+        ['url' => '/', 'text' => 'DOMŮ'],
+        ['url' => 'https://www.cycli.cz/vyhledavani?controller=search&s=cyklistickey', 'text' => 'ESHOP', 'target' => '_blank'],
+        ['url' => '/categories/', 'text' => 'KATEGORIE'],
+        ['url' => '/authors/', 'text' => 'REDAKCE'],
+        ['url' => '/events', 'text' => 'EVENTS'],
+        ['url' => '/kontakt/', 'text' => 'O NÁS'],
+        ['url' => '/appka', 'text' => 'APPKA']
     ]);
      
     include 'flash.php';

@@ -32,7 +32,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="editor" class="form-label"><i class="fas fa-pen me-2"></i>Popis</label>
-                            <textarea id="editor" name="popis"><?= htmlspecialchars($user['popis'] ?? '') ?></textarea>
+                            <textarea id="editor" name="popis" lang="cs" spellcheck="true"><?= htmlspecialchars($user['popis'] ?? '') ?></textarea>
                         </div>
                         
                         <div class="d-flex justify-content-between">
@@ -61,20 +61,19 @@
 </style>
 
 <!-- TinyMCE + konfigurace -->
-<script src="/js/tinymce-config.js"></script>
+<!-- TinyMCE je načten v base.php -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        if (typeof tinymce !== 'undefined') {
-            tinymce.init({
-                selector: '#editor',
-                height: 750,
-                setup: function(editor) {
-                    editor.on('init', function() {
-                        document.querySelector('.tox-tinymce').style.height = '750px';
-                        document.querySelector('.tox-edit-area').style.height = '680px';
-                    });
+        // Počkáme na inicializaci TinyMCE
+        setTimeout(function() {
+            const editorElement = document.querySelector('.tox-tinymce');
+            if (editorElement) {
+                editorElement.style.height = '750px';
+                const editArea = document.querySelector('.tox-edit-area');
+                if (editArea) {
+                    editArea.style.height = '680px';
                 }
-            });
-        }
+            }
+        }, 1000);
     });
 </script>

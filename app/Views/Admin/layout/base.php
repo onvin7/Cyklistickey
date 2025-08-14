@@ -31,7 +31,12 @@
             <link rel="stylesheet" href="/css/<?php echo $i; ?>.css">
         <?php endforeach; ?>
     <?php endif; ?>
-
+    
+    <!-- TinyMCE -->
+    <script src="https://cdn.tiny.cloud/1/l1vyo5rc4lr9bndoweby2luoq845e7lw20i4gb1rtwn0xify/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    
+    <!-- Jednoduchá TinyMCE konfigurace s vestavěnou kontrolou pravopisu -->
+    <script src="/js/tinymce-simple.js"></script>
 
 </head>
 

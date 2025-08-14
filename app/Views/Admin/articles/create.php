@@ -66,7 +66,7 @@
 
         <div class="mb-4">
             <label for="editor" class="form-label">Obsah článku</label>
-            <textarea id="editor" name="content"></textarea>
+            <textarea id="editor" name="content" lang="cs" spellcheck="true"></textarea>
         </div>
 
         <div class="d-flex justify-content-between">
@@ -153,24 +153,19 @@
         }
     });
 </script>
-<!-- TinyMCE + konfigurace -->
-<script src="/js/tinymce-config.js"></script>
+<!-- Nastavení výšky editoru -->
 <script>
-    // Nastavení větší výšky editoru
     document.addEventListener('DOMContentLoaded', function() {
-        if (typeof tinymce !== 'undefined') {
-            tinymce.init({
-                selector: '#editor',
-                height: 830,
-                // Toto zachová ostatní nastavení z tinymce-config.js a pouze přepíše height
-                setup: function(editor) {
-                    editor.on('init', function() {
-                        // Zajistí viditelnost editoru
-                        document.querySelector('.tox-tinymce').style.height = '830px';
-                        document.querySelector('.tox-edit-area').style.height = '760px';
-                    });
+        // Počkáme na inicializaci TinyMCE
+        setTimeout(function() {
+            const editorElement = document.querySelector('.tox-tinymce');
+            if (editorElement) {
+                editorElement.style.height = '830px';
+                const editArea = document.querySelector('.tox-edit-area');
+                if (editArea) {
+                    editArea.style.height = '760px';
                 }
-            });
-        }
+            }
+        }, 1000);
     });
 </script>

@@ -1,0 +1,346 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: 'Fira Sans Condensed', sans-serif;
+}
+
+body {
+  background-color: #00000f;
+}
+
+.container-appka {
+  max-width: 100%;
+  margin-inline: 30px;
+  margin-block: 150px;
+  color: white;
+}
+
+.container-appka h2 {
+  text-transform: uppercase;
+  font-weight: 100;
+  font-size: 50px;
+  margin-bottom: 50px;
+}
+
+.container-appka .texty {
+  display: flex;
+  gap: 50px;
+  margin-bottom: 30px;
+}
+
+.container-appka .texty .text {
+  width: 100%;
+}
+
+.container-appka .texty .text h1 {
+  font-weight: 200;
+  margin-bottom: 20px;
+}
+
+.container-appka .texty .text p {
+  font-weight: 300;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.container-appka a {
+  color: #f1008d;
+  font-weight: 300;
+  font-style: italic;
+  text-decoration: none;
+}
+
+.container-appka a:hover {
+  color: #f87fc6;
+}
+
+.container-appka ul {
+  margin-left: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.container-appka ul li {
+  list-style-type: disc;
+  font-weight: 300;
+  font-size: 18px;
+}
+
+.container-appka .tlacitko {
+  display: block;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.container-appka .tlacitko a {
+  background-color: #3EB7E7;
+  padding: 8px 20px;
+  border-radius: 25px;
+  color: white;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 20px;
+  border: 3px solid transparent;
+  transition: 0.2s;
+}
+
+.container-appka .tlacitko a:hover {
+  background-color: #00000F;
+  border: 3px solid #3EB7E7;
+  color: #3EB7E7;
+  transition: 0.2s;
+}
+
+@media screen and (max-width: 1000px) {
+  .container-appka .texty {
+    flex-direction: column;
+  }
+}
+
+.popup-container-outer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(23, 25, 37, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup-container-inner {
+  background-color: #00000F;
+  padding: 20px;
+  border-radius: 25px;
+  max-width: 550px;
+  margin: 20px;
+  border: 1px solid white;
+}
+
+.popup-container-inner .top {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.popup-container-inner .top h1 {
+  color: white;
+  text-transform: uppercase;
+  font-weight: 300;
+  margin-bottom: 10px;
+}
+
+.popup-container-inner .top .close-popup {
+  cursor: pointer;
+  color: white;
+  font-size: 20px;
+}
+
+.popup-container-inner .obsah {
+  color: white;
+  font-weight: 300;
+}
+
+.popup-container-inner .obsah p, .popup-container-inner .obsah li {
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.popup-container-inner .obsah ul {
+  margin-left: 30px;
+  margin-bottom: 15px;
+}
+
+.popup-container-inner .obsah a {
+  color: #f1008d;
+  text-decoration: none;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.cist-clanek {
+  color: #fff;
+  font-size: 1.25rem;
+  line-height: 1;
+  width: max-content;
+  padding: .7em .9em;
+  border: 0.25em solid transparent;
+  background-image: linear-gradient(#00000F, #00000F), linear-gradient(to right, rgb(229, 7, 126), rgb(154, 31, 106), rgb(4, 142, 206), rgb(4, 142, 206), rgb(99, 195, 208));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  border-radius: 1.8em;
+  background-size: 200% 100%;
+  background-position: left bottom;
+  transition: background-position 0.3s ease-out, background-size 0.3s ease-out;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.cist-clanek:hover {
+  background-position: right bottom;
+}
+
+.cist-clanek a {
+  font-weight: 300;
+  color: white;
+  text-decoration: none;
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;
+  overflow: hidden;
+  padding: 2px;
+}
+
+.cist-clanek i {
+  margin-left: 20px;
+}
+
+::-webkit-scrollbar {
+  background-color: #00000F;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #171925;
+  border-radius: 25px;
+}
+
+.container-appka .nadpis {
+  padding-top: 180px;
+  height: 80vh;
+  background-size: cover;
+  background-position: center;
+  padding-inline: 5%;
+}
+
+.container-appka .nadpis h1 {
+  color: white;
+  text-transform: uppercase;
+  font-size: 80px;
+  margin-block: -10px;
+  font-weight: 100;
+}
+
+.container-appka .nadpis p {
+  color: white;
+  text-transform: uppercase;
+  font-weight: 300;
+  font-size: 30px;  
+  margin-left: 5px;  
+}
+
+@media screen and (max-width: 600px) {
+  .container-appka .nadpis {
+    height: auto;
+    padding-bottom: 20vh;
+  }
+
+  .container-appka .nadpis h1 {
+    font-size: 70px;
+  }
+}
+
+.container-appka .popis {
+  margin-top: 10vh;
+  padding-inline: 5%;
+  font-size: 18px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-size: contain;
+  background-position: right;
+  background-repeat: no-repeat;
+}
+
+.container-appka .popis .text {
+  width: 50%;
+}
+
+.container-appka .popis p {
+  color: white;
+  font-weight: 200;
+}
+
+.container-appka .popis h1 {
+  text-transform: uppercase;
+  color: white;
+  font-weight: 100;
+  font-size: 50px;
+}
+
+@media screen and (max-width: 800px) {
+  .container-appka .popis {
+    flex-direction: column;
+    margin-top: 0;
+  }
+
+  .container-appka .popis .text {
+    width: 90%;
+    text-align: center;
+  }
+}
+
+#pink {
+  color: #f1008d;
+  font-weight: 300;
+}
+
+.container-appka .popis img {
+  width: 50%;
+  height: 80vh;
+  object-fit: contain;
+}
+
+.container-appka .funkce {
+  height: 250px;
+  margin-top: 15vh;
+  justify-content: center;   
+  display: flex;
+  flex-direction: row;
+}
+
+.container-appka .funkce .prvek {
+  width: 100%;
+  height: auto;
+  display: flex;
+  color: white;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  margin: 15px;
+  gap: 30px;
+  padding: 15px;
+  text-align: center;
+  border-radius: 15px;
+  font-weight: 200;
+}
+
+.container-appka .funkce .prvek i {
+  font-size: 50px;
+  padding-top: 4px;
+  color: #3eb7e7;
+}
+
+@media screen and (max-width: 850px) {
+  .container-appka .funkce {
+    flex-direction: column;
+    height: auto;
+    justify-content: center;
+    margin-top: 0;
+    padding-top: 8vh;
+  }
+
+  .container-appka .funkce .prvek {
+    height: 200px;
+    margin: 0;
+  }
+}
+
+
+
