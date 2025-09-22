@@ -1,0 +1,92 @@
+{
+    "name": "Cyklistický magazín",
+    "short_name": "Cyklistickey",
+    "description": "Sledujte nejnovější zprávy, tréninkové tipy, technické novinky a rozhovory ze světa cyklistiky.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#f1008d",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "lang": "cs",
+    "dir": "ltr",
+    "categories": ["sports", "news", "lifestyle"],
+    "icons": [
+        {
+            "src": "/assets/graphics/icon.ico",
+            "sizes": "16x16 32x32",
+            "type": "image/x-icon"
+        },
+        {
+            "src": "/assets/graphics/logo_text_cyklistickey.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/assets/graphics/logo_text_cyklistickey.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/assets/graphics/logo_text_cyklistickey.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Nejnovější články",
+            "short_name": "Novinky",
+            "description": "Zobrazit nejnovější články",
+            "url": "/",
+            "icons": [
+                {
+                    "src": "/assets/graphics/icon.ico",
+                    "sizes": "32x32"
+                }
+            ]
+        },
+        {
+            "name": "Kategorie",
+            "short_name": "Kategorie",
+            "description": "Prohlédnout kategorie článků",
+            "url": "/categories",
+            "icons": [
+                {
+                    "src": "/assets/graphics/icon.ico",
+                    "sizes": "32x32"
+                }
+            ]
+        },
+        {
+            "name": "Events",
+            "short_name": "Events",
+            "description": "Zobrazit cyklistické akce",
+            "url": "/events",
+            "icons": [
+                {
+                    "src": "/assets/graphics/icon.ico",
+                    "sizes": "32x32"
+                }
+            ]
+        }
+    ],
+    "related_applications": [
+        {
+            "platform": "play",
+            "url": "https://play.google.com/store/apps/details?id=com.appsisto.cyklistickey",
+            "id": "com.appsisto.cyklistickey"
+        },
+        {
+            "platform": "itunes",
+            "url": "https://apps.apple.com/app/id6479637828",
+            "id": "6479637828"
+        }
+    ],
+    "prefer_related_applications": true
+}
