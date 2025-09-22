@@ -54,12 +54,26 @@ $routes = [
     '/reset-password/save' => [LoginController::class, 'saveNewPassword'],
     '/user/([^/]+)' => [UserController::class, 'userDetail'],
     '/user/([^/]+)/articles' => [UserController::class, 'userArticles'],
+    '/sitemap.xml' => ['sitemap', 'generate'],
+    '/robots.txt' => ['robots', 'generate'],
 ];
 
 $routeFound = false;
 
 foreach ($routes as $path => $route) {
     if (preg_match('#^' . $path . '$#', $uri, $matches)) {
+        // Speciální handling pro sitemap a robots
+        if ($route[0] === 'sitemap') {
+            include 'sitemap.php';
+            exit;
+        }
+        
+        if ($route[0] === 'robots') {
+            header('Content-Type: text/plain');
+            readfile('robots.txt');
+            exit;
+        }
+        
         $controllerClass = $route[0];
         $method = $route[1];
         $param = $matches[1] ?? null;

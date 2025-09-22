@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\User;
+use App\Helpers\CSRFHelper;
 
 class LoginController
 {
@@ -41,6 +42,12 @@ class LoginController
             session_start();
         }
 
+        // Kontrola CSRF tokenu
+        if (!CSRFHelper::checkPostToken()) {
+            echo "<script>alert('CSRF token validation failed!'); window.location.href='/login';</script>";
+            exit();
+        }
+
         $user = $this->model->getByEmail($email);
 
         if (!$user) {
@@ -50,7 +57,7 @@ class LoginController
 
         if (!password_verify($password, $user['heslo'])) {
             echo "<script>alert('Špatné heslo!'); window.location.href='/login';</script>";
-            exit();
+            exit();  
         }
 
         // Kontrola role - pouze uživatelé s rolí > 0 mají přístup do administrace

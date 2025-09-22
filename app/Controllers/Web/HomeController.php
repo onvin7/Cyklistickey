@@ -33,7 +33,13 @@ class HomeController
         // SEO nastavení pro hlavní stránku
         $title = "Cyklistický magazín – Novinky, závody a technika";
         $description = "Sledujte nejnovější zprávy, tréninkové tipy, technické novinky a rozhovory ze světa cyklistiky.";
-        $canonicalUrl = "https://vincenon21.mp.spse-net.cz";
+        $canonicalPath = "";
+        $keywords = ["cyklistika", "kolo", "závody", "trénink", "technika", "novinky"];
+        
+        // Breadcrumbs pro hlavní stránku
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/']
+        ];
         
         // Structured data pro webovou stránku
         $structuredData = [

@@ -4,6 +4,7 @@ namespace App\Controllers\Web;
 
 use App\Models\User;
 use App\Models\Article;
+use App\Helpers\SEOHelper;
 class UserController
 {
     private $userModel;
@@ -21,18 +22,17 @@ class UserController
         $css = ['authors', 'kategorie'];
         
         // SEO nastavení
-        $title = "Redakce | Cyklistický magazín";
+        $title = "Redakce";
         $description = "Seznamte se s redakčním týmem Cyklistického magazínu - naši autoři, fotografové a editoři.";
-        $ogTitle = "Naše redakce | Cyklistický magazín";
-        $ogDescription = "Poznejte blíže celý tým, který pro vás tvoří obsah Cyklistického magazínu.";
-        $canonicalUrl = "https://vincenon21.mp.spse-net.cz/authors";
+        $canonicalPath = "authors";
+        $keywords = ["redakce", "autoři", "fotografové", "editoři", "cyklistika"];
         
         // Structured data pro seznam autorů
         $structuredData = [
             "@context" => "https://schema.org",
             "@type" => "CollectionPage",
             "name" => "Redakce Cyklistického magazínu",
-            "url" => $canonicalUrl,
+            "url" => "https://vincenon21.mp.spse-net.cz/authors",
             "description" => $description
         ];
 
@@ -67,19 +67,25 @@ class UserController
         $css = ["main-page", "autor_clanku"];
         
         // SEO nastavení
-        $title = $user['name'] . " " . $user['surname'] . " | Cyklistický magazín";
+        $title = $user['name'] . " " . $user['surname'];
         $description = $user['popis'] ? substr(strip_tags($user['popis']), 0, 155) . "..." : "Profil autora " . $user['name'] . " " . $user['surname'] . " a seznam jeho článků.";
-        $ogTitle = $user['name'] . " " . $user['surname'] . " - Autor | Cyklistický magazín";
-        $ogDescription = $description;
-        $canonicalUrl = "https://vincenon21.mp.spse-net.cz/author/" . $user['name'] . "-" . $user['surname'];
+        $canonicalPath = "author/" . $user['name'] . "-" . $user['surname'];
         $ogImage = $user['profil_foto'] ? "https://vincenon21.mp.spse-net.cz/" . $user['profil_foto'] : null;
+        $keywords = SEOHelper::extractKeywords($user['popis'] ?? '', 5);
+        
+        // Breadcrumbs pro detail autora
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/'],
+            ['name' => 'Redakce', 'url' => '/authors'],
+            ['name' => $user['name'] . " " . $user['surname'], 'url' => '/author/' . $user['name'] . "-" . $user['surname']]
+        ];
         
         // Structured data pro autora
         $structuredData = [
             "@context" => "https://schema.org",
             "@type" => "Person",
             "name" => $user['name'] . " " . $user['surname'],
-            "url" => $canonicalUrl,
+            "url" => "https://vincenon21.mp.spse-net.cz/author/" . $user['name'] . "-" . $user['surname'],
             "jobTitle" => $user['role'] ?? "Autor",
             "description" => strip_tags($user['popis'] ?? ""),
             "image" => $ogImage
@@ -126,11 +132,18 @@ class UserController
         $css = ["kategorie"];
         
         // SEO nastavení
-        $title = "Články od " . $user['name'] . " " . $user['surname'] . " | Cyklistický magazín";
+        $title = "Články od " . $user['name'] . " " . $user['surname'];
         $description = "Kompletní seznam článků, které napsal " . $user['name'] . " " . $user['surname'] . " pro Cyklistický magazín.";
-        $ogTitle = "Články autora " . $user['name'] . " " . $user['surname'];
-        $ogDescription = "Přečtěte si všechny články od našeho autora " . $user['name'] . " " . $user['surname'] . ".";
-        $canonicalUrl = "https://vincenon21.mp.spse-net.cz/author/" . $user['name'] . "-" . $user['surname'] . "/articles";
+        $canonicalPath = "author/" . $user['name'] . "-" . $user['surname'] . "/articles";
+        $keywords = ["články", $user['name'], $user['surname'], "autor", "cyklistika"];
+        
+        // Breadcrumbs pro články autora
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/'],
+            ['name' => 'Redakce', 'url' => '/authors'],
+            ['name' => $user['name'] . " " . $user['surname'], 'url' => '/author/' . $user['name'] . "-" . $user['surname']],
+            ['name' => 'Články', 'url' => '/author/' . $user['name'] . "-" . $user['surname'] . '/articles']
+        ];
 
         $view = '../app/Views/Web/user/article.php';
         include '../app/Views/Web/layouts/base.php';

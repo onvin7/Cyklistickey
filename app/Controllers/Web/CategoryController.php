@@ -4,6 +4,7 @@ namespace App\Controllers\Web;
 
 use App\Models\Category;
 use App\Models\Article;
+use App\Helpers\SEOHelper;
 
 class CategoryController
 {
@@ -23,18 +24,23 @@ class CategoryController
         $css = ["main-page", "kategorie"];
         
         // SEO nastavení
-        $title = "Kategorie | Cyklistický magazín";
+        $title = "Kategorie";
         $description = "Prohlédněte si články z našeho magazínu rozdělené do tematických kategorií.";
-        $ogTitle = "Tematické kategorie | Cyklistický magazín";
-        $ogDescription = "Vyberte si z tematických kategorií a objevte články, které vás zajímají.";
-        $canonicalUrl = "https://vincenon21.mp.spse-net.cz/categories";
+        $canonicalPath = "categories";
+        $keywords = ["kategorie", "témata", "cyklistika", "články"];
+        
+        // Breadcrumbs pro kategorie
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/'],
+            ['name' => 'Kategorie', 'url' => '/categories']
+        ];
         
         // Structured data pro seznam kategorií
         $structuredData = [
             "@context" => "https://schema.org",
             "@type" => "CollectionPage",
             "name" => "Kategorie Cyklistického magazínu",
-            "url" => $canonicalUrl,
+            "url" => "https://vincenon21.mp.spse-net.cz/categories",
             "description" => $description
         ];
 

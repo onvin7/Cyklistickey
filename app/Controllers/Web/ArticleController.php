@@ -5,6 +5,7 @@ namespace App\Controllers\Web;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\User;
+use App\Helpers\SEOHelper;
 
 class ArticleController
 {
@@ -56,39 +57,26 @@ class ArticleController
         $author = $this->userModel->getById($article['user_id']);
         
         // SEO nastavení
-        $title = isset($article['nazev']) ? $article['nazev'] . " | Cyklistický magazín" : "Cyklistický magazín";
+        $title = isset($article['nazev']) ? $article['nazev'] : "Cyklistický magazín";
         $description = isset($article['obsah']) ? substr(strip_tags($article['obsah']), 0, 155) . "..." : "Cyklistický magazín";
-        $ogTitle = isset($article['nazev']) ? $article['nazev'] : "Cyklistický magazín";
-        $ogDescription = $description;
-        $canonicalUrl = "https://vincenon21.mp.spse-net.cz/article/" . (isset($article['url']) ? $article['url'] : "");
+        $canonicalPath = "article/" . (isset($article['url']) ? $article['url'] : "");
         $ogImage = isset($article['nahled_foto']) && $article['nahled_foto'] ? "https://vincenon21.mp.spse-net.cz/" . $article['nahled_foto'] : null;
+        $keywords = [];
+        
+        // Extrahuj klíčová slova z obsahu článku
+        if (isset($article['obsah'])) {
+            $keywords = SEOHelper::extractKeywords($article['obsah'], 8);
+        }
+        
+        // Breadcrumbs pro článek
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/'],
+            ['name' => 'Články', 'url' => '/articles'],
+            ['name' => $title, 'url' => '/article/' . $article['url']]
+        ];
         
         // Structured data pro článek
-        $structuredData = [
-            "@context" => "https://schema.org",
-            "@type" => "Article",
-            "headline" => isset($article['nazev']) ? $article['nazev'] : "Cyklistický magazín",
-            "image" => $ogImage,
-            "datePublished" => isset($article['datum']) ? $article['datum'] : date("Y-m-d"),
-            "dateModified" => isset($article['updated_at']) ? $article['updated_at'] : (isset($article['datum']) ? $article['datum'] : date("Y-m-d")),
-            "author" => [
-                "@type" => "Person",
-                "name" => $author['name'] . " " . $author['surname'],
-                "url" => "https://vincenon21.mp.spse-net.cz/author/" . $author['name'] . "-" . $author['surname']
-            ],
-            "publisher" => [
-                "@type" => "Organization",
-                "name" => "Cyklistický magazín",
-                "logo" => [
-                    "@type" => "ImageObject",
-                    "url" => "https://vincenon21.mp.spse-net.cz/assets/graphics/logo_text_cyklistickey.png"
-                ]
-            ],
-            "mainEntityOfPage" => [
-                "@type" => "WebPage",
-                "@id" => $canonicalUrl
-            ]
-        ];
+        $structuredData = SEOHelper::generateArticleSchema($article, $author);
         
         // Absolutní cesta k audio souboru
         $audioFilePath = __DIR__ . '/../../../web/uploads/audio/' . $article['id'] . '.mp3';

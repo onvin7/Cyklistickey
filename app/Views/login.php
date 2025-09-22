@@ -1,4 +1,5 @@
 <form method="POST" action="/login/submit">
+    <?= \App\Helpers\CSRFHelper::generateHiddenInput() ?>
     <div class="container">
         <div class="ohraniceni new">
             <div class="logo"><img src="/assets/graphics/logo_text_cyklistickey.png" alt="Cyklistickey logo">
