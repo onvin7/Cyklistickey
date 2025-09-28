@@ -14,7 +14,7 @@
     // JavaScript a AJAX kód pro detekci kdy uživatel zavře stránku
     window.addEventListener("beforeunload", function(e) {
         // AJAXový požadavek pro zaznamenání odchodu uživatele
-        navigator.sendBeacon('templates/leave.php');
+        // navigator.sendBeacon('templates/leave.php'); // Soubor neexistuje
     });
 </script>
 </head>

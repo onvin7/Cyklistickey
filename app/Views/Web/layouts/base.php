@@ -75,6 +75,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="<?= $seoConfig['site']['name'] ?>">
+
+    <!-- ✅ TRACKING CODES -->
+    <?php
+    use App\Helpers\TrackingHelper;
+    echo TrackingHelper::generateTrackingCode();
+    ?>
     
     <!-- ✅ FAVICON A IKONY -->
     <link id="favicon" rel="icon" href="/assets/graphics/icon.ico" type="image/x-icon">
@@ -102,6 +108,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" defer></script>
     <script src="https://kit.fontawesome.com/d74f0b379c.js" crossorigin="anonymous" defer></script>
     <script src="https://cdn.tiny.cloud/1/4zya77m9f7cxct4wa90s8vckad17auk31vflx884mx6xu1a3/tinymce/7/tinymce.min.js" referrerpolicy="origin" defer></script>
+    <script src="/js/spellchecker.js" defer></script>
 
     <!-- ✅ STRUCTURED DATA (JSON-LD) -->
     <?php if (isset($structuredData)): ?>

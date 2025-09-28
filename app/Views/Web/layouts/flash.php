@@ -1,39 +1,54 @@
 <?php
 
-$jsonFilePath = __DIR__ . '/../../../../web/flash.json';
+// Načtení flash news z JSON souboru
+try {
+    require_once __DIR__ . '/../../../../config/autoloader.php';
+    use App\Models\FlashNewsJSONSimple;
 
-$jsonData = file_get_contents($jsonFilePath);
+    $flashNewsModel = new FlashNewsJSONSimple();
+    $flashNews = $flashNewsModel->getForDisplay();
+    
+    // Rozdělení podle typu
+    $newsTitles = [];
+    $techTitles = [];
+    $customTitles = [];
 
-$data = json_decode($jsonData, true);
-
-
-
-$newsTitles = $data['news']['titles'] ?? [];
-
-$techTitles = $data['tech']['titles'] ?? [];
-
-
-
-$maxCount = max(count($newsTitles), count($techTitles));
-
-$interleavedTitles = [];
-
-
-
-for ($i = 0; $i < $maxCount; $i++) {
-
-    if (isset($newsTitles[$i])) {
-
-        $interleavedTitles[] = $newsTitles[$i]; 
-
+    foreach ($flashNews as $item) {
+        if ($item['type'] === 'news') {
+            $newsTitles[] = ['title' => $item['title']];
+        } elseif ($item['type'] === 'tech') {
+            $techTitles[] = ['title' => $item['title']];
+        } else {
+            $customTitles[] = ['title' => $item['title']];
+        }
     }
 
-    if (isset($techTitles[$i])) {
-
-        $interleavedTitles[] = $techTitles[$i];
-
+    // Kombinace všech typů
+    $allTitles = array_merge($newsTitles, $techTitles, $customTitles);
+    
+} catch (Exception $e) {
+    // Pokud se nepodaří načíst z modelu, použij přímé načtení JSON
+    $jsonFilePath = __DIR__ . '/../../../../web/flash.json';
+    
+    if (file_exists($jsonFilePath)) {
+        try {
+            $jsonData = file_get_contents($jsonFilePath);
+            $data = json_decode($jsonData, true);
+            
+            $newsTitles = $data['news']['titles'] ?? [];
+            $techTitles = $data['tech']['titles'] ?? [];
+            $customTitles = $data['custom']['titles'] ?? [];
+            
+            // Kombinace všech typů
+            $allTitles = array_merge($newsTitles, $techTitles, $customTitles);
+            
+        } catch (Exception $e2) {
+            $allTitles = [];
+            error_log('Flash News Error: ' . $e2->getMessage());
+        }
+    } else {
+        $allTitles = [];
     }
-
 }
 
 ?>
@@ -174,7 +189,7 @@ for ($i = 0; $i < $maxCount; $i++) {
 
             <?php
 
-            foreach ($interleavedTitles as $entry) {
+            foreach ($allTitles as $entry) {
 
                 if (isset($entry['title'])) {
 
@@ -186,7 +201,7 @@ for ($i = 0; $i < $maxCount; $i++) {
 
             }
 
-            if (empty($interleavedTitles)) {
+            if (empty($allTitles)) {
 
                 echo "<li>No news or tech items available.</li>";
 
@@ -200,7 +215,7 @@ for ($i = 0; $i < $maxCount; $i++) {
 
             <?php
 
-            foreach ($interleavedTitles as $entry) {
+            foreach ($allTitles as $entry) {
 
                 if (isset($entry['title'])) {
 
@@ -212,7 +227,7 @@ for ($i = 0; $i < $maxCount; $i++) {
 
             }
 
-            if (empty($interleavedTitles)) {
+            if (empty($allTitles)) {
 
                 echo "<li>No news or tech items available.</li>";
 

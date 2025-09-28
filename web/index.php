@@ -29,6 +29,25 @@ if (preg_match('/^\/uploads\/(.+)$/', $uri, $matches)) {
     }
 }
 
+// Handling pro hunspell soubory
+if (preg_match('/^\/js\/hunspell\/(.+)$/', $uri, $matches)) {
+    $filePath = __DIR__ . $uri;
+    if (file_exists($filePath)) {
+        // Nastavení správných hlaviček pro hunspell soubory
+        if (strpos($filePath, '.aff') !== false) {
+            header("Content-Type: text/plain; charset=utf-8");
+        } elseif (strpos($filePath, '.dic') !== false) {
+            header("Content-Type: text/plain; charset=utf-8");
+        }
+        header("Access-Control-Allow-Origin: *");
+        readfile($filePath);
+        exit;
+    } else {
+        http_response_code(404);
+        exit;
+    }
+}
+
 $routes = [
     '/' => [HomeController::class, 'index'],
     '' => [HomeController::class, 'index'],

@@ -2,7 +2,6 @@
 <?php
 
 use App\Helpers\TextHelper;
-use App\Helpers\FileHelper;
 
 // První článek - banner
 if (!empty($articles) && count($articles) > 0) {

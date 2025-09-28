@@ -29,6 +29,11 @@
         "tiktok": "https://www.tiktok.com/@cyklistickey",
         "twitter": "@cyklistickey"
     },
+    "tracking": {
+        "meta_pixel_id": "YOUR_META_PIXEL_ID",
+        "google_analytics_id": "YOUR_GA_ID",
+        "enabled": true
+    },
     "contact": {
         "phone": "+420 608 644 786",
         "email": "jsem@cyklistickey.cz",

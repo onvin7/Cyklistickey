@@ -35,6 +35,9 @@
     <!-- TinyMCE -->
     <script src="https://cdn.tiny.cloud/1/l1vyo5rc4lr9bndoweby2luoq845e7lw20i4gb1rtwn0xify/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
     
+    <!-- SpellChecker pro kontrolu pravopisu -->
+    <script src="/js/spellchecker.js"></script>
+    
     <!-- Jednoduchá TinyMCE konfigurace s vestavěnou kontrolou pravopisu -->
     <script src="/js/tinymce-simple.js"></script>
 

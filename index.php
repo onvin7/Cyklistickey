@@ -1,7 +1,7 @@
 <?php
-// Pokud uživatel požaduje /admin, přesměruj na /web/admin
+// Pokud uživatel požaduje /admin, přesměruj na /admin
 if (strpos($_SERVER['REQUEST_URI'], '/admin') === 0) {
-require __DIR__ . '/web/admin/index.php';
+require __DIR__ . '/admin/index.php';
 exit;
 }
 
