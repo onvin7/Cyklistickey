@@ -72,8 +72,7 @@ class CSRFHelper
         
         $token = $_POST['csrf_token'] ?? '';
         if (!self::validateToken($token)) {
-            http_response_code(403);
-            die('CSRF token validation failed');
+            return false;
         }
         
         return true;
