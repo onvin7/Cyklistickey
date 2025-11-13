@@ -11,9 +11,14 @@ $flashNews = $flashNews ?? [];
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1 class="h3 mb-0">Náhled Flash News</h1>
-                <a href="/admin/flashnews" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Zpět na seznam
-                </a>
+                <div class="d-flex gap-2">
+                    <a href="/admin/flashnews/create" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nová Flash News
+                    </a>
+                    <a href="/admin/flashnews" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Zpět na seznam
+                    </a>
+                </div>
             </div>
 
             <div class="card">
@@ -97,13 +102,13 @@ $flashNews = $flashNews ?? [];
                                     <ul class="preview-marquee__content scroll">
                                         <?php foreach ($flashNews as $entry): ?>
                                             <li><?= htmlspecialchars($entry['title']) ?></li>
-                                            <li><i class="fa-solid fa-person-biking"></i></li>
+                                            <li>🚴</li>
                                         <?php endforeach; ?>
                                     </ul>
                                     <ul class="preview-marquee__content scroll" aria-hidden="true">
                                         <?php foreach ($flashNews as $entry): ?>
                                             <li><?= htmlspecialchars($entry['title']) ?></li>
-                                            <li><i class="fa-solid fa-person-biking"></i></li>
+                                            <li>🚴</li>
                                         <?php endforeach; ?>
                                     </ul>
                                 </div>
@@ -120,13 +125,14 @@ $flashNews = $flashNews ?? [];
                                             <th>Pořadí</th>
                                             <th>Typ</th>
                                             <th>Název</th>
+                                            <th width="120">Akce</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($flashNews as $entry): ?>
                                             <tr>
                                                 <td>
-                                                    <span class="badge bg-primary"><?= $entry['sort_order'] ?></span>
+                                                    <span class="badge bg-primary"><?= htmlspecialchars($entry['sort_order'] ?? 0) ?></span>
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-<?= $entry['type'] === 'news' ? 'info' : ($entry['type'] === 'tech' ? 'secondary' : 'dark') ?>">
@@ -138,6 +144,9 @@ $flashNews = $flashNews ?? [];
                                                          title="<?= htmlspecialchars($entry['title']) ?>">
                                                         <?= htmlspecialchars($entry['title']) ?>
                                                     </div>
+                                                </td>
+                                                <td>
+                                                    <a href="/admin/flashnews/edit?id=<?= urlencode($entry['id']) ?>" class="btn btn-sm btn-outline-primary">Upravit</a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

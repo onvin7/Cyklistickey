@@ -20,7 +20,6 @@ use App\Controllers\Admin\UserAdminController;
 use App\Controllers\Admin\AccessControlAdminController;
 use App\Controllers\Admin\PromotionAdminController;
 use App\Controllers\Admin\FlashNewsJSONAdminController;
-use App\Controllers\Admin\TrackingAdminController;
 use App\Controllers\LoginController;
 
 // ✅ **Inicializace připojení k databázi**
@@ -103,11 +102,9 @@ $routes = [
     'flashnews/delete' => [FlashNewsJSONAdminController::class, 'delete'],
     'flashnews/toggle-active' => [FlashNewsJSONAdminController::class, 'toggleActive'],
     'flashnews/update-sort-order' => [FlashNewsJSONAdminController::class, 'updateSortOrder'],
+    'flashnews/reorder' => [FlashNewsJSONAdminController::class, 'reorder'],
     'flashnews/preview' => [FlashNewsJSONAdminController::class, 'preview'],
     'flashnews/refresh' => [FlashNewsJSONAdminController::class, 'refresh'],
-    'tracking' => [TrackingAdminController::class, 'index'],
-    'tracking/update' => [TrackingAdminController::class, 'update'],
-    'tracking/test' => [TrackingAdminController::class, 'test'],
 ];
 
 // ✅ **Načtení přístupných rout ze session**

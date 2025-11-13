@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Models\FlashNewsJSONSimple;
 use App\Helpers\CSRFHelper;
+use Exception;
 
 class FlashNewsJSONAdminController
 {
@@ -26,6 +27,17 @@ class FlashNewsJSONAdminController
         try {
             $flashNews = $this->model->getAll();
             $stats = $this->model->getStats();
+
+            $activeFlashNews = [];
+            $inactiveFlashNews = [];
+            foreach ($flashNews as $item) {
+                if (!empty($item['is_active'])) {
+                    $activeFlashNews[] = $item;
+                } else {
+                    $inactiveFlashNews[] = $item;
+                }
+            }
+            $flashNews = array_merge($activeFlashNews, $inactiveFlashNews);
         } catch (Exception $e) {
             $_SESSION['error'] = 'Chyba při načítání flash news: ' . $e->getMessage();
             $flashNews = [];
@@ -39,6 +51,7 @@ class FlashNewsJSONAdminController
             ];
         }
 
+        $csrfToken = CSRFHelper::generateToken();
         $adminTitle = "Správa Flash News | Admin Panel - Cyklistickey magazín";
         $view = '../app/Views/Admin/flashnews/index.php';
         include '../app/Views/Admin/layout/base.php';
@@ -53,6 +66,7 @@ class FlashNewsJSONAdminController
             session_start();
         }
 
+        $defaultSortOrder = $this->model->getNextSortOrder();
         $adminTitle = "Nová Flash News | Admin Panel - Cyklistickey magazín";
         $view = '../app/Views/Admin/flashnews/create.php';
         include '../app/Views/Admin/layout/base.php';
@@ -74,11 +88,12 @@ class FlashNewsJSONAdminController
         }
 
         try {
+            $sortOrderInput = isset($_POST['sort_order']) ? (int)$_POST['sort_order'] : null;
             $data = [
                 'title' => trim($_POST['title'] ?? ''),
                 'type' => $_POST['type'] ?? 'custom',
                 'is_active' => isset($_POST['is_active']) ? 1 : 0,
-                'sort_order' => (int)($_POST['sort_order'] ?? 0),
+                'sort_order' => ($sortOrderInput && $sortOrderInput > 0) ? $sortOrderInput : null,
                 'created_by_name' => $_SESSION['email'] ?? 'Admin'
             ];
 
@@ -161,10 +176,20 @@ class FlashNewsJSONAdminController
         }
 
         try {
+            // Načti aktuální flash news pro zjištění aktuálního typu
+            $currentFlashNews = $this->model->getById($id);
+            if (!$currentFlashNews) {
+                $_SESSION['error'] = 'Flash news nebyla nalezena';
+                header('Location: /admin/flashnews');
+                exit;
+            }
+
+            $sortOrderInput = isset($_POST['sort_order']) ? (int)$_POST['sort_order'] : null;
             $data = [
                 'title' => trim($_POST['title'] ?? ''),
+                'type' => $_POST['type'] ?? $currentFlashNews['type'],
                 'is_active' => isset($_POST['is_active']) ? 1 : 0,
-                'sort_order' => (int)($_POST['sort_order'] ?? 0)
+                'sort_order' => ($sortOrderInput && $sortOrderInput > 0) ? $sortOrderInput : null
             ];
 
             if (empty($data['title'])) {
@@ -235,30 +260,29 @@ class FlashNewsJSONAdminController
         }
 
         if (!CSRFHelper::validateToken($_POST['csrf_token'] ?? '')) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Neplatný CSRF token']);
+            $_SESSION['error'] = 'Neplatný CSRF token';
+            header('Location: /admin/flashnews');
             exit;
         }
 
         $id = $_POST['id'] ?? null;
         if (!$id) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Chybí ID']);
+            $_SESSION['error'] = 'Chybí ID flash news';
+            header('Location: /admin/flashnews');
             exit;
         }
 
         try {
             if ($this->model->toggleActive($id)) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => true]);
+                $_SESSION['success'] = 'Stav flash news byl změněn';
             } else {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'error' => 'Chyba při změně stavu']);
+                $_SESSION['error'] = 'Chyba při změně stavu flash news';
             }
         } catch (Exception $e) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Chyba při změně stavu flash news: ' . $e->getMessage();
         }
+
+        header('Location: /admin/flashnews');
         exit;
     }
 
@@ -293,6 +317,50 @@ class FlashNewsJSONAdminController
             } else {
                 header('Content-Type: application/json');
                 echo json_encode(['success' => false, 'error' => 'Chyba při aktualizaci pořadí']);
+            }
+        } catch (Exception $e) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
+     * Přijme nové pořadí z drag & drop / tlačítek
+     */
+    public function reorder()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!CSRFHelper::validateToken($_POST['csrf_token'] ?? '')) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Neplatný CSRF token']);
+            exit;
+        }
+
+        $order = $_POST['order'] ?? [];
+        if (!is_array($order)) {
+            $order = [$order];
+        }
+
+        $order = array_map('intval', $order);
+        $order = array_filter($order, fn($id) => $id > 0);
+
+        if (empty($order)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Chybí data o pořadí']);
+            exit;
+        }
+
+        try {
+            if ($this->model->reorder($order)) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true]);
+            } else {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => 'Nepodařilo se uložit pořadí']);
             }
         } catch (Exception $e) {
             header('Content-Type: application/json');

@@ -44,6 +44,37 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/9cc50b8ba6.js" crossorigin="anonymous"></script>
 
+    <?php
+        $metaPixelId = \App\Helpers\TrackingHelper::getMetaPixelId();
+        $trackingEnabled = \App\Helpers\TrackingHelper::isTrackingEnabled();
+
+        if ($trackingEnabled && $metaPixelId && $metaPixelId !== 'YOUR_META_PIXEL_ID'):
+    ?>
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '<?= htmlspecialchars($metaPixelId, ENT_QUOTES, 'UTF-8'); ?>');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=<?= rawurlencode($metaPixelId); ?>&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    <?php endif; ?>
+
+    <?php
+        if ($trackingEnabled) {
+            echo \App\Helpers\TrackingHelper::generateGoogleAnalytics();
+        }
+    ?>
+
     <!-- ✅ Structured Data (JSON-LD) -->
     <?php if (isset($structuredData)): ?>
         <script type="application/ld+json">

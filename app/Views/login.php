@@ -1,4 +1,12 @@
+<?php
+use App\Helpers\CSRFHelper;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$csrfToken = CSRFHelper::generateToken();
+?>
 <form method="POST" action="/login/submit">
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
     <div class="container">
         <div class="ohraniceni new">
             <div class="logo"><img src="/assets/graphics/logo_text_cyklistickey.png" alt="Cyklistickey logo">
