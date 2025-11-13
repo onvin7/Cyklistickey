@@ -1,0 +1,42 @@
+User-agent: *
+Allow: /
+
+# Povolit všechny veřejné stránky
+Allow: /article/
+Allow: /category/
+Allow: /categories
+Allow: /authors
+Allow: /author/
+Allow: /events
+Allow: /appka
+Allow: /kontakt
+
+# Zakázat admin stránky
+Disallow: /admin/
+Disallow: /admin
+Disallow: /admin.php
+
+# Zakázat technické soubory
+Disallow: /config/
+Disallow: /logs/
+Disallow: /backdoor/
+Disallow: /*.sql
+Disallow: /*.log
+Disallow: /web/config/
+Disallow: /web/logs/
+
+# Zakázat duplicitní obsah
+Disallow: /*?*
+Disallow: /*&*
+
+# Povolit CSS a JS soubory
+Allow: /css/
+Allow: /js/
+Allow: /assets/
+Allow: /uploads/
+
+# Sitemap
+Sitemap: https://vincenon21.mp.spse-net.cz/sitemap.xml
+
+# Crawl delay (1 sekunda mezi požadavky)
+Crawl-delay: 1

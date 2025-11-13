@@ -19,10 +19,34 @@ use App\Controllers\Admin\CategoryAdminController;
 use App\Controllers\Admin\UserAdminController;
 use App\Controllers\Admin\AccessControlAdminController;
 use App\Controllers\Admin\PromotionAdminController;
+use App\Controllers\Admin\FlashNewsJSONAdminController;
+use App\Controllers\Admin\TrackingAdminController;
 use App\Controllers\LoginController;
 
 // ✅ **Inicializace připojení k databázi**
 $db = (new Database())->connect();
+
+// ✅ **Handling pro hunspell soubory**
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri = rtrim($uri, '/');
+
+if (preg_match('/^\/js\/hunspell\/(.+)$/', $uri, $matches)) {
+    $filePath = __DIR__ . '/../web' . $uri;
+    if (file_exists($filePath)) {
+        // Nastavení správných hlaviček pro hunspell soubory
+        if (strpos($filePath, '.aff') !== false) {
+            header("Content-Type: text/plain; charset=utf-8");
+        } elseif (strpos($filePath, '.dic') !== false) {
+            header("Content-Type: text/plain; charset=utf-8");
+        }
+        header("Access-Control-Allow-Origin: *");
+        readfile($filePath);
+        exit;
+    } else {
+        http_response_code(404);
+        exit;
+    }
+}
 
 // ✅ **Middleware pro ověření přístupu**
 AuthMiddleware::check($db);
@@ -71,6 +95,19 @@ $routes = [
     'social-sites' => [UserAdminController::class, 'socialSites'],
     'social-sites/save' => [UserAdminController::class, 'saveSocialSite'],
     'social-sites/delete' => [UserAdminController::class, 'deleteSocialSite', 'id'],
+    'flashnews' => [FlashNewsJSONAdminController::class, 'index'],
+    'flashnews/create' => [FlashNewsJSONAdminController::class, 'create'],
+    'flashnews/store' => [FlashNewsJSONAdminController::class, 'store'],
+    'flashnews/edit' => [FlashNewsJSONAdminController::class, 'edit'],
+    'flashnews/update' => [FlashNewsJSONAdminController::class, 'update'],
+    'flashnews/delete' => [FlashNewsJSONAdminController::class, 'delete'],
+    'flashnews/toggle-active' => [FlashNewsJSONAdminController::class, 'toggleActive'],
+    'flashnews/update-sort-order' => [FlashNewsJSONAdminController::class, 'updateSortOrder'],
+    'flashnews/preview' => [FlashNewsJSONAdminController::class, 'preview'],
+    'flashnews/refresh' => [FlashNewsJSONAdminController::class, 'refresh'],
+    'tracking' => [TrackingAdminController::class, 'index'],
+    'tracking/update' => [TrackingAdminController::class, 'update'],
+    'tracking/test' => [TrackingAdminController::class, 'test'],
 ];
 
 // ✅ **Načtení přístupných rout ze session**
@@ -104,12 +141,12 @@ if ($uri === '' || $uri === 'home') {
     exit();
 }
 
-// ✅ **Dynamické zpracování rout** 
+// ✅ **Dynamické zpracování rout**
 $routeFound = false;
 
 foreach ($routes as $path => $route) {
     error_log("Kontroluji routu: " . $path . " proti URI: " . $uri);
-    
+
     // Přímé porovnání pro přesnou shodu
     if ($path === $uri) {
         $controllerClass = $route[0];
@@ -125,7 +162,7 @@ foreach ($routes as $path => $route) {
         $routeFound = true;
         break;
     }
-    
+
     // Kontrola pro routy s parametry
     if (strpos($path, '(') !== false) {
         // Jedná se o routu s regulárním výrazem
@@ -134,9 +171,9 @@ foreach ($routes as $path => $route) {
         // Běžná routa
         $pattern = '#^' . preg_quote($path, '#') . '$#';
     }
-    
+
     error_log("Používám pattern: " . $pattern);
-    
+
     if (preg_match($pattern, $uri, $matches)) {
         $controllerClass = $route[0];
         $method = $route[1];
@@ -170,4 +207,4 @@ if (!$routeFound) {
     echo "HTTP Metoda: " . $_SERVER['REQUEST_METHOD'] . "<br>";
     echo "Dostupné routy: " . implode(', ', array_keys($routes)) . "<br>";
     exit();
-} 
+}

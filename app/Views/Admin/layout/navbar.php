@@ -32,6 +32,8 @@ $activeLinks = [
     'promotions' => strpos($currentUri, '/admin/promotions') !== false,
     'users' => strpos($currentUri, '/admin/users') !== false,
     'access-control' => strpos($currentUri, '/admin/access-control') !== false,
+    'flashnews' => strpos($currentUri, '/admin/flashnews') !== false,
+    'tracking' => strpos($currentUri, '/admin/tracking') !== false,
 ];
 
 ?>
@@ -66,6 +68,12 @@ $activeLinks = [
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= $activeLinks['access-control'] ? 'active' : '' ?>" href="/admin/access-control">Správa přístupů</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $activeLinks['flashnews'] ? 'active' : '' ?>" href="/admin/flashnews">Flash News</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $activeLinks['tracking'] ? 'active' : '' ?>" href="/admin/tracking">Tracking</a>
                     </li>
                 <?php endif; ?>
             </ul>

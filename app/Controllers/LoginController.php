@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\User;
+use App\Helpers\CSRFHelper;
 
 class LoginController
 {
@@ -39,6 +40,12 @@ class LoginController
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
+        }
+
+        // Kontrola CSRF tokenu
+        if (!CSRFHelper::checkPostToken()) {
+            echo "<script>alert('CSRF token validation failed!'); window.location.href='/login';</script>";
+            exit();
         }
 
         $user = $this->model->getByEmail($email);

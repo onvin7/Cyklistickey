@@ -1,0 +1,120 @@
+{
+    "site": {
+        "name": "Cyklistický magazín",
+        "url": "https://vincenon21.mp.spse-net.cz",
+        "description": "Sledujte nejnovější zprávy, tréninkové tipy, technické novinky a rozhovory ze světa cyklistiky.",
+        "keywords": "cyklistika, kolo, závody, trénink, technika, novinky, magazín, cyklistické novinky, cyklistické závody, cyklistická technika",
+        "author": "Cyklistický magazín",
+        "theme_color": "#f1008d",
+        "background_color": "#ffffff",
+        "language": "cs",
+        "country": "CZ"
+    },
+    "international": {
+        "default_language": "cs",
+        "supported_languages": ["cs", "en"],
+        "language_names": {
+            "cs": "Čeština",
+            "en": "English"
+        },
+        "language_urls": {
+            "cs": "https://vincenon21.mp.spse-net.cz",
+            "en": "https://vincenon21.mp.spse-net.cz/en"
+        }
+    },
+    "social": {
+        "facebook": "https://www.facebook.com/profile.php?id=100094700727442",
+        "instagram": "https://www.instagram.com/cyklistickey/",
+        "youtube": "https://www.youtube.com/@cyklistickey",
+        "tiktok": "https://www.tiktok.com/@cyklistickey",
+        "twitter": "@cyklistickey"
+    },
+    "tracking": {
+        "meta_pixel_id": "YOUR_META_PIXEL_ID",
+        "google_analytics_id": "YOUR_GA_ID",
+        "enabled": true
+    },
+    "contact": {
+        "phone": "+420 608 644 786",
+        "email": "jsem@cyklistickey.cz",
+        "address": "Česká republika",
+        "opening_hours": "Po-Pá 9:00-17:00"
+    },
+    "defaults": {
+        "title_suffix": " | Cyklistický magazín",
+        "description_length": 160,
+        "keywords_length": 10,
+        "image_width": 1200,
+        "image_height": 630
+    },
+    "ai_automation": {
+        "enabled": true,
+        "description_generation": true,
+        "keyword_extraction": true,
+        "title_optimization": true,
+        "content_analysis": true
+    },
+    "structured_data": {
+        "organization": {
+            "name": "Cyklistický magazín",
+            "url": "https://vincenon21.mp.spse-net.cz",
+            "logo": "https://vincenon21.mp.spse-net.cz/assets/graphics/logo_text_cyklistickey.png",
+            "description": "Nejlepší cyklistický magazín v České republice",
+            "foundingDate": "2024",
+            "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "CZ",
+                "addressRegion": "Česká republika"
+            },
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+420 608 644 786",
+                "contactType": "customer service",
+                "email": "jsem@cyklistickey.cz"
+            },
+            "sameAs": [
+                "https://www.facebook.com/profile.php?id=100094700727442",
+                "https://www.instagram.com/cyklistickey/",
+                "https://www.youtube.com/@cyklistickey",
+                "https://www.tiktok.com/@cyklistickey"
+            ]
+        },
+        "website": {
+            "name": "Cyklistický magazín",
+            "url": "https://vincenon21.mp.spse-net.cz",
+            "description": "Sledujte nejnovější zprávy, tréninkové tipy, technické novinky a rozhovory ze světa cyklistiky.",
+            "inLanguage": "cs-CZ",
+            "copyrightYear": "2024",
+            "publisher": {
+                "@type": "Organization",
+                "name": "Cyklistický magazín"
+            }
+        }
+    },
+    "faq": [
+        {
+            "question": "Co je Cyklistický magazín?",
+            "answer": "Cyklistický magazín je online platforma zaměřená na cyklistiku, která přináší nejnovější zprávy, tréninkové tipy, technické novinky a rozhovory ze světa cyklistiky."
+        },
+        {
+            "question": "Jak často vycházejí nové články?",
+            "answer": "Nové články vycházejí pravidelně několikrát týdně. Sledujte naše sociální sítě pro nejnovější aktualizace."
+        },
+        {
+            "question": "Mohu se stát autorem?",
+            "answer": "Ano, rádi uvítáme nové autory. Kontaktujte nás na emailu jsem@cyklistickey.cz s vašimi návrhy článků."
+        },
+        {
+            "question": "Je obsah zdarma?",
+            "answer": "Ano, veškerý obsah na našem webu je zdarma dostupný pro všechny čtenáře."
+        }
+    ],
+    "breadcrumbs": {
+        "home": "Domů",
+        "categories": "Kategorie",
+        "authors": "Redakce",
+        "events": "Events",
+        "appka": "Appka",
+        "kontakt": "Kontakt"
+    }
+}
