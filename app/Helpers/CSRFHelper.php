@@ -13,6 +13,15 @@ class CSRFHelper
             session_start();
         }
         
+        // Pokud už existuje platný token, vrať ho
+        if (isset($_SESSION['csrf_token']) && isset($_SESSION['csrf_token_time'])) {
+            // Token je platný 1 hodinu
+            if (time() - $_SESSION['csrf_token_time'] < 3600) {
+                return $_SESSION['csrf_token'];
+            }
+        }
+        
+        // Jinak vygeneruj nový token
         $token = bin2hex(random_bytes(32));
         $_SESSION['csrf_token'] = $token;
         $_SESSION['csrf_token_time'] = time();

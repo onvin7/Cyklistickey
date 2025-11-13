@@ -1,6 +1,9 @@
 <?php
+use App\Helpers\CSRFHelper;
+
 $title = 'Nová Flash News';
 $css = ['admin'];
+$csrfToken = CSRFHelper::generateToken();
 ?>
 
 <div class="container-fluid">
@@ -38,7 +41,7 @@ $css = ['admin'];
                         </div>
                         <div class="card-body">
                             <form method="POST" action="/admin/flashnews/store">
-                                <input type="hidden" name="csrf_token" value="<?= CSRFHelper::generateToken() ?>">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                                 
                                 <div class="mb-3">
                                     <label for="title" class="form-label">Název <span class="text-danger">*</span></label>
@@ -72,7 +75,7 @@ $css = ['admin'];
                                                    class="form-control" 
                                                    id="sort_order" 
                                                    name="sort_order" 
-                                                   value="<?= htmlspecialchars($_POST['sort_order'] ?? '0') ?>"
+                                                   value="<?= htmlspecialchars($_POST['sort_order'] ?? ($defaultSortOrder ?? '0')) ?>"
                                                    min="0">
                                             <div class="form-text">Nižší číslo = vyšší priorita</div>
                                         </div>

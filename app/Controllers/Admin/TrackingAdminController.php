@@ -12,6 +12,10 @@ class TrackingAdminController
      */
     public function index()
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $seoConfigFile = __DIR__ . '/../../../web/config/seo_config.json';
         $seoConfig = json_decode(file_get_contents($seoConfigFile), true);
         
@@ -21,7 +25,9 @@ class TrackingAdminController
             'enabled' => false
         ];
 
-        include __DIR__ . '/../../Views/Admin/tracking/index.php';
+        $adminTitle = "Správa Tracking Kódů | Admin Panel - Cyklistickey magazín";
+        $view = '../app/Views/Admin/tracking/index.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 
     /**

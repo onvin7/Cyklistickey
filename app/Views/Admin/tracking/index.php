@@ -1,4 +1,6 @@
 <?php
+use App\Helpers\CSRFHelper;
+
 $pageTitle = 'Správa Tracking Kódů';
 $pageDescription = 'Správa Meta Pixel a Google Analytics tracking kódů';
 ?>

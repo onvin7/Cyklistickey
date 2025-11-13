@@ -1,9 +1,12 @@
 <?php
+use App\Helpers\CSRFHelper;
+
 $title = 'Upravit Flash News';
 $css = ['admin'];
 
 // Zajištění, že jsou proměnné definované
 $flashNews = $flashNews ?? [];
+$csrfToken = CSRFHelper::generateToken();
 ?>
 
 <div class="container-fluid">
@@ -42,7 +45,7 @@ $flashNews = $flashNews ?? [];
                         <div class="card-body">
                             <form method="POST" action="/admin/flashnews/update">
                                 <input type="hidden" name="id" value="<?= $flashNews['id'] ?>">
-                                <input type="hidden" name="csrf_token" value="<?= CSRFHelper::generateToken() ?>">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                                 
                                 <div class="mb-3">
                                     <label for="title" class="form-label">Název <span class="text-danger">*</span></label>

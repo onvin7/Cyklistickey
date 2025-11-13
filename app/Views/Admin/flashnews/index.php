@@ -14,17 +14,22 @@ $stats = $stats ?? [
 ];
 ?>
 
+<style>
+.flashnews-row { cursor: default; }
+.flashnews-row.dragging { opacity: 0.6; }
+.flashnews-drag-handle { cursor: grab; font-size: 1.1rem; color: #6c757d; }
+.flashnews-drag-handle:active { cursor: grabbing; }
+.flashnews-action-group .btn { min-width: 90px; }
+</style>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1 class="h3 mb-0">Správa Flash News</h1>
                 <div>
-                    <a href="/admin/flashnews/preview" class="btn btn-info me-2" target="_blank">
-                        <i class="fas fa-eye"></i> Náhled
-                    </a>
                     <form method="POST" action="/admin/flashnews/refresh" style="display: inline;" class="me-2">
-                        <input type="hidden" name="csrf_token" value="<?= CSRFHelper::generateToken() ?>">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                         <button type="submit" class="btn btn-warning" onclick="return confirm('Opravdu chcete aktualizovat flash news z API? Tím se přepíšou aktuální data.')">
                             <i class="fas fa-sync-alt"></i> Aktualizovat z API
                         </button>
@@ -135,14 +140,17 @@ $stats = $stats ?? [
                                 </thead>
                                 <tbody>
                                     <?php foreach ($flashNews as $item): ?>
-                                        <tr data-id="<?= $item['id'] ?>">
+                                        <tr class="flashnews-row" data-id="<?= $item['id'] ?>" draggable="true">
                                             <td><?= $item['id'] ?></td>
-                                            <td>
-                                                <input type="number" 
-                                                       class="form-control form-control-sm sort-order" 
-                                                       value="<?= $item['sort_order'] ?>" 
-                                                       data-id="<?= $item['id'] ?>"
-                                                       style="width: 60px;">
+                                            <td class="align-middle">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="flashnews-drag-handle" title="Přetáhnout pořadí">↕</span>
+                                                    <span class="badge bg-secondary sort-order-badge" title="Aktuální pořadí"><?= $item['sort_order'] ?></span>
+                                                    <div class="btn-group btn-group-sm" role="group" aria-label="Změna pořadí">
+                                                        <button type="button" class="btn btn-outline-secondary move-up" title="Posunout nahoru">▲</button>
+                                                        <button type="button" class="btn btn-outline-secondary move-down" title="Posunout dolů">▼</button>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td>
                                                 <div class="text-truncate" style="max-width: 300px;" 
@@ -169,23 +177,20 @@ $stats = $stats ?? [
                                                 </small>
                                             </td>
                                             <td>
-                                                <div class="btn-group btn-group-sm" role="group">
-                                                    <button type="button" 
-                                                            class="btn btn-<?= $item['is_active'] ? 'warning' : 'success' ?> toggle-active"
+                                                <div class="d-flex flex-wrap gap-2 flashnews-action-group">
+                                                    <form method="POST" action="/admin/flashnews/toggle-active" class="d-inline">
+                                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+                                                        <input type="hidden" name="id" value="<?= $item['id'] ?>">
+                                                        <button type="submit" class="btn btn-sm <?= $item['is_active'] ? 'btn-warning' : 'btn-success' ?> text-white">
+                                                            <?= $item['is_active'] ? 'Deaktivovat' : 'Aktivovat' ?>
+                                                        </button>
+                                                    </form>
+                                                    <a href="/admin/flashnews/edit?id=<?= $item['id'] ?>" class="btn btn-sm btn-primary text-white">Upravit</a>
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-danger delete-flashnews"
                                                             data-id="<?= $item['id'] ?>"
-                                                            title="<?= $item['is_active'] ? 'Deaktivovat' : 'Aktivovat' ?>">
-                                                        <i class="fas fa-<?= $item['is_active'] ? 'pause' : 'play' ?>"></i>
-                                                    </button>
-                                                    <a href="/admin/flashnews/edit?id=<?= $item['id'] ?>" 
-                                                       class="btn btn-primary" title="Upravit">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    <button type="button" 
-                                                            class="btn btn-danger delete-flashnews"
-                                                            data-id="<?= $item['id'] ?>"
-                                                            data-title="<?= htmlspecialchars($item['title']) ?>"
-                                                            title="Smazat">
-                                                        <i class="fas fa-trash"></i>
+                                                            data-title="<?= htmlspecialchars($item['title']) ?>">
+                                                        Smazat
                                                     </button>
                                                 </div>
                                             </td>
@@ -217,7 +222,7 @@ $stats = $stats ?? [
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
                 <form method="POST" action="/admin/flashnews/delete" style="display: inline;">
                     <input type="hidden" name="id" id="deleteId">
-                    <input type="hidden" name="csrf_token" value="<?= CSRFHelper::generateToken() ?>">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                     <button type="submit" class="btn btn-danger">Smazat</button>
                 </form>
             </div>
@@ -227,67 +232,135 @@ $stats = $stats ?? [
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Toggle aktivní stav
-    document.querySelectorAll('.toggle-active').forEach(button => {
-        button.addEventListener('click', function() {
-            const id = this.dataset.id;
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/admin/flashnews/toggle-active';
-            
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = 'csrf_token';
-            csrfInput.value = '<?= CSRFHelper::generateToken() ?>';
-            
-            const idInput = document.createElement('input');
-            idInput.type = 'hidden';
-            idInput.name = 'id';
-            idInput.value = id;
-            
-            form.appendChild(csrfInput);
-            form.appendChild(idInput);
-            document.body.appendChild(form);
-            form.submit();
+    const tableBody = document.querySelector('#flashNewsTable tbody');
+    const csrfToken = '<?= htmlspecialchars($csrfToken) ?>';
+    const reorderUrl = '/admin/flashnews/reorder';
+
+    function collectOrder() {
+        return Array.from(tableBody.querySelectorAll('tr')).map(row => parseInt(row.dataset.id, 10));
+    }
+
+    function updateOrderBadges() {
+        tableBody.querySelectorAll('tr').forEach((row, index) => {
+            const badge = row.querySelector('.sort-order-badge');
+            if (badge) {
+                badge.textContent = index + 1;
+            }
+        });
+    }
+
+    async function sendReorder(order) {
+        const formData = new FormData();
+        order.forEach(id => formData.append('order[]', id));
+        formData.append('csrf_token', csrfToken);
+
+        const response = await fetch(reorderUrl, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error('HTTP ' + response.status);
+        }
+
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.error || 'Neznámá chyba při ukládání pořadí');
+        }
+    }
+
+    function moveRow(row, direction) {
+        if (!row) return;
+        const sibling = direction === 'up' ? row.previousElementSibling : row.nextElementSibling;
+        if (!sibling) return;
+
+        if (direction === 'up') {
+            tableBody.insertBefore(row, sibling);
+        } else {
+            tableBody.insertBefore(sibling, row);
+        }
+
+        const order = collectOrder();
+        sendReorder(order)
+            .then(updateOrderBadges)
+            .catch(error => {
+                console.error(error);
+                alert('Nepodařilo se uložit nové pořadí. Stránka se obnoví.');
+                window.location.reload();
+            });
+    }
+
+    tableBody.querySelectorAll('.move-up').forEach(button => {
+        button.addEventListener('click', function () {
+            moveRow(button.closest('tr'), 'up');
         });
     });
 
-    // Smazání flash news
+    tableBody.querySelectorAll('.move-down').forEach(button => {
+        button.addEventListener('click', function () {
+            moveRow(button.closest('tr'), 'down');
+        });
+    });
+
+    tableBody.querySelectorAll('tr').forEach(row => {
+        row.addEventListener('dragstart', function (event) {
+            if (event.target.closest('button, a, form, input')) {
+                event.preventDefault();
+                return;
+            }
+            row.classList.add('dragging');
+            event.dataTransfer.effectAllowed = 'move';
+        });
+
+        row.addEventListener('dragend', function () {
+            row.classList.remove('dragging');
+        });
+    });
+
+    tableBody.addEventListener('dragover', function (event) {
+        event.preventDefault();
+        const draggingRow = tableBody.querySelector('.dragging');
+        if (!draggingRow) return;
+
+        const rows = Array.from(tableBody.querySelectorAll('tr:not(.dragging)'));
+        let insertBeforeRow = null;
+        for (const currentRow of rows) {
+            const box = currentRow.getBoundingClientRect();
+            if (event.clientY < box.top + box.height / 2) {
+                insertBeforeRow = currentRow;
+                break;
+            }
+        }
+
+        if (insertBeforeRow) {
+            tableBody.insertBefore(draggingRow, insertBeforeRow);
+        } else {
+            tableBody.appendChild(draggingRow);
+        }
+    });
+
+    tableBody.addEventListener('drop', function (event) {
+        event.preventDefault();
+        const order = collectOrder();
+        sendReorder(order)
+            .then(updateOrderBadges)
+            .catch(error => {
+                console.error(error);
+                alert('Nepodařilo se uložit nové pořadí. Stránka se obnoví.');
+                window.location.reload();
+            });
+    });
+
     document.querySelectorAll('.delete-flashnews').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             document.getElementById('deleteId').value = this.dataset.id;
             document.getElementById('deleteTitle').textContent = this.dataset.title;
-            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+            const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
         });
     });
 
-    // Aktualizace pořadí
-    document.querySelectorAll('.sort-order').forEach(input => {
-        input.addEventListener('change', function() {
-            const id = this.dataset.id;
-            const sortOrder = this.value;
-            
-            fetch('/admin/flashnews/update-sort-order', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRF-Token': '<?= CSRFHelper::generateToken() ?>'
-                },
-                body: `id=${id}&sort_order=${sortOrder}&csrf_token=<?= CSRFHelper::generateToken() ?>`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Úspěch - možno přidat notifikaci
-                } else {
-                    alert('Chyba při aktualizaci pořadí');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Chyba při aktualizaci pořadí');
-            });
-        });
-    });
+    updateOrderBadges();
 });
 </script>
+

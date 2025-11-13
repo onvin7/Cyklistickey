@@ -20,7 +20,6 @@ use App\Controllers\Admin\UserAdminController;
 use App\Controllers\Admin\AccessControlAdminController;
 use App\Controllers\Admin\PromotionAdminController;
 use App\Controllers\Admin\FlashNewsJSONAdminController;
-use App\Controllers\Admin\TrackingAdminController;
 use App\Controllers\LoginController;
 
 // ✅ **Inicializace připojení k databázi**
@@ -103,11 +102,8 @@ $routes = [
     'flashnews/delete' => [FlashNewsJSONAdminController::class, 'delete'],
     'flashnews/toggle-active' => [FlashNewsJSONAdminController::class, 'toggleActive'],
     'flashnews/update-sort-order' => [FlashNewsJSONAdminController::class, 'updateSortOrder'],
-    'flashnews/preview' => [FlashNewsJSONAdminController::class, 'preview'],
+    'flashnews/reorder' => [FlashNewsJSONAdminController::class, 'reorder'],
     'flashnews/refresh' => [FlashNewsJSONAdminController::class, 'refresh'],
-    'tracking' => [TrackingAdminController::class, 'index'],
-    'tracking/update' => [TrackingAdminController::class, 'update'],
-    'tracking/test' => [TrackingAdminController::class, 'test'],
 ];
 
 // ✅ **Načtení přístupných rout ze session**
@@ -141,12 +137,12 @@ if ($uri === '' || $uri === 'home') {
     exit();
 }
 
-// ✅ **Dynamické zpracování rout** 
+// ✅ **Dynamické zpracování rout**
 $routeFound = false;
 
 foreach ($routes as $path => $route) {
     error_log("Kontroluji routu: " . $path . " proti URI: " . $uri);
-    
+
     // Přímé porovnání pro přesnou shodu
     if ($path === $uri) {
         $controllerClass = $route[0];
@@ -162,7 +158,7 @@ foreach ($routes as $path => $route) {
         $routeFound = true;
         break;
     }
-    
+
     // Kontrola pro routy s parametry
     if (strpos($path, '(') !== false) {
         // Jedná se o routu s regulárním výrazem
@@ -171,9 +167,9 @@ foreach ($routes as $path => $route) {
         // Běžná routa
         $pattern = '#^' . preg_quote($path, '#') . '$#';
     }
-    
+
     error_log("Používám pattern: " . $pattern);
-    
+
     if (preg_match($pattern, $uri, $matches)) {
         $controllerClass = $route[0];
         $method = $route[1];
@@ -207,4 +203,4 @@ if (!$routeFound) {
     echo "HTTP Metoda: " . $_SERVER['REQUEST_METHOD'] . "<br>";
     echo "Dostupné routy: " . implode(', ', array_keys($routes)) . "<br>";
     exit();
-} 
+}
