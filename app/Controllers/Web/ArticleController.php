@@ -60,7 +60,7 @@ class ArticleController
         $title = isset($article['nazev']) ? $article['nazev'] : "Cyklistický magazín";
         $description = isset($article['obsah']) ? substr(strip_tags($article['obsah']), 0, 155) . "..." : "Cyklistický magazín";
         $canonicalPath = "article/" . (isset($article['url']) ? $article['url'] : "");
-        $ogImage = isset($article['nahled_foto']) && $article['nahled_foto'] ? "https://vincenon21.mp.spse-net.cz/" . $article['nahled_foto'] : null;
+        $ogImage = isset($article['nahled_foto']) && $article['nahled_foto'] ? "https://www.cyklistickey.cz/" . $article['nahled_foto'] : null;
         $keywords = [];
         
         // Extrahuj klíčová slova z obsahu článku

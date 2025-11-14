@@ -32,7 +32,7 @@ class UserController
             "@context" => "https://schema.org",
             "@type" => "CollectionPage",
             "name" => "Redakce Cyklistického magazínu",
-            "url" => "https://vincenon21.mp.spse-net.cz/authors",
+            "url" => "https://www.cyklistickey.cz/authors",
             "description" => $description
         ];
 
@@ -70,7 +70,7 @@ class UserController
         $title = $user['name'] . " " . $user['surname'];
         $description = $user['popis'] ? substr(strip_tags($user['popis']), 0, 155) . "..." : "Profil autora " . $user['name'] . " " . $user['surname'] . " a seznam jeho článků.";
         $canonicalPath = "author/" . $user['name'] . "-" . $user['surname'];
-        $ogImage = $user['profil_foto'] ? "https://vincenon21.mp.spse-net.cz/" . $user['profil_foto'] : null;
+        $ogImage = $user['profil_foto'] ? "https://www.cyklistickey.cz/" . $user['profil_foto'] : null;
         $keywords = SEOHelper::extractKeywords($user['popis'] ?? '', 5);
         
         // Breadcrumbs pro detail autora
@@ -85,7 +85,7 @@ class UserController
             "@context" => "https://schema.org",
             "@type" => "Person",
             "name" => $user['name'] . " " . $user['surname'],
-            "url" => "https://vincenon21.mp.spse-net.cz/author/" . $user['name'] . "-" . $user['surname'],
+            "url" => "https://www.cyklistickey.cz/author/" . $user['name'] . "-" . $user['surname'],
             "jobTitle" => $user['role'] ?? "Autor",
             "description" => strip_tags($user['popis'] ?? ""),
             "image" => $ogImage

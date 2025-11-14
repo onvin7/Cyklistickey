@@ -40,7 +40,7 @@ class CategoryController
             "@context" => "https://schema.org",
             "@type" => "CollectionPage",
             "name" => "Kategorie Cyklistického magazínu",
-            "url" => "https://vincenon21.mp.spse-net.cz/categories",
+            "url" => "https://www.cyklistickey.cz/categories",
             "description" => $description
         ];
 
@@ -72,7 +72,7 @@ class CategoryController
         $description = $category['popis'] ?? "Přečtěte si články z kategorie " . $category['nazev_kategorie'] . " na Cyklistickém magazínu.";
         $ogTitle = "Kategorie " . $category['nazev_kategorie'] . " | Cyklistický magazín";
         $ogDescription = $description;
-        $canonicalUrl = "https://vincenon21.mp.spse-net.cz/category/" . $category['url'];
+        $canonicalUrl = "https://www.cyklistickey.cz/category/" . $category['url'];
         
         // Structured data pro kategorii
         $structuredData = [

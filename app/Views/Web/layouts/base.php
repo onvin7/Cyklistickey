@@ -9,8 +9,8 @@
     <?php
     $defaultTitle = "Cyklistický magazín – Novinky, závody a technika";
     $defaultDescription = "Sledujte nejnovější zprávy, tréninkové tipy, technické novinky a rozhovory ze světa cyklistiky.";
-    $defaultOgImage = "https://vincenon21.mp.spse-net.cz/assets/graphics/logo_text_cyklistickey.png";
-    $defaultOgUrl = "https://vincenon21.mp.spse-net.cz";
+    $defaultOgImage = "https://www.cyklistickey.cz/assets/graphics/logo_text_cyklistickey.png";
+    $defaultOgUrl = "https://www.cyklistickey.cz";
     ?>
 
     <!-- ✅ Dynamické SEO (pokud není nastavena proměnná, použije se výchozí hodnota) -->

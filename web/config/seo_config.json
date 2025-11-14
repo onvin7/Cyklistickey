@@ -1,7 +1,7 @@
 {
     "site": {
         "name": "Cyklistický magazín",
-        "url": "https://vincenon21.mp.spse-net.cz",
+        "url": "https://www.cyklistickey.cz",
         "description": "Sledujte nejnovější zprávy, tréninkové tipy, technické novinky a rozhovory ze světa cyklistiky.",
         "keywords": "cyklistika, kolo, závody, trénink, technika, novinky, magazín, cyklistické novinky, cyklistické závody, cyklistická technika",
         "author": "Cyklistický magazín",
@@ -18,8 +18,8 @@
             "en": "English"
         },
         "language_urls": {
-            "cs": "https://vincenon21.mp.spse-net.cz",
-            "en": "https://vincenon21.mp.spse-net.cz/en"
+            "cs": "https://www.cyklistickey.cz",
+            "en": "https://www.cyklistickey.cz/"
         }
     },
     "social": {
@@ -57,8 +57,8 @@
     "structured_data": {
         "organization": {
             "name": "Cyklistický magazín",
-            "url": "https://vincenon21.mp.spse-net.cz",
-            "logo": "https://vincenon21.mp.spse-net.cz/assets/graphics/logo_text_cyklistickey.png",
+            "url": "https://www.cyklistickey.cz",
+            "logo": "https://www.cyklistickey.cz/assets/graphics/logo_text_cyklistickey.png",
             "description": "Nejlepší cyklistický magazín v České republice",
             "foundingDate": "2024",
             "address": {
@@ -81,7 +81,7 @@
         },
         "website": {
             "name": "Cyklistický magazín",
-            "url": "https://vincenon21.mp.spse-net.cz",
+            "url": "https://www.cyklistickey.cz",
             "description": "Sledujte nejnovější zprávy, tréninkové tipy, technické novinky a rozhovory ze světa cyklistiky.",
             "inLanguage": "cs-CZ",
             "copyrightYear": "2024",

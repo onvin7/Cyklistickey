@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Models\User;
+use App\Helpers\CSRFHelper;
 
 use function imagecreatefromjpeg;
 use function imagecreatefrompng;
@@ -55,29 +56,55 @@ class UserAdminController
 
     public function update($id, $postData)
     {
-        if (empty($postData['email']) || empty($postData['name']) || empty($postData['surname'])) {
-            echo "E-mail, jméno a příjmení jsou povinné.";
-            return;
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
 
-        $data = [
-            'id' => $id,
-            'email' => $postData['email'],
-            'name' => $postData['name'],
-            'surname' => $postData['surname'],
-            'role' => $postData['role'] ?? 0,
-            'profil_foto' => $postData['profil_foto'] ?? null,
-            'popis' => $postData['popis'] ?? ''
-        ];
+        if (!CSRFHelper::validateToken($postData['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Neplatný CSRF token. Zkuste to prosím znovu.';
+            header("Location: /admin/users/edit/{$id}");
+            exit;
+        }
 
-        $result = $this->model->update($data);
-
-        if ($result) {
+        $existingUser = $this->model->getById($id);
+        if (!$existingUser) {
+            $_SESSION['error'] = 'Uživatel nebyl nalezen.';
             header("Location: /admin/users");
             exit;
-        } else {
-            echo "Chyba při aktualizaci uživatele.";
         }
+
+        $email = trim($postData['email'] ?? '');
+        $name = trim($postData['name'] ?? '');
+        $surname = trim($postData['surname'] ?? '');
+
+        if ($email === '' || $name === '' || $surname === '') {
+            $_SESSION['error'] = 'E-mail, jméno a příjmení jsou povinné.';
+            header("Location: /admin/users/edit/{$id}");
+            exit;
+        }
+
+        $role = isset($postData['role']) ? (int)$postData['role'] : (int)$existingUser['role'];
+        $role = max(0, min(3, $role));
+
+        $data = [
+            'id' => (int)$id,
+            'email' => $email,
+            'name' => $name,
+            'surname' => $surname,
+            'role' => $role,
+            'profil_foto' => $existingUser['profil_foto'] ?? null,
+            'popis' => $postData['popis'] ?? $existingUser['popis'] ?? ''
+        ];
+
+        if ($this->model->update($data)) {
+            $_SESSION['success'] = 'Uživatel byl úspěšně aktualizován.';
+            header("Location: /admin/users");
+            exit;
+        }
+
+        $_SESSION['error'] = 'Chyba při aktualizaci uživatele.';
+        header("Location: /admin/users/edit/{$id}");
+        exit;
     }
 
     public function delete($id)

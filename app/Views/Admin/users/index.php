@@ -3,6 +3,19 @@
         <h1 class="mb-4 text-center"><i class="fas fa-users me-2"></i>Správa uživatelů</h1>
     </div>
 
+    <?php if (!empty($_SESSION['error'])): ?>
+        <div class="alert alert-danger">
+            <?= htmlspecialchars($_SESSION['error']) ?>
+        </div>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+    <?php if (!empty($_SESSION['success'])): ?>
+        <div class="alert alert-success">
+            <?= htmlspecialchars($_SESSION['success']) ?>
+        </div>
+        <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
+
     <div class="mb-4">
         <form action="/admin/users" method="GET" class="card">
             <div class="card-body">

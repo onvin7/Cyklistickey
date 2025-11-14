@@ -40,32 +40,31 @@ class User
 
     public function create($data)
     {
-        $query = "INSERT INTO users (email, heslo, name, surname, role, profil_foto, zahlavi_foto, popis)
-                VALUES (:email, :heslo, :name, :surname, :role, :profil_foto, :zahlavi_foto, :popis)";
+        $query = "INSERT INTO users (email, heslo, name, surname, role, profil_foto, popis)
+                VALUES (:email, :heslo, :name, :surname, :role, :profil_foto, :popis)";
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':email', $data['email'], \PDO::PARAM_STR);
         $stmt->bindValue(':heslo', $data['heslo'], \PDO::PARAM_STR);
         $stmt->bindValue(':name', $data['name'], \PDO::PARAM_STR);
         $stmt->bindValue(':surname', $data['surname'], \PDO::PARAM_STR);
         $stmt->bindValue(':role', $data['role'], \PDO::PARAM_INT);
-        $stmt->bindValue(':profil_foto', $data['profil_foto'], \PDO::PARAM_STR);
-        $stmt->bindValue(':zahlavi_foto', $data['zahlavi_foto'], \PDO::PARAM_STR);
-        $stmt->bindValue(':popis', $data['popis'], \PDO::PARAM_STR);
+        $stmt->bindValue(':profil_foto', $data['profil_foto'] ?? '', \PDO::PARAM_STR);
+        $stmt->bindValue(':popis', $data['popis'] ?? '', \PDO::PARAM_STR);
         return $stmt->execute();
     }
 
     public function update($data)
     {
         $query = "UPDATE users SET email = :email, name = :name, surname = :surname, role = :role,
-                profil_foto = :profil_foto, zahlavi_foto = :zahlavi_foto, popis = :popis WHERE id = :id";
+                profil_foto = :profil_foto, popis = :popis WHERE id = :id";
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':id', $data['id'], \PDO::PARAM_INT);
         $stmt->bindValue(':email', $data['email'], \PDO::PARAM_STR);
         $stmt->bindValue(':name', $data['name'], \PDO::PARAM_STR);
         $stmt->bindValue(':surname', $data['surname'], \PDO::PARAM_STR);
         $stmt->bindValue(':role', $data['role'], \PDO::PARAM_INT);
-        $stmt->bindValue(':profil_foto', $data['profil_foto'], \PDO::PARAM_STR);
-        $stmt->bindValue(':popis', $data['popis'], \PDO::PARAM_STR);
+        $stmt->bindValue(':profil_foto', $data['profil_foto'] ?? null, \PDO::PARAM_STR);
+        $stmt->bindValue(':popis', $data['popis'] ?? '', \PDO::PARAM_STR);
         return $stmt->execute();
     }
 

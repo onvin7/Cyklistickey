@@ -1,3 +1,6 @@
+<?php
+use App\Helpers\CSRFHelper;
+?>
 <section class="content-section">
     <div class="section-header">
         <h1 class="text-center mb-4"><i class="fas fa-user-edit me-2"></i><?= isset($user) ? 'Upravit uživatele' : 'Přidat nového uživatele' ?></h1>
@@ -9,7 +12,20 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
+                    <?php if (!empty($_SESSION['error'])): ?>
+                        <div class="alert alert-danger">
+                            <?= htmlspecialchars($_SESSION['error']) ?>
+                        </div>
+                        <?php unset($_SESSION['error']); ?>
+                    <?php endif; ?>
+                    <?php if (!empty($_SESSION['success'])): ?>
+                        <div class="alert alert-success">
+                            <?= htmlspecialchars($_SESSION['success']) ?>
+                        </div>
+                        <?php unset($_SESSION['success']); ?>
+                    <?php endif; ?>
                     <form action="<?= isset($user) ? '/admin/users/update/' . htmlspecialchars($user['id']) : '/admin/users/store' ?>" method="POST">
+                        <input type="hidden" name="csrf_token" value="<?= CSRFHelper::generateToken(); ?>">
                         <div class="mb-3">
                             <label for="email" class="form-label"><i class="fas fa-envelope me-2"></i>E-mail</label>
                             <input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required>
@@ -25,6 +41,7 @@
                         <div class="mb-3">
                             <label for="role" class="form-label"><i class="fas fa-user-tag me-2"></i>Role</label>
                             <select class="form-select" id="role" name="role" required>
+                                <option value="0" <?= isset($user['role']) && (int)$user['role'] === 0 ? 'selected' : '' ?>>Uživatel</option>
                                 <option value="1" <?= isset($user['role']) && $user['role'] == 1 ? 'selected' : '' ?>>Moderátor</option>
                                 <option value="2" <?= isset($user['role']) && $user['role'] == 2 ? 'selected' : '' ?>>Editor</option>
                                 <option value="3" <?= isset($user['role']) && $user['role'] == 3 ? 'selected' : '' ?>>Administrátor</option>

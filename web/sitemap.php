@@ -12,7 +12,7 @@ if (!RateLimitHelper::checkAndSetHeaders($ip, 'sitemap', 10, 3600)) {
     echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
     echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
     echo '  <url>' . "\n";
-    echo '    <loc>https://vincenon21.mp.spse-net.cz/</loc>' . "\n";
+    echo '    <loc>https://www.cyklistickey.cz/</loc>' . "\n";
     echo '    <lastmod>' . date('Y-m-d') . '</lastmod>' . "\n";
     echo '    <changefreq>daily</changefreq>' . "\n";
     echo '    <priority>1.0</priority>' . "\n";

@@ -1,0 +1,257 @@
+.events-container {
+    padding-top: 0;
+    min-height: 100vh;
+    background-color: #00000F;
+    padding-inline: 5%;
+    padding-bottom: 50px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.year-section {
+    margin-bottom: 80px;
+}
+
+.year-header {
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid rgba(241, 0, 141, 0.3);
+}
+
+.year-header h2 {
+    color: white;
+    font-size: 48px;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.events-section {
+    margin-bottom: 60px;
+}
+
+.section-title {
+    color: #f1008d;
+    font-size: 28px;
+    font-weight: 400;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+
+.series-section {
+    margin-top: 50px;
+}
+
+.events-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.series-list {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.event-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 12px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.event-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #f1008d 0%, #ff6b9d 100%);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.event-card.active::before {
+    transform: scaleX(1);
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    border-color: #f1008d;
+    box-shadow: 0 10px 30px rgba(241, 0, 141, 0.2);
+}
+
+.event-card.inactive {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.event-card.series-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #1e2a3e 100%);
+    border-left: 3px solid #f1008d;
+}
+
+.event-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.event-info {
+    flex: 1;
+    margin-bottom: 20px;
+}
+
+.event-info h4 {
+    color: white;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 15px;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.series-card .event-info h4 {
+    font-size: 18px;
+}
+
+.event-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.event-detail {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #ccc;
+    font-size: 15px;
+}
+
+.event-detail i {
+    color: #f1008d;
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.event-card.inactive .event-detail i {
+    color: #666;
+}
+
+.event-action {
+    margin-top: auto;
+}
+
+.btn-event {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #f1008d 0%, #ff6b9d 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-event:hover {
+    background: linear-gradient(135deg, #ff6b9d 0%, #f1008d 100%);
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(241, 0, 141, 0.4);
+}
+
+.btn-event i {
+    transition: transform 0.3s ease;
+}
+
+.btn-event:hover i {
+    transform: translateX(3px);
+}
+
+.btn-event.disabled {
+    background: #333;
+    color: #999;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-event.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .events-container {
+        padding-inline: 20px;
+    }
+
+    .year-header h2 {
+        font-size: 36px;
+    }
+
+    .section-title {
+        font-size: 24px;
+    }
+
+    .events-list {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .series-list {
+        grid-template-columns: 1fr;
+    }
+
+    .event-card {
+        padding: 20px;
+    }
+
+    .event-info h4 {
+        font-size: 18px;
+    }
+
+    .year-section {
+        margin-bottom: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .year-header h2 {
+        font-size: 28px;
+    }
+
+    .section-title {
+        font-size: 20px;
+    }
+
+    .event-card {
+        padding: 15px;
+    }
+
+    .event-info h4 {
+        font-size: 16px;
+    }
+
+    .event-detail {
+        font-size: 14px;
+    }
+
+    .btn-event {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+

@@ -60,10 +60,8 @@ $routes = [
     '/login/submit' => [LoginController::class, 'login'],
     '/logout' => [LoginController::class, 'logout'],
     '/kontakt' => [HomeController::class, 'kontakt'],
-    '/race' => [HomeController::class, 'race'],
-    '/race/cyklistickey' => [HomeController::class, 'raceCyklistickey'],
-    '/race/bezeckey' => [HomeController::class, 'raceBezeckey'],
     '/events' => [HomeController::class, 'events'],
+    '/events/(\d+)/([^/]+)' => [HomeController::class, 'eventDetail'],
     '/appka' => [HomeController::class, 'appka'],
     '/register' => [LoginController::class, 'create'],
     '/register/submit' => [LoginController::class, 'store'],
@@ -101,6 +99,9 @@ foreach ($routes as $path => $route) {
 
         if ($method === 'login') {
             $controller->$method($_POST['email'], $_POST['password']);
+        } else if ($method === 'eventDetail' && isset($matches[1]) && isset($matches[2])) {
+            // Speciální handling pro eventDetail s dvěma parametry
+            $controller->$method($matches[1], $matches[2]);
         } else if ($param) {
             $controller->$method($param);
         } else {
