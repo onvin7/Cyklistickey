@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use PDO;
 use App\Models\Promotion;
 use App\Models\Article;
+use App\Helpers\LogHelper;
 use DateTime;
 
 class PromotionAdminController
@@ -103,6 +104,7 @@ class PromotionAdminController
         // Uložíme propagaci
         $this->promotionModel->createPromotion($id_clanku, $user_id, $zacatek, $konec);
 
+        @LogHelper::admin('Promotion created', 'Article ID: ' . $id_clanku . ', Start: ' . $zacatek . ', End: ' . $konec);
         $_SESSION['success'] = "Propagace byla úspěšně vytvořena.";
         header("Location: /admin/promotions");
         exit();
@@ -166,6 +168,7 @@ class PromotionAdminController
         // Jinak propagaci smažeme
         $this->promotionModel->deletePromotion($id);
 
+        @LogHelper::admin('Promotion deleted', 'ID: ' . $id);
         $_SESSION['success'] = "Propagace byla úspěšně smazána.";
         header("Location: /admin/promotions");
         exit();

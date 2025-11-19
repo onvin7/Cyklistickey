@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 $csrfToken = CSRFHelper::generateToken();
 ?>
-<form method="POST" action="/login/submit">
+<form method="POST" action="/login/submit" onsubmit="console.log('Form submitting to:', this.action); return true;">
     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
     <div class="container">
         <div class="ohraniceni new">
@@ -17,7 +17,13 @@ $csrfToken = CSRFHelper::generateToken();
                     <?= $_SESSION['login_success']; ?>
                     <?php unset($_SESSION['login_success']); ?>
                 </div>
-                <?php endif; ?>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['login_error'])): ?>
+                <div class="prvek" style="color: red; margin-bottom: 10px;">
+                    <?= $_SESSION['login_error']; ?>
+                    <?php unset($_SESSION['login_error']); ?>
+                </div>
+            <?php endif; ?>
                 <div class="input-wrapper">
                     <div class="prvek">
                         <div class="input-group validator-msg-holder js-validated-element-wrapper">

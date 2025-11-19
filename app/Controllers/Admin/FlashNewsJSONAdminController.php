@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Models\FlashNewsJSONSimple;
 use App\Helpers\CSRFHelper;
+use App\Helpers\LogHelper;
 use Exception;
 
 class FlashNewsJSONAdminController
@@ -104,10 +105,12 @@ class FlashNewsJSONAdminController
             }
 
             if ($this->model->create($data)) {
+                LogHelper::admin('Flash News created', 'ID: ' . ($data['id'] ?? 'new') . ', Title: ' . ($data['title'] ?? 'N/A'));
                 $_SESSION['success'] = 'Flash news byla úspěšně vytvořena';
                 header('Location: /admin/flashnews');
                 exit;
             } else {
+                LogHelper::admin('Flash News create failed', 'Title: ' . ($data['title'] ?? 'N/A'));
                 $_SESSION['error'] = 'Chyba při vytváření flash news';
                 header('Location: /admin/flashnews/create');
                 exit;
@@ -199,10 +202,12 @@ class FlashNewsJSONAdminController
             }
 
             if ($this->model->update($id, $data)) {
+                LogHelper::admin('Flash News updated', 'ID: ' . $id . ', Title: ' . ($data['title'] ?? 'N/A'));
                 $_SESSION['success'] = 'Flash news byla úspěšně aktualizována';
                 header('Location: /admin/flashnews');
                 exit;
             } else {
+                LogHelper::admin('Flash News update failed', 'ID: ' . $id);
                 $_SESSION['error'] = 'Chyba při aktualizaci flash news';
                 header('Location: /admin/flashnews/edit?id=' . $id);
                 exit;
@@ -238,11 +243,14 @@ class FlashNewsJSONAdminController
 
         try {
             if ($this->model->delete($id)) {
+                LogHelper::admin('Flash News deleted', 'ID: ' . $id);
                 $_SESSION['success'] = 'Flash news byla úspěšně smazána';
             } else {
+                LogHelper::admin('Flash News delete failed', 'ID: ' . $id);
                 $_SESSION['error'] = 'Chyba při mazání flash news';
             }
         } catch (Exception $e) {
+            LogHelper::admin('Flash News delete error', 'ID: ' . $id . ', Error: ' . $e->getMessage());
             $_SESSION['error'] = 'Chyba při mazání flash news: ' . $e->getMessage();
         }
 
@@ -274,11 +282,16 @@ class FlashNewsJSONAdminController
 
         try {
             if ($this->model->toggleActive($id)) {
+                $flashNews = $this->model->getById($id);
+                $newStatus = $flashNews['is_active'] ? 'activated' : 'deactivated';
+                LogHelper::admin('Flash News ' . $newStatus, 'ID: ' . $id);
                 $_SESSION['success'] = 'Stav flash news byl změněn';
             } else {
+                LogHelper::admin('Flash News toggle failed', 'ID: ' . $id);
                 $_SESSION['error'] = 'Chyba při změně stavu flash news';
             }
         } catch (Exception $e) {
+            LogHelper::admin('Flash News toggle error', 'ID: ' . $id . ', Error: ' . $e->getMessage());
             $_SESSION['error'] = 'Chyba při změně stavu flash news: ' . $e->getMessage();
         }
 

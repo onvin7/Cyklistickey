@@ -183,10 +183,10 @@ $stats = $stats ?? [
                                                         <input type="hidden" name="id" value="<?= $item['id'] ?>">
                                                         <button type="submit" class="btn btn-sm <?= $item['is_active'] ? 'btn-warning' : 'btn-success' ?> text-white">
                                                             <?= $item['is_active'] ? 'Deaktivovat' : 'Aktivovat' ?>
-                                                        </button>
+                                                    </button>
                                                     </form>
                                                     <a href="/admin/flashnews/edit?id=<?= $item['id'] ?>" class="btn btn-sm btn-primary text-white">Upravit</a>
-                                                    <button type="button"
+                                                    <button type="button" 
                                                             class="btn btn-sm btn-danger delete-flashnews"
                                                             data-id="<?= $item['id'] ?>"
                                                             data-title="<?= htmlspecialchars($item['title']) ?>">
@@ -334,9 +334,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (insertBeforeRow) {
             tableBody.insertBefore(draggingRow, insertBeforeRow);
-        } else {
+                } else {
             tableBody.appendChild(draggingRow);
-        }
+                }
     });
 
     tableBody.addEventListener('drop', function (event) {
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Nepodařilo se uložit nové pořadí. Stránka se obnoví.');
                 window.location.reload();
             });
-    });
+        });
 
     document.querySelectorAll('.delete-flashnews').forEach(button => {
         button.addEventListener('click', function () {

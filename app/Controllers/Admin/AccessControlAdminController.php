@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Models\AccessControl;
+use App\Helpers\LogHelper;
 
 class AccessControlAdminController
 {
@@ -43,6 +44,7 @@ class AccessControlAdminController
 
                     // Logování změny
                     $this->model->logChange($_SESSION['user_id'], $pageName, $role1, $role2);
+                    @LogHelper::admin('Access control updated', 'Page: ' . $pageName . ', Role1: ' . $role1 . ', Role2: ' . $role2);
                 }
             }
 

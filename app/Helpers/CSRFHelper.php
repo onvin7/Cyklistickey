@@ -15,8 +15,8 @@ class CSRFHelper
         
         // Pokud už existuje platný token, vrať ho
         if (isset($_SESSION['csrf_token']) && isset($_SESSION['csrf_token_time'])) {
-            // Token je platný 1 hodinu
-            if (time() - $_SESSION['csrf_token_time'] < 3600) {
+            // Token je platný 2 hodiny
+            if (time() - $_SESSION['csrf_token_time'] < 7200) {
                 return $_SESSION['csrf_token'];
             }
         }
@@ -42,8 +42,8 @@ class CSRFHelper
             return false;
         }
         
-        // Token je platný 1 hodinu
-        if (time() - $_SESSION['csrf_token_time'] > 3600) {
+        // Token je platný 2 hodiny
+        if (time() - $_SESSION['csrf_token_time'] > 7200) {
             unset($_SESSION['csrf_token']);
             unset($_SESSION['csrf_token_time']);
             return false;
@@ -79,9 +79,41 @@ class CSRFHelper
             return true;
         }
         
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         $token = $_POST['csrf_token'] ?? '';
-        if (!self::validateToken($token)) {
+        
+        // Pokud není token v POST, vrať false
+        if (empty($token)) {
+            error_log("DEBUG CSRF: No token in POST data");
             return false;
+        }
+        
+        // Pokud není token v session, vrať false
+        if (!isset($_SESSION['csrf_token'])) {
+            error_log("DEBUG CSRF: No token in session");
+            return false;
+        }
+        
+        // Porovnej tokeny
+        if (!hash_equals($_SESSION['csrf_token'], $token)) {
+            error_log("DEBUG CSRF: Tokens don't match");
+            error_log("DEBUG CSRF: POST token: " . substr($token, 0, 20));
+            error_log("DEBUG CSRF: SESSION token: " . substr($_SESSION['csrf_token'], 0, 20));
+            return false;
+        }
+        
+        // Zkontroluj expiraci
+        if (isset($_SESSION['csrf_token_time'])) {
+            $age = time() - $_SESSION['csrf_token_time'];
+            if ($age > 7200) { // 2 hodiny
+                error_log("DEBUG CSRF: Token expired (age: $age seconds)");
+                unset($_SESSION['csrf_token']);
+                unset($_SESSION['csrf_token_time']);
+                return false;
+            }
         }
         
         return true;

@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Models\Category;
+use App\Helpers\LogHelper;
 
 class CategoryAdminController
 {
@@ -53,9 +54,11 @@ class CategoryAdminController
         $result = $this->model->create($data);
 
         if ($result) {
+            @LogHelper::admin('Category created', 'Name: ' . ($data['nazev_kategorie'] ?? 'N/A'));
             header("Location: /admin/categories");
             exit;
         } else {
+            @LogHelper::admin('Category create failed', 'Name: ' . ($data['nazev_kategorie'] ?? 'N/A'));
             echo "Chyba při ukládání kategorie.";
         }
     }
@@ -90,9 +93,11 @@ class CategoryAdminController
         $result = $this->model->update($data);
 
         if ($result) {
+            @LogHelper::admin('Category updated', 'ID: ' . $id . ', Name: ' . ($data['nazev_kategorie'] ?? 'N/A'));
             header("Location: /admin/categories");
             exit;
         } else {
+            @LogHelper::admin('Category update failed', 'ID: ' . $id);
             echo "Chyba při aktualizaci kategorie.";
         }
     }
@@ -102,9 +107,11 @@ class CategoryAdminController
         $result = $this->model->delete($id);
 
         if ($result) {
+            @LogHelper::admin('Category deleted', 'ID: ' . $id);
             header("Location: /admin/categories");
             exit;
         } else {
+            @LogHelper::admin('Category delete failed', 'ID: ' . $id);
             echo "Chyba při mazání kategorie.";
         }
     }

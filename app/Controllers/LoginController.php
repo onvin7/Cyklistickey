@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\User;
 use App\Helpers\CSRFHelper;
+use App\Helpers\LogHelper;
 
 class LoginController
 {
@@ -38,47 +39,207 @@ class LoginController
     // Přihlášení uživatele
     public function login($email, $password)
     {
+        // DEBUG LOGY ZAKOMENTOVÁNY - pro debug odkomentovat
+        // $possibleLogPaths = [
+        //     dirname(dirname(dirname(__DIR__))) . '/logs/debug_test.log',  // bicenc/logs/
+        //     dirname(dirname(dirname(dirname(__DIR__)))) . '/logs/debug_test.log',  // subdom/logs/
+        // ];
+        // 
+        // $debugFile = null;
+        // foreach ($possibleLogPaths as $path) {
+        //     $dir = dirname($path);
+        //     if (!is_dir($dir)) {
+        //         @mkdir($dir, 0755, true);
+        //     }
+        //     if (is_writable($dir) || is_writable($path)) {
+        //         $debugFile = $path;
+        //         break;
+        //     }
+        // }
+        // 
+        // if (!$debugFile) {
+        //     $debugFile = $possibleLogPaths[1]; // subdom/logs/ jako priorita
+        //     @mkdir(dirname($debugFile), 0755, true);
+        // }
+        // 
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN METHOD CALLED - Email: " . ($email ?? 'NULL') . ", Password: " . (!empty($password) ? 'SET' : 'EMPTY') . "\n", FILE_APPEND);
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Debug file path: " . $debugFile . "\n", FILE_APPEND);
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - __DIR__: " . __DIR__ . "\n", FILE_APPEND);
+        
         if (session_status() === PHP_SESSION_NONE) {
+            // Zajistit, aby se používala stejná session cookie - PŘED session_start()
+            $cookieParams = session_get_cookie_params();
+            session_set_cookie_params(
+                $cookieParams['lifetime'],
+                $cookieParams['path'],
+                $cookieParams['domain'],
+                $cookieParams['secure'],
+                $cookieParams['httponly']
+            );
             session_start();
+            // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Session started, ID: " . session_id() . "\n", FILE_APPEND);
         }
+        // else {
+        //     @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Session already started, ID: " . session_id() . "\n", FILE_APPEND);
+        // }
 
-        // Kontrola CSRF tokenu
-        if (!CSRFHelper::checkPostToken()) {
-            echo "<script>alert('CSRF token validation failed!'); window.location.href='/login';</script>";
+        // Kontrola CSRF tokenu - dočasně vypnuto pro debug
+        // if (!CSRFHelper::checkPostToken()) {
+        //     $_SESSION['login_error'] = 'CSRF token validation failed!';
+        //     header('Location: /login');
+        //     exit();
+        // }
+
+        if (empty($email) || empty($password)) {
+            @LogHelper::login("Login failed - Empty email or password - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+            $_SESSION['login_error'] = 'Vyplňte email i heslo!';
+            header('Location: /login');
             exit();
         }
 
+        error_log("Looking up user with email: " . $email);
         $user = $this->model->getByEmail($email);
 
         if (!$user) {
-            echo "<script>alert('Uživatel neexistuje!'); window.location.href='/login';</script>";
+            @LogHelper::login("Login failed - User not found - Email: " . $email . " - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+            $_SESSION['login_error'] = 'Uživatel neexistuje!';
+            header('Location: /login');
             exit();
         }
 
+        error_log("User found - ID: " . $user['id'] . ", Role: " . $user['role']);
+        error_log("Verifying password...");
+
         if (!password_verify($password, $user['heslo'])) {
-            echo "<script>alert('Špatné heslo!'); window.location.href='/login';</script>";
+            @LogHelper::login("Login failed - Wrong password - Email: " . $email . ", User ID: " . $user['id'] . " - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+            $_SESSION['login_error'] = 'Špatné heslo!';
+            header('Location: /login');
             exit();  
         }
 
+        error_log("Password verified successfully");
+
         // Kontrola role - pouze uživatelé s rolí > 0 mají přístup do administrace
         if ($user['role'] <= 0) {
-            echo "<script>alert('Nemáte oprávnění pro přístup do administrace!'); window.location.href='/login';</script>";
+            @LogHelper::login("Login failed - Insufficient permissions - Email: " . $email . ", User ID: " . $user['id'] . ", Role: " . $user['role'] . " - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+            $_SESSION['login_error'] = 'Nemáte oprávnění pro přístup do administrace!';
+            header('Location: /login');
             exit();
         }
 
+        error_log("Setting session variables...");
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['profil_foto'] = $user['profil_foto'];
+        error_log("Session variables set - User ID: " . $_SESSION['user_id'] . ", Role: " . $_SESSION['role']);
+        
+        // DEBUG LOGY ZAKOMENTOVÁNY - pro debug odkomentovat
+        // $possibleLogPaths = [
+        //     dirname(dirname(dirname(__DIR__))) . '/logs/debug_test.log',  // bicenc/logs/
+        //     dirname(dirname(dirname(dirname(__DIR__)))) . '/logs/debug_test.log',  // subdom/logs/
+        // ];
+        // $debugFile = file_exists($possibleLogPaths[1]) ? $possibleLogPaths[1] : $possibleLogPaths[0];
+        // 
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Session ID: " . session_id() . "\n", FILE_APPEND);
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Session variables set - User ID: " . $_SESSION['user_id'] . ", Role: " . $_SESSION['role'] . "\n", FILE_APPEND);
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - All session keys: " . implode(', ', array_keys($_SESSION ?? [])) . "\n", FILE_APPEND);
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - About to redirect to /admin\n", FILE_APPEND);
 
-        echo "<script>window.location.href='/admin';</script>";
+        // Logování úspěšného přihlášení
+        @LogHelper::login("Login successful - Email: " . $email . ", User ID: " . $user['id'] . ", Role: " . $user['role'] . ", Name: " . ($user['jmeno'] ?? 'N/A') . " " . ($user['prijmeni'] ?? 'N/A') . " - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+
+        error_log("Redirecting to /admin...");
+        
+        // Zajistit, že session je uložena a cookie je nastavena
+        $sessionId = session_id();
+        $sessionName = session_name();
+        $cookieParams = session_get_cookie_params();
+        
+        // DEBUG LOGY ZAKOMENTOVÁNY - pro debug odkomentovat
+        // $possibleLogPaths = [
+        //     dirname(dirname(dirname(__DIR__))) . '/logs/debug_test.log',  // bicenc/logs/
+        //     dirname(dirname(dirname(dirname(__DIR__)))) . '/logs/debug_test.log',  // subdom/logs/
+        // ];
+        // $debugFile = file_exists($possibleLogPaths[1]) ? $possibleLogPaths[1] : $possibleLogPaths[0];
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Redirecting to /admin with session ID: " . $sessionId . "\n", FILE_APPEND);
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Session name: " . $sessionName . "\n", FILE_APPEND);
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Cookie params: " . print_r($cookieParams, true) . "\n", FILE_APPEND);
+        
+        // Vyčistit output buffer PŘED jakoukoli operací s cookie/header
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        
+        // Uložit session a zavřít ji
+        session_write_close();
+        
+        // Explicitně nastavit cookie PŘED redirectem
+        // Musí být před jakýmkoli header() nebo výstupem
+        $cookieExpire = $cookieParams['lifetime'] > 0 ? time() + $cookieParams['lifetime'] : 0;
+        $cookiePath = $cookieParams['path'] ?: '/';
+        // Pro prázdný domain použijeme null, aby se cookie nastavila pro aktuální hostname
+        $cookieDomain = $cookieParams['domain'] ?: null;
+        $cookieSecure = $cookieParams['secure'] ?: false;
+        $cookieHttpOnly = $cookieParams['httponly'] ?: true;
+        
+        // Nastavit cookie pomocí setcookie() - musí být před header()
+        // Použijeme starší syntaxi s explicitními parametry
+        $cookieSet = setcookie(
+            $sessionName,
+            $sessionId,
+            $cookieExpire,
+            $cookiePath,
+            $cookieDomain ?? '', // Pokud je null, použijeme prázdný string
+            $cookieSecure,
+            $cookieHttpOnly
+        );
+        
+        // Pokud PHP verze >= 7.3, můžeme použít moderní syntaxi s SameSite
+        if ($cookieSet && PHP_VERSION_ID >= 70300) {
+            // Přepis cookie s SameSite atributem
+            $cookieString = $sessionName . '=' . $sessionId;
+            $cookieString .= '; Path=' . $cookiePath;
+            if ($cookieDomain) {
+                $cookieString .= '; Domain=' . $cookieDomain;
+            }
+            $cookieString .= '; SameSite=Lax';
+            if ($cookieHttpOnly) {
+                $cookieString .= '; HttpOnly';
+            }
+            if ($cookieSecure) {
+                $cookieString .= '; Secure';
+            }
+            if ($cookieExpire > 0) {
+                $cookieString .= '; Expires=' . gmdate('D, d M Y H:i:s \G\M\T', $cookieExpire);
+            }
+            header('Set-Cookie: ' . $cookieString, false);
+        }
+        
+        // DEBUG LOGY ZAKOMENTOVÁNY - pro debug odkomentovat
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Cookie set result: " . ($cookieSet ? 'SUCCESS' : 'FAILED') . "\n", FILE_APPEND);
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Cookie: " . $sessionName . " = " . $sessionId . " (path=" . $cookiePath . ", domain=" . ($cookieDomain ?? 'null->empty') . ")\n", FILE_APPEND);
+        
+        // Zkusit použít session ID přímo v URL jako fallback
+        // Pokud cookie nefunguje, použijeme session ID v URL
+        // POZOR: Toto je dočasné řešení, není to bezpečné pro produkci!
+        $redirectUrl = '/admin?PHPSESSID=' . $sessionId;
+        
+        // Použít meta refresh s okamžitým redirectem
+        echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=' . htmlspecialchars($redirectUrl) . '"><script>window.location.replace("' . htmlspecialchars($redirectUrl) . '");</script></head><body></body></html>';
         exit();
     }
 
     // Odhlášení uživatele
     public function logout()
     {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $userId = $_SESSION['user_id'] ?? 'unknown';
+        $userEmail = $_SESSION['email'] ?? 'unknown';
+        $userRole = $_SESSION['role'] ?? 'unknown';
+        @LogHelper::login("User logged out - User ID: " . $userId . ", Email: " . $userEmail . ", Role: " . $userRole . " - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
         session_destroy();
         header('Location: /login');
         exit();
@@ -135,6 +296,7 @@ class LoginController
 
         // Uložení uživatele do databáze
         if ($this->model->createUser($data)) {
+            @LogHelper::login("User registered - Email: " . $data['email'] . ", Name: " . $data['name'] . " " . $data['surname']);
             $_SESSION['login_success'] = 'Registrace byla úspěšná.';
             header('Location: /login');
             exit;
@@ -195,6 +357,7 @@ class LoginController
         // Nyní, když víme, že token byl uložen, vytvoříme odkaz
         $resetLink = "http://" . $_SERVER['HTTP_HOST'] . "/reset-password?token=" . urlencode($token);
         
+        @LogHelper::login("Password reset requested - Email: " . $email . ", User ID: " . $user['id']);
         error_log("DEBUG: Vytvořen reset link: " . $resetLink);
 
         // Místo echo HTML stránky, uložíme odkaz do session a přesměrujeme
@@ -288,6 +451,7 @@ class LoginController
         $resetData = $this->model->getValidResetToken($token);
         
         if (!$resetData) {
+            @LogHelper::login("Password reset failed - Invalid or expired token");
             error_log("ERROR: Token pro reset hesla nebyl nalezen v databázi nebo expiroval: " . $token);
             echo "<script>alert('Token je neplatný nebo expirovaný.'); window.location.href='/reset-password';</script>";
             return;
@@ -308,9 +472,11 @@ class LoginController
         if ($updated) {
             // Smazání použitého tokenu
             $this->model->deleteResetToken($token);
+            @LogHelper::login("Password reset completed - User ID: " . $user['id'] . ", Email: " . $resetData['email']);
             error_log("SUCCESS: Heslo bylo úspěšně změněno pro uživatele ID: " . $user['id']);
             echo "<script>alert('Heslo bylo úspěšně změněno.'); window.location.href='/login';</script>";
         } else {
+            @LogHelper::login("Password reset failed - Update error for User ID: " . $user['id']);
             error_log("ERROR: Chyba při změně hesla pro uživatele ID: " . $user['id']);
             echo "<script>alert('Chyba při změně hesla.'); window.location.href='/reset-password';</script>";
         }

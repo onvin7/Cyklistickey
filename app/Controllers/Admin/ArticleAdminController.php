@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Models\Article;
 use App\Models\Category;
 use App\Helpers\TextHelper;
+use App\Helpers\LogHelper;
 
 use function imagecreatefromjpeg;
 use function imagecreatefrompng;
@@ -90,6 +91,7 @@ class ArticleAdminController
 
             // Přesun a zpracování originálního souboru
             if (move_uploaded_file($_FILES['nahled_foto']['tmp_name'], $largeFilePath)) {
+                @LogHelper::admin('Article image uploaded (create)', 'File: ' . basename($largeFilePath) . ', Size: ' . $_FILES['nahled_foto']['size'] . ' bytes');
                 // Pro velké fotky použijeme optimalizovanou velikost
                 $this->createThumbnail($largeFilePath, $largeFilePath, 1600, 1067, 90, true);
                 
@@ -128,6 +130,7 @@ class ArticleAdminController
             $tempAudioPath = $audioDir . $tempAudioName;
             
             if (move_uploaded_file($_FILES['audio_file']['tmp_name'], $tempAudioPath)) {
+                @LogHelper::admin('Article audio uploaded', 'File: ' . $tempAudioPath . ', Size: ' . $_FILES['audio_file']['size'] . ' bytes');
                 $audioFile = $tempAudioName;
                 echo "<p>Zvukový soubor byl úspěšně nahrán.</p>";
             } else {
@@ -161,9 +164,11 @@ class ArticleAdminController
                 rename($audioDir . $audioFile, $finalAudioPath);
             }
             
+            LogHelper::admin('Article created', 'ID: ' . $articleId . ', Title: ' . ($postData['nazev'] ?? 'N/A'));
             header("Location: /admin/articles");
             exit;
         } else {
+            LogHelper::admin('Article create failed', 'Title: ' . ($postData['nazev'] ?? 'N/A'));
             echo "Chyba při ukládání článku.";
         }
     }
@@ -234,6 +239,7 @@ class ArticleAdminController
             }
 
             if (move_uploaded_file($_FILES['nahled_foto']['tmp_name'], $largeFilePath)) {
+                @LogHelper::admin('Article image uploaded (update)', 'Article ID: ' . $id . ', File: ' . basename($largeFilePath) . ', Size: ' . $_FILES['nahled_foto']['size'] . ' bytes');
                 // Pro velké fotky použijeme optimalizovanou velikost
                 $this->createThumbnail($largeFilePath, $largeFilePath, 1600, 1067, 90, true);
                 
@@ -266,6 +272,7 @@ class ArticleAdminController
             $audioPath = $audioDir . $id . '.mp3';
             
             if (move_uploaded_file($_FILES['audio_file']['tmp_name'], $audioPath)) {
+                @LogHelper::admin('Article audio uploaded (update)', 'Article ID: ' . $id . ', File: ' . basename($audioPath) . ', Size: ' . $_FILES['audio_file']['size'] . ' bytes');
                 echo "<p>Zvukový soubor byl úspěšně aktualizován.</p>";
             } else {
                 echo "<div class='alert alert-danger'>❌ Chyba při nahrávání zvukového souboru!</div>";
@@ -304,9 +311,11 @@ class ArticleAdminController
                 $this->articleModel->addCategories($id, []);
             }
             
+            LogHelper::admin('Article updated', 'ID: ' . $id . ', Title: ' . ($postData['nazev'] ?? 'N/A'));
             header("Location: /admin/articles");
             exit;
         } else {
+            LogHelper::admin('Article update failed', 'ID: ' . $id);
             echo "Chyba při aktualizaci článku.";
         }
     }
@@ -320,9 +329,11 @@ class ArticleAdminController
 
         // ✅ **Smazání článku z databáze**
         if ($this->articleModel->delete($id)) {
+            LogHelper::admin('Article deleted', 'ID: ' . $id);
             header("Location: /admin/articles"); // Přesměrování na seznam článků
             exit();
         } else {
+            LogHelper::admin('Article delete failed', 'ID: ' . $id);
             die("❌ Chyba: Článek se nepodařilo smazat.");
         }
     }
@@ -473,6 +484,7 @@ class ArticleAdminController
 
             // ✅ Ukládání souboru a logování úspěchu nebo chyby
             if (move_uploaded_file($file['tmp_name'], $filePath)) {
+                @LogHelper::admin('Article image uploaded (editor)', 'File: ' . basename($filePath) . ', Size: ' . $file['size'] . ' bytes');
                 error_log("✅ Soubor úspěšně uložen na: $filePath");
                 header('Content-Type: application/json');
                 echo json_encode(['location' => $relativePath]);

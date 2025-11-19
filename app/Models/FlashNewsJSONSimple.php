@@ -41,8 +41,8 @@ class FlashNewsJSONSimple
 
             if (!isset($this->data[$type]['titles']) || !is_array($this->data[$type]['titles'])) {
                 $this->data[$type]['titles'] = [];
-            }
         }
+    }
     }
 
     private function saveData(): bool
@@ -105,7 +105,7 @@ class FlashNewsJSONSimple
                 if (!isset($item['created_by_name'])) {
                     $item['created_by_name'] = 'API';
                     $changed = true;
-                }
+        }
             }
         }
         unset($item);
@@ -125,19 +125,19 @@ class FlashNewsJSONSimple
         // Nejdřív načti všechny položky se stabilním ID
         foreach (['news', 'tech', 'custom'] as $type) {
             foreach ($this->data[$type]['titles'] as $index => $item) {
-                $allNews[] = [
+            $allNews[] = [
                     'id' => ++$globalIndex,
                     'title' => $item['title'] ?? '',
                     'type' => $type,
                     'is_active' => (int)($item['is_active'] ?? 1),
                     'sort_order' => (int)($item['sort_order'] ?? 0),
-                    'created_at' => $item['created_at'] ?? date('Y-m-d H:i:s'),
-                    'updated_at' => $item['updated_at'] ?? date('Y-m-d H:i:s'),
+                'created_at' => $item['created_at'] ?? date('Y-m-d H:i:s'),
+                'updated_at' => $item['updated_at'] ?? date('Y-m-d H:i:s'),
                     'created_by_name' => $item['created_by_name'] ?? ($type === 'custom' ? 'Admin' : 'API'),
                     'internal_type' => $type,
                     'internal_index' => $index,
                     'stable_id' => $type . '_' . $index, // Stabilní ID pro reorder
-                ];
+            ];
             }
         }
 
@@ -227,7 +227,7 @@ class FlashNewsJSONSimple
             $itemInfo = $indexed[$id];
             $currentType = $itemInfo['internal_type'];
             $currentIndex = $itemInfo['internal_index'];
-
+                    
             $entry =& $this->data[$currentType]['titles'][$currentIndex];
             $entry['title'] = $data['title'];
             $entry['is_active'] = $data['is_active'] ?? 1;
@@ -269,9 +269,9 @@ class FlashNewsJSONSimple
             $itemInfo = $indexed[$id];
             $type = $itemInfo['internal_type'];
             $index = $itemInfo['internal_index'];
-
+                    
             unset($this->data[$type]['titles'][$index]);
-            $this->data[$type]['titles'] = array_values($this->data[$type]['titles']);
+                        $this->data[$type]['titles'] = array_values($this->data[$type]['titles']);
 
             return $this->normalizeSortOrders();
         } catch (Exception $e) {
@@ -292,12 +292,12 @@ class FlashNewsJSONSimple
             $itemInfo = $indexed[$id];
             $type = $itemInfo['internal_type'];
             $index = $itemInfo['internal_index'];
-
+                    
             $current = $this->data[$type]['titles'][$index]['is_active'] ?? 1;
             $this->data[$type]['titles'][$index]['is_active'] = $current ? 0 : 1;
             $this->data[$type]['titles'][$index]['updated_at'] = date('Y-m-d H:i:s');
 
-            return $this->saveData();
+                return $this->saveData();
         } catch (Exception $e) {
             error_log('FlashNewsJSONSimple toggleActive error: ' . $e->getMessage());
             return false;
@@ -320,7 +320,7 @@ class FlashNewsJSONSimple
             $itemInfo = $indexed[$id];
             $type = $itemInfo['internal_type'];
             $index = $itemInfo['internal_index'];
-
+                    
             $this->data[$type]['titles'][$index]['sort_order'] = (int)$sortOrder;
             $this->data[$type]['titles'][$index]['updated_at'] = date('Y-m-d H:i:s');
 
@@ -375,8 +375,8 @@ class FlashNewsJSONSimple
         } catch (Exception $e) {
             error_log('FlashNewsJSONSimple reorder error: ' . $e->getMessage());
             return false;
+            }
         }
-    }
 
     private function normalizeSortOrders()
     {

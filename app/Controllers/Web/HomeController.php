@@ -166,6 +166,59 @@ class HomeController
         require '../app/Views/Web/layouts/base.php';
     }
 
+    public function viewLog($logFileName)
+    {
+        // Bezpečnostní kontrola - povolíme pouze .log soubory
+        if (!preg_match('/^[a-zA-Z0-9_-]+\.log$/', $logFileName)) {
+            http_response_code(400);
+            die('Neplatný název log souboru');
+        }
+
+        // Cesta k log souborům - logs/ může být v rootu projektu nebo o úroveň výš
+        // app/Controllers/Web -> app -> root -> logs/
+        // NEBO app/Controllers/Web -> app -> root -> .. -> logs/ (subdom/logs/)
+        $rootPath = dirname(dirname(dirname(__DIR__)));
+        
+        // Zkusíme nejdřív o úroveň výš (subdom/logs/), pak v rootu (bicenc/logs/)
+        $possiblePaths = [
+            dirname($rootPath) . '/logs/' . $logFileName,  // subdom/logs/
+            $rootPath . '/logs/' . $logFileName,           // bicenc/logs/
+        ];
+        
+        $logPath = null;
+        foreach ($possiblePaths as $path) {
+            if (file_exists($path)) {
+                $logPath = $path;
+                break;
+            }
+        }
+        
+        // Pokud žádná cesta neexistuje, použijeme první
+        if (!$logPath) {
+            $logPath = $possiblePaths[0];
+        }
+        
+        // Kontrola existence souboru
+        if (!file_exists($logPath)) {
+            error_log("DEBUG LOG VIEWER: Log file not found at: " . $logPath);
+            error_log("DEBUG LOG VIEWER: Root path: " . $rootPath);
+            error_log("DEBUG LOG VIEWER: __DIR__: " . __DIR__);
+            http_response_code(404);
+            die('Log soubor nenalezen');
+        }
+
+        // Načtení obsahu souboru
+        $lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        
+        // Obrátit pořadí - nejnovější první
+        $lines = array_reverse($lines);
+
+        // Přímé zobrazení bez layoutu
+        $view = '../app/Views/Web/logs/view.php';
+        require $view;
+        exit;
+    }
+
     public function appka()
     {
         // SEO nastavení
@@ -178,5 +231,57 @@ class HomeController
 
         $view = '../app/Views/Web/home/appka.php';
         require '../app/Views/Web/layouts/base.php';
+    }
+
+    public function testLogs()
+    {
+        // Test zapsání do logs/
+        $possibleLogPaths = [
+            dirname(dirname(dirname(__DIR__))) . '/logs/debug_test.log',  // bicenc/logs/
+            dirname(dirname(dirname(dirname(__DIR__)))) . '/logs/debug_test.log',  // subdom/logs/
+        ];
+
+        echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Test logs</title></head><body>";
+        echo "<h1>Test zápisu do logs/</h1>";
+        echo "<p>__DIR__: " . __DIR__ . "</p>";
+        echo "<p>dirname(dirname(dirname(__DIR__))): " . dirname(dirname(dirname(__DIR__))) . "</p>";
+        echo "<p>dirname(dirname(dirname(dirname(__DIR__)))): " . dirname(dirname(dirname(dirname(__DIR__)))) . "</p>";
+
+        foreach ($possibleLogPaths as $path) {
+            $dir = dirname($path);
+            echo "<h2>Test: $path</h2>";
+            echo "<p>Adresář: $dir</p>";
+            echo "<p>Adresář existuje: " . (is_dir($dir) ? 'ANO' : 'NE') . "</p>";
+            echo "<p>Adresář je zapisovatelný: " . (is_writable($dir) ? 'ANO' : 'NE') . "</p>";
+            
+            if (!is_dir($dir)) {
+                echo "<p>Vytváření adresáře...</p>";
+                if (@mkdir($dir, 0755, true)) {
+                    echo "<p style='color: green;'>✓ Adresář vytvořen</p>";
+                } else {
+                    echo "<p style='color: red;'>✗ Chyba při vytváření adresáře</p>";
+                }
+            }
+            
+            $testContent = date('Y-m-d H:i:s') . " - TEST ZÁPIS\n";
+            if (@file_put_contents($path, $testContent, FILE_APPEND)) {
+                echo "<p style='color: green;'>✓ Zápis úspěšný</p>";
+                if (file_exists($path)) {
+                    echo "<p>Obsah souboru (posledních 20 řádků):</p>";
+                    $lines = file($path);
+                    $lastLines = array_slice($lines, -20);
+                    echo "<pre>" . htmlspecialchars(implode('', $lastLines)) . "</pre>";
+                }
+            } else {
+                echo "<p style='color: red;'>✗ Chyba při zápisu</p>";
+                $error = error_get_last();
+                if ($error) {
+                    echo "<p>Chyba: " . htmlspecialchars($error['message']) . "</p>";
+                }
+            }
+            echo "<hr>";
+        }
+        echo "</body></html>";
+        exit;
     }
 }

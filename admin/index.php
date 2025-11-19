@@ -1,5 +1,50 @@
 <?php
-session_start();
+// Spuštění session - kontrola, zda už neběží
+if (session_status() === PHP_SESSION_NONE) {
+    // DEBUG LOGY ZAKOMENTOVÁNY - pro debug odkomentovat
+    // $possibleLogPaths = [
+    //     dirname(__DIR__) . '/logs/debug_test.log',  // bicenc/logs/
+    //     dirname(dirname(__DIR__)) . '/logs/debug_test.log',  // subdom/logs/
+    // ];
+    // $debugFile = file_exists($possibleLogPaths[1]) ? $possibleLogPaths[1] : $possibleLogPaths[0];
+    
+    // Zajistit, aby se používala stejná session name a cookie params
+    $sessionName = session_name();
+    $cookieParams = session_get_cookie_params();
+    
+    // DEBUG LOGY ZAKOMENTOVÁNY - pro debug odkomentovat
+    // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - Cookie params before start: " . print_r($cookieParams, true) . "\n", FILE_APPEND);
+    // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - Session name: " . $sessionName . "\n", FILE_APPEND);
+    // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - Session save path: " . session_save_path() . "\n", FILE_APPEND);
+    // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - All cookies: " . print_r($_COOKIE, true) . "\n", FILE_APPEND);
+    // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - PHPSESSID cookie value: " . ($_COOKIE[$sessionName] ?? 'NOT SET') . "\n", FILE_APPEND);
+    // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - HTTP headers: " . print_r(getallheaders(), true) . "\n", FILE_APPEND);
+    
+    // Zajistit, aby se používala stejná session cookie - PŘED session_start()
+    // Použijeme stejné parametry jako v login
+    session_set_cookie_params(
+        $cookieParams['lifetime'] ?: 0,
+        $cookieParams['path'] ?: '/',
+        $cookieParams['domain'] ?: '',
+        $cookieParams['secure'] ?: false,
+        $cookieParams['httponly'] ?: true
+    );
+    
+    // Pokud máme cookie, použijeme ji
+    // Pokud ne, zkusíme použít session ID z URL (fallback pro dočasné řešení)
+    if (isset($_COOKIE[$sessionName])) {
+        session_id($_COOKIE[$sessionName]);
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - Using existing session ID from cookie: " . $_COOKIE[$sessionName] . "\n", FILE_APPEND);
+    } elseif (isset($_GET['PHPSESSID'])) {
+        // Fallback: použít session ID z URL (dočasné řešení)
+        session_id($_GET['PHPSESSID']);
+        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - Using session ID from URL (fallback): " . $_GET['PHPSESSID'] . "\n", FILE_APPEND);
+    }
+    
+    session_start();
+    // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - Session started, ID: " . session_id() . "\n", FILE_APPEND);
+    // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - Session data after start: " . print_r($_SESSION, true) . "\n", FILE_APPEND);
+}
 
 // Kontrola, zda není požadavek z /web/admin
 if (strpos($_SERVER['REQUEST_URI'], '/web/admin') === 0) {

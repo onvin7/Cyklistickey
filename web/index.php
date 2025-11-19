@@ -1,4 +1,26 @@
 <?php
+// DEBUG LOGY ZAKOMENTOVÁNY - pro debug odkomentovat
+// $testFile = dirname(__DIR__) . '/logs/debug_test.log';
+// @file_put_contents($testFile, date('Y-m-d H:i:s') . " - web/index.php loaded - URI: " . ($_SERVER['REQUEST_URI'] ?? 'N/A') . "\n", FILE_APPEND);
+
+// Zapnutí output buffering pro zabránění problémů s headers
+if (!ob_get_level()) {
+    ob_start();
+}
+
+// Spuštění session na začátku
+if (session_status() === PHP_SESSION_NONE) {
+    // Zajistit, aby se používala stejná session cookie
+    $cookieParams = session_get_cookie_params();
+    session_set_cookie_params(
+        $cookieParams['lifetime'],
+        $cookieParams['path'],
+        $cookieParams['domain'],
+        $cookieParams['secure'],
+        $cookieParams['httponly']
+    );
+    session_start();
+}
 
 require '../config/db.php';
 require '../config/autoloader.php';
@@ -73,12 +95,20 @@ $routes = [
     '/user/([^/]+)/articles' => [UserController::class, 'userArticles'],
     '/sitemap.xml' => ['sitemap', 'generate'],
     '/robots.txt' => ['robots', 'generate'],
+    '/logs/([^/]+\.log)' => [HomeController::class, 'viewLog'],
+    // '/test_logs' => [HomeController::class, 'testLogs'], // Test route - zakomentováno
 ];
 
 $routeFound = false;
 
+// DEBUG LOGY ZAKOMENTOVÁNY - pro debug odkomentovat
+// $debugFile = dirname(__DIR__) . '/logs/debug_test.log';
+// @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ROUTING START - URI: $uri, METHOD: " . $_SERVER['REQUEST_METHOD'] . "\n", FILE_APPEND);
+// @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - POST keys: " . implode(', ', array_keys($_POST ?? [])) . "\n", FILE_APPEND);
+
 foreach ($routes as $path => $route) {
     if (preg_match('#^' . $path . '$#', $uri, $matches)) {
+        error_log("Route matched: " . $path);
         // Speciální handling pro sitemap a robots
         if ($route[0] === 'sitemap') {
             include 'sitemap.php';
@@ -98,10 +128,19 @@ foreach ($routes as $path => $route) {
         $controller = new $controllerClass($db);
 
         if ($method === 'login') {
-            $controller->$method($_POST['email'], $_POST['password']);
+            $email = $_POST['email'] ?? '';
+            $password = $_POST['password'] ?? '';
+            // DEBUG LOGY ZAKOMENTOVÁNY - pro debug odkomentovat
+            // $debugFile = dirname(__DIR__) . '/logs/debug_test.log';
+            // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN ROUTING - Email: " . ($email ?: 'EMPTY') . ", Password: " . (!empty($password) ? 'SET' : 'EMPTY') . "\n", FILE_APPEND);
+            $controller->$method($email, $password);
+            // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN ROUTING END (should not reach here)\n", FILE_APPEND);
         } else if ($method === 'eventDetail' && isset($matches[1]) && isset($matches[2])) {
             // Speciální handling pro eventDetail s dvěma parametry
             $controller->$method($matches[1], $matches[2]);
+        } else if ($method === 'viewLog' && isset($matches[1])) {
+            // Speciální handling pro viewLog s parametrem
+            $controller->$method($matches[1]);
         } else if ($param) {
             $controller->$method($param);
         } else {

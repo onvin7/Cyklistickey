@@ -94,3 +94,4 @@ Pokud chceš zůstat u souborů, můžeš použít:
 - Konzistentní s ostatními částmi aplikace
 
 
+

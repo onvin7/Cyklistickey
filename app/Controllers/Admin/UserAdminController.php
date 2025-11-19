@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Models\User;
 use App\Helpers\CSRFHelper;
+use App\Helpers\LogHelper;
 
 use function imagecreatefromjpeg;
 use function imagecreatefrompng;
@@ -97,11 +98,13 @@ class UserAdminController
         ];
 
         if ($this->model->update($data)) {
+            LogHelper::admin('User updated', 'ID: ' . $id . ', Email: ' . $email . ', Role: ' . $role);
             $_SESSION['success'] = 'Uživatel byl úspěšně aktualizován.';
             header("Location: /admin/users");
             exit;
         }
 
+        LogHelper::admin('User update failed', 'ID: ' . $id);
         $_SESSION['error'] = 'Chyba při aktualizaci uživatele.';
         header("Location: /admin/users/edit/{$id}");
         exit;
@@ -112,10 +115,11 @@ class UserAdminController
         $result = $this->model->delete($id); // Volání metody `delete` v modelu
 
         if ($result) {
-
+            LogHelper::admin('User deleted', 'ID: ' . $id);
             header("Location: /admin/users");
             exit;
         } else {
+            LogHelper::admin('User delete failed', 'ID: ' . $id);
             echo "Chyba při mazání uživatele.";
         }
     }
@@ -183,6 +187,7 @@ class UserAdminController
 
             if (move_uploaded_file($_FILES['profil_foto']['tmp_name'], $targetFile)) {
                 error_log("✅ Profilová fotka nahrána do: $targetFile");
+                @LogHelper::admin('User profile photo uploaded', 'User ID: ' . $userId . ', File: ' . $fileName . ', Size: ' . $_FILES['profil_foto']['size'] . ' bytes');
                 $this->resizeAndCropImage($targetFile, 400, 400, true);
                 $profile_photo = $fileName;
             } else {
@@ -192,6 +197,7 @@ class UserAdminController
 
         // **Aktualizace databáze pouze s novými hodnotami**
         $this->model->updateUser($userId, $name, $surname, $email, $description, $profile_photo);
+        @LogHelper::admin('User settings updated', 'User ID: ' . $userId . ', Email: ' . $email);
 
         $social_ids = $_POST['social_id'] ?? [];
         $links = $_POST['link'] ?? [];
