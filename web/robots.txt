@@ -35,8 +35,10 @@ Allow: /js/
 Allow: /assets/
 Allow: /uploads/
 
-# Sitemap
+# Sitemaps
 Sitemap: https://www.cyklistickey.cz/sitemap.xml
+Sitemap: https://www.cyklistickey.cz/sitemap-images.xml
+Sitemap: https://www.cyklistickey.cz/sitemap-news.xml
 
 # Crawl delay (1 sekunda mezi požadavky)
 Crawl-delay: 1
