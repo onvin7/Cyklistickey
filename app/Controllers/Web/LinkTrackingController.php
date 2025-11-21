@@ -29,7 +29,8 @@ class LinkTrackingController
         // Převod z URL-safe base64 zpět na standardní base64
         $token = strtr($token, '-_', '+/');
         // Doplnění padding znaků
-        $token = str_pad($token, strlen($token) % 4, '=', STR_PAD_RIGHT);
+        $padding = (4 - strlen($token) % 4) % 4;
+        $token = str_pad($token, strlen($token) + $padding, '=', STR_PAD_RIGHT);
         $data = json_decode(base64_decode($token), true);
         
         if (!$data || !isset($data['article_id']) || !isset($data['url'])) {

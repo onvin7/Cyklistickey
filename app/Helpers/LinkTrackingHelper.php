@@ -13,6 +13,9 @@ class LinkTrackingHelper
             return $html;
         }
 
+        // Uložíme originální HTML pro fallback
+        $originalHtml = $html;
+
         // Použijeme DOMDocument pro lepší manipulaci s HTML
         $dom = new \DOMDocument();
         
@@ -144,7 +147,7 @@ class LinkTrackingHelper
         }
 
         // Fallback - pokud se nepodařilo parsovat, vrátíme původní HTML
-        return $html;
+        return $originalHtml;
     }
 }
 
