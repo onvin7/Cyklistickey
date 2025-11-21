@@ -144,7 +144,7 @@ class SEOHelper
     /**
      * Extrahuje klíčová slova z obsahu pomocí AI
      */
-    private static function extractKeywords($content, $limit = 5)
+    public static function extractKeywords($content, $limit = 5)
     {
         // Použij AI helper pro lepší extrakci
         if (class_exists('App\Helpers\AISEOHelper')) {
@@ -554,5 +554,178 @@ class SEOHelper
         }
         
         return $sitemap;
+    }
+    
+    /**
+     * Generuje NewsArticle schema pro Google News
+     */
+    public static function generateNewsArticleSchema($article, $author = null)
+    {
+        $config = self::getConfig();
+        $articleSchema = self::generateArticleSchema($article, $author);
+        
+        // Změna typu na NewsArticle
+        $articleSchema['@type'] = 'NewsArticle';
+        
+        // Přidání specifických polí pro NewsArticle
+        if (isset($article['datum'])) {
+            $articleSchema['datePublished'] = date('c', strtotime($article['datum']));
+        }
+        
+        // Přidání headline (povinné pro NewsArticle)
+        $articleSchema['headline'] = $article['nazev'] ?? '';
+        
+        // Přidání image (povinné pro NewsArticle)
+        if (isset($article['nahled_foto']) && $article['nahled_foto']) {
+            $articleSchema['image'] = [
+                '@type' => 'ImageObject',
+                'url' => $config['site']['url'] . '/' . ltrim($article['nahled_foto'], '/'),
+                'width' => $config['defaults']['image_width'] ?? 1200,
+                'height' => $config['defaults']['image_height'] ?? 630
+            ];
+        }
+        
+        return $articleSchema;
+    }
+    
+    /**
+     * Generuje ImageObject schema
+     */
+    public static function generateImageSchema($imageUrl, $title = '', $caption = '')
+    {
+        $config = self::getConfig();
+        
+        return [
+            '@type' => 'ImageObject',
+            'url' => $imageUrl,
+            'width' => $config['defaults']['image_width'] ?? 1200,
+            'height' => $config['defaults']['image_height'] ?? 630,
+            'title' => $title,
+            'caption' => $caption
+        ];
+    }
+    
+    /**
+     * Generuje VideoObject schema
+     */
+    public static function generateVideoSchema($videoUrl, $title, $description = '', $thumbnailUrl = '', $duration = '')
+    {
+        $config = self::getConfig();
+        
+        $schema = [
+            '@type' => 'VideoObject',
+            'name' => $title,
+            'description' => $description,
+            'uploadDate' => date('c'),
+            'contentUrl' => $videoUrl,
+            'embedUrl' => $videoUrl
+        ];
+        
+        if ($thumbnailUrl) {
+            $schema['thumbnailUrl'] = $thumbnailUrl;
+        }
+        
+        if ($duration) {
+            $schema['duration'] = $duration;
+        }
+        
+        return $schema;
+    }
+    
+    /**
+     * Generuje Event schema
+     */
+    public static function generateEventSchema($event)
+    {
+        $config = self::getConfig();
+        
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Event',
+            'name' => $event['nazev'] ?? '',
+            'description' => $event['popis'] ?? '',
+            'startDate' => isset($event['datum_zacatku']) ? date('c', strtotime($event['datum_zacatku'])) : date('c'),
+            'url' => $config['site']['url'] . '/events/' . ($event['url'] ?? '')
+        ];
+        
+        if (isset($event['datum_konce'])) {
+            $schema['endDate'] = date('c', strtotime($event['datum_konce']));
+        }
+        
+        if (isset($event['misto'])) {
+            $schema['location'] = [
+                '@type' => 'Place',
+                'name' => $event['misto']
+            ];
+        }
+        
+        return $schema;
+    }
+    
+    /**
+     * Generuje rozšířené Organization schema
+     */
+    public static function generateOrganizationSchema()
+    {
+        $config = self::getConfig();
+        
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => $config['structured_data']['organization']['name'],
+            'url' => $config['structured_data']['organization']['url'],
+            'logo' => [
+                '@type' => 'ImageObject',
+                'url' => $config['structured_data']['organization']['logo']
+            ],
+            'description' => $config['structured_data']['organization']['description'],
+            'foundingDate' => $config['structured_data']['organization']['foundingDate'],
+            'address' => $config['structured_data']['organization']['address'],
+            'contactPoint' => $config['structured_data']['organization']['contactPoint'],
+            'sameAs' => $config['structured_data']['organization']['sameAs']
+        ];
+    }
+    
+    /**
+     * Generuje WebSite schema s SearchAction
+     */
+    public static function generateWebSiteSchema()
+    {
+        $config = self::getConfig();
+        
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            'name' => $config['structured_data']['website']['name'],
+            'url' => $config['structured_data']['website']['url'],
+            'description' => $config['structured_data']['website']['description'],
+            'inLanguage' => $config['structured_data']['website']['inLanguage'],
+            'copyrightYear' => $config['structured_data']['website']['copyrightYear'],
+            'publisher' => $config['structured_data']['website']['publisher'],
+            'potentialAction' => [
+                '@type' => 'SearchAction',
+                'target' => $config['site']['url'] . '/search?q={search_term_string}',
+                'query-input' => 'required name=search_term_string'
+            ]
+        ];
+    }
+    
+    /**
+     * Generuje kompletní sadu meta tagů
+     */
+    public static function generateFullMetaTags($title, $description, $keywords = [], $image = null, $url = null, $type = 'website')
+    {
+        $config = self::getConfig();
+        $url = $url ?? $config['site']['url'];
+        
+        return [
+            'title' => self::generateTitle($title, null, $keywords),
+            'description' => self::generateDescription(null, $description, $keywords),
+            'keywords' => self::generateKeywords(null, $keywords),
+            'robots' => self::generateRobotsMeta(),
+            'canonical' => $url,
+            'og' => self::generateOpenGraph($title, $description, $image, $type, $url),
+            'twitter' => self::generateTwitterCard($title, $description, $image)
+        ];
     }
 }
