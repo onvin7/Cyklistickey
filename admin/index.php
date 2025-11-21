@@ -30,17 +30,7 @@ if (session_status() === PHP_SESSION_NONE) {
         $cookieParams['httponly'] ?: true
     );
     
-    // Pokud máme cookie, použijeme ji
-    // Pokud ne, zkusíme použít session ID z URL (fallback pro dočasné řešení)
-    if (isset($_COOKIE[$sessionName])) {
-        session_id($_COOKIE[$sessionName]);
-        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - Using existing session ID from cookie: " . $_COOKIE[$sessionName] . "\n", FILE_APPEND);
-    } elseif (isset($_GET['PHPSESSID'])) {
-        // Fallback: použít session ID z URL (dočasné řešení)
-        session_id($_GET['PHPSESSID']);
-        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - Using session ID from URL (fallback): " . $_GET['PHPSESSID'] . "\n", FILE_APPEND);
-    }
-    
+    // Session by měla fungovat přes cookie normálně
     session_start();
     // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - Session started, ID: " . session_id() . "\n", FILE_APPEND);
     // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ADMIN INDEX - Session data after start: " . print_r($_SESSION, true) . "\n", FILE_APPEND);
@@ -65,6 +55,8 @@ use App\Controllers\Admin\UserAdminController;
 use App\Controllers\Admin\AccessControlAdminController;
 use App\Controllers\Admin\PromotionAdminController;
 use App\Controllers\Admin\FlashNewsJSONAdminController;
+use App\Controllers\Admin\LinkClicksAdminController;
+use App\Controllers\Admin\LogsAdminController;
 use App\Controllers\LoginController;
 
 // ✅ **Inicializace připojení k databázi**
@@ -114,6 +106,7 @@ $routes = [
     'articles/edit/(\d+)' => [ArticleAdminController::class, 'edit', 'id'],
     'articles/update/(\d+)' => [ArticleAdminController::class, 'update', 'id'],
     'articles/delete/(\d+)' => [ArticleAdminController::class, 'delete', 'id'],
+    'articles/preview/(\d+)' => [ArticleAdminController::class, 'preview', 'id'],
     'categories' => [CategoryAdminController::class, 'index'],
     'categories/create' => [CategoryAdminController::class, 'create'],
     'categories/store' => [CategoryAdminController::class, 'store'],
@@ -149,6 +142,11 @@ $routes = [
     'flashnews/update-sort-order' => [FlashNewsJSONAdminController::class, 'updateSortOrder'],
     'flashnews/reorder' => [FlashNewsJSONAdminController::class, 'reorder'],
     'flashnews/refresh' => [FlashNewsJSONAdminController::class, 'refresh'],
+    'link-clicks/url/(\d+)' => [LinkClicksAdminController::class, 'urlDetails', 'linkClickId'],
+    'link-clicks/article/(\d+)' => [LinkClicksAdminController::class, 'article', 'articleId'],
+    'link-clicks' => [LinkClicksAdminController::class, 'index'],
+    'logs/view/([a-zA-Z0-9_-]+\.log)' => [LogsAdminController::class, 'view', 'logFileName'],
+    'logs' => [LogsAdminController::class, 'index'],
 ];
 
 // ✅ **Načtení přístupných rout ze session**

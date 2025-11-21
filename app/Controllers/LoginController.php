@@ -39,32 +39,58 @@ class LoginController
     // Přihlášení uživatele
     public function login($email, $password)
     {
-        // DEBUG LOGY ZAKOMENTOVÁNY - pro debug odkomentovat
-        // $possibleLogPaths = [
-        //     dirname(dirname(dirname(__DIR__))) . '/logs/debug_test.log',  // bicenc/logs/
-        //     dirname(dirname(dirname(dirname(__DIR__)))) . '/logs/debug_test.log',  // subdom/logs/
-        // ];
-        // 
-        // $debugFile = null;
-        // foreach ($possibleLogPaths as $path) {
-        //     $dir = dirname($path);
-        //     if (!is_dir($dir)) {
-        //         @mkdir($dir, 0755, true);
-        //     }
-        //     if (is_writable($dir) || is_writable($path)) {
-        //         $debugFile = $path;
-        //         break;
-        //     }
-        // }
-        // 
-        // if (!$debugFile) {
-        //     $debugFile = $possibleLogPaths[1]; // subdom/logs/ jako priorita
-        //     @mkdir(dirname($debugFile), 0755, true);
-        // }
-        // 
-        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN METHOD CALLED - Email: " . ($email ?? 'NULL') . ", Password: " . (!empty($password) ? 'SET' : 'EMPTY') . "\n", FILE_APPEND);
-        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Debug file path: " . $debugFile . "\n", FILE_APPEND);
-        // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - __DIR__: " . __DIR__ . "\n", FILE_APPEND);
+        // LOGIN LOG - speciální log soubor pro login
+        $loginLogFile = dirname(dirname(dirname(__DIR__))) . '/logs/login.log';
+        $logDir = dirname($loginLogFile);
+        if (!is_dir($logDir)) {
+            @mkdir($logDir, 0755, true);
+        }
+        
+        // Zapíšeme do login logu
+        $logEntry = "\n" . str_repeat("=", 80) . "\n";
+        $logEntry .= date('Y-m-d H:i:s') . " - LOGIN ATTEMPT\n";
+        $logEntry .= str_repeat("-", 80) . "\n";
+        $logEntry .= "REQUEST_METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'N/A') . "\n";
+        $logEntry .= "Email parameter: " . ($email ?? 'NULL') . " (length: " . strlen($email ?? '') . ")\n";
+        $logEntry .= "Password parameter: " . (!empty($password) ? 'SET (length: ' . strlen($password) . ')' : 'EMPTY') . "\n";
+        $logEntry .= "\nPOST data:\n" . print_r($_POST, true) . "\n";
+        $logEntry .= "\nGET data:\n" . print_r($_GET, true) . "\n";
+        $logEntry .= "\nSERVER variables:\n";
+        $logEntry .= "  REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? 'N/A') . "\n";
+        $logEntry .= "  HTTP_REFERER: " . ($_SERVER['HTTP_REFERER'] ?? 'N/A') . "\n";
+        $logEntry .= "  REMOTE_ADDR: " . ($_SERVER['REMOTE_ADDR'] ?? 'N/A') . "\n";
+        $logEntry .= "  HTTP_USER_AGENT: " . ($_SERVER['HTTP_USER_AGENT'] ?? 'N/A') . "\n";
+        
+        // DEBUG LOGY - aktivováno pro debugging
+        $possibleLogPaths = [
+            dirname(dirname(dirname(__DIR__))) . '/logs/debug_test.log',  // bicenc/logs/
+        ];
+        
+        $debugFile = null;
+        foreach ($possibleLogPaths as $path) {
+            $dir = dirname($path);
+            if (!is_dir($dir)) {
+                @mkdir($dir, 0755, true);
+            }
+            if (is_writable($dir) || is_writable($path)) {
+                $debugFile = $path;
+                break;
+            }
+        }
+        
+        if (!$debugFile) {
+            $debugFile = $possibleLogPaths[0];
+            @mkdir(dirname($debugFile), 0755, true);
+        }
+        
+        // Zapíšeme do obou logů
+        @file_put_contents($loginLogFile, $logEntry, FILE_APPEND);
+        @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN METHOD CALLED - Email: " . ($email ?? 'NULL') . ", Password: " . (!empty($password) ? 'SET (length: ' . strlen($password) . ')' : 'EMPTY') . "\n", FILE_APPEND);
+        @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Debug file path: " . $debugFile . "\n", FILE_APPEND);
+        @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Login log path: " . $loginLogFile . "\n", FILE_APPEND);
+        @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - __DIR__: " . __DIR__ . "\n", FILE_APPEND);
+        @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - POST data: " . print_r($_POST, true) . "\n", FILE_APPEND);
+        @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - REQUEST_METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'N/A') . "\n", FILE_APPEND);
         
         if (session_status() === PHP_SESSION_NONE) {
             // Zajistit, aby se používala stejná session cookie - PŘED session_start()
@@ -77,11 +103,11 @@ class LoginController
                 $cookieParams['httponly']
             );
             session_start();
-            // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Session started, ID: " . session_id() . "\n", FILE_APPEND);
+            @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Session started, ID: " . session_id() . "\n", FILE_APPEND);
         }
-        // else {
-        //     @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Session already started, ID: " . session_id() . "\n", FILE_APPEND);
-        // }
+        else {
+            @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Session already started, ID: " . session_id() . "\n", FILE_APPEND);
+        }
 
         // Kontrola CSRF tokenu - dočasně vypnuto pro debug
         // if (!CSRFHelper::checkPostToken()) {
@@ -90,12 +116,33 @@ class LoginController
         //     exit();
         // }
 
+        // Trim hodnoty před kontrolou
+        $email = trim($email ?? '');
+        $password = trim($password ?? '');
+
+        // Zkontrolujeme, jestli jsou prázdné a zapíšeme do logu
+        $logEntry = "";
         if (empty($email) || empty($password)) {
+            $logEntry .= "ERROR: Email or password is empty!\n";
+            $logEntry .= "  Email empty: " . (empty($email) ? 'YES' : 'NO') . "\n";
+            $logEntry .= "  Password empty: " . (empty($password) ? 'YES' : 'NO') . "\n";
+            $logEntry .= "  Email value: '" . ($email ?? 'NULL') . "'\n";
+            $logEntry .= "  Password length: " . strlen($password ?? '') . "\n";
+            $logEntry .= "  Checking POST directly:\n";
+            $logEntry .= "    \$_POST['email']: " . (isset($_POST['email']) ? "'" . $_POST['email'] . "'" : 'NOT SET') . "\n";
+            $logEntry .= "    \$_POST['password']: " . (isset($_POST['password']) ? 'SET (length: ' . strlen($_POST['password']) . ')' : 'NOT SET') . "\n";
+            @file_put_contents($loginLogFile, $logEntry, FILE_APPEND);
             @LogHelper::login("Login failed - Empty email or password - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
             $_SESSION['login_error'] = 'Vyplňte email i heslo!';
             header('Location: /login');
             exit();
         }
+        
+        // Zapišeme, že hodnoty nejsou prázdné
+        $logEntry = "SUCCESS: Email and password received\n";
+        $logEntry .= "  Email: '" . $email . "' (length: " . strlen($email) . ")\n";
+        $logEntry .= "  Password: SET (length: " . strlen($password) . ")\n";
+        @file_put_contents($loginLogFile, $logEntry, FILE_APPEND);
 
         error_log("Looking up user with email: " . $email);
         $user = $this->model->getByEmail($email);
@@ -220,13 +267,8 @@ class LoginController
         // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Cookie set result: " . ($cookieSet ? 'SUCCESS' : 'FAILED') . "\n", FILE_APPEND);
         // @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - LOGIN - Cookie: " . $sessionName . " = " . $sessionId . " (path=" . $cookiePath . ", domain=" . ($cookieDomain ?? 'null->empty') . ")\n", FILE_APPEND);
         
-        // Zkusit použít session ID přímo v URL jako fallback
-        // Pokud cookie nefunguje, použijeme session ID v URL
-        // POZOR: Toto je dočasné řešení, není to bezpečné pro produkci!
-        $redirectUrl = '/admin?PHPSESSID=' . $sessionId;
-        
-        // Použít meta refresh s okamžitým redirectem
-        echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=' . htmlspecialchars($redirectUrl) . '"><script>window.location.replace("' . htmlspecialchars($redirectUrl) . '");</script></head><body></body></html>';
+        // Normální redirect na /admin - session cookie by měla fungovat normálně
+        header('Location: /admin');
         exit();
     }
 
@@ -322,7 +364,17 @@ class LoginController
     // Uloží token a zapíše do logu
     public function resetPassword()
     {
-        $email = trim($_POST['email']);
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        $email = trim($_POST['email'] ?? '');
+        
+        if (empty($email)) {
+            $_SESSION['reset_error'] = 'Vyplňte email!';
+            header('Location: /reset-password');
+            exit();
+        }
         
         error_log("DEBUG: Začínám reset hesla pro email: " . $email);
         
@@ -330,8 +382,9 @@ class LoginController
 
         if (!$user) {
             error_log("ERROR: Uživatel s emailem " . $email . " neexistuje");
-            echo "<script>alert('Účet s tímto e-mailem neexistuje.'); window.location.href='/reset-password';</script>";
-            return;
+            $_SESSION['reset_error'] = 'Účet s tímto e-mailem neexistuje.';
+            header('Location: /reset-password');
+            exit();
         }
 
         error_log("DEBUG: Uživatel nalezen, ID: " . $user['id']);
@@ -347,8 +400,9 @@ class LoginController
         
         if (!$tokenSaved) {
             error_log("ERROR: Chyba při ukládání tokenu do databáze");
-            echo "<script>alert('Chyba při ukládání tokenu do databáze.'); window.location.href='/reset-password';</script>";
-            return;
+            $_SESSION['reset_error'] = 'Chyba při ukládání tokenu do databáze.';
+            header('Location: /reset-password');
+            exit();
         }
         
         // Pro účely ladění vypíšeme informace do error_log
@@ -424,9 +478,9 @@ class LoginController
 
     public function saveNewPassword()
     {
-        $token = $_POST['token'] ?? null;
-        $newPassword = $_POST['new_password'] ?? null;
-        $confirmPassword = $_POST['confirm_password'] ?? null;
+        $token = trim($_POST['token'] ?? '');
+        $newPassword = trim($_POST['new_password'] ?? '');
+        $confirmPassword = trim($_POST['confirm_password'] ?? '');
 
         // Kontrola přítomnosti povinných údajů
         if (empty($token)) {

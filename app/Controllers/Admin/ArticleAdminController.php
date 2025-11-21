@@ -338,6 +338,101 @@ class ArticleAdminController
         }
     }
 
+    public function preview($id)
+    {
+        // Načtení článku - použijeme metodu, která načte i skryté články s kategoriemi
+        $query = "SELECT c.*, 
+                        u.name AS autor_jmeno, 
+                        u.surname AS autor_prijmeni,
+                        GROUP_CONCAT(k.nazev_kategorie) as kategorie_nazvy,
+                        GROUP_CONCAT(k.id) as kategorie_ids,
+                        GROUP_CONCAT(k.url) as kategorie_urls
+                    FROM clanky c
+                    LEFT JOIN users u ON c.user_id = u.id
+                    LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
+                    LEFT JOIN kategorie k ON ck.id_kategorie = k.id
+                    WHERE c.id = :id
+                    GROUP BY c.id";
+        
+        $stmt = $this->model->prepare($query);
+        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $article = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if (!$article) {
+            echo "Článek nenalezen.";
+            return;
+        }
+
+        // Formátování kategorií do pole objektů (stejně jako getByUrl)
+        $article['kategorie'] = [];
+        if (!empty($article['kategorie_nazvy'])) {
+            $nazvy = $article['kategorie_nazvy'] ? explode(',', $article['kategorie_nazvy']) : [];
+            $ids = $article['kategorie_ids'] ? explode(',', $article['kategorie_ids']) : [];
+            $urls = $article['kategorie_urls'] ? explode(',', $article['kategorie_urls']) : [];
+            
+            for ($i = 0; $i < count($nazvy); $i++) {
+                if (isset($nazvy[$i]) && isset($urls[$i])) {
+                    $article['kategorie'][] = [
+                        'nazev_kategorie' => trim($nazvy[$i]),
+                        'id' => isset($ids[$i]) ? trim($ids[$i]) : null,
+                        'url' => trim($urls[$i])
+                    ];
+                }
+            }
+        }
+
+        // Načtení souvisejících článků
+        $relatedArticles = $this->articleModel->getRelatedArticles($id, 3);
+        if (!is_array($relatedArticles)) {
+            $relatedArticles = [];
+        }
+
+        // Formátování souvisejících článků
+        foreach ($relatedArticles as &$related) {
+            if (!empty($related['kategorie_nazvy'])) {
+                $nazvy = explode(',', $related['kategorie_nazvy']);
+                $urls = explode(',', $related['kategorie_urls']);
+                $related['kategorie'] = [];
+                for ($i = 0; $i < count($nazvy); $i++) {
+                    $related['kategorie'][] = [
+                        'nazev_kategorie' => trim($nazvy[$i]),
+                        'url' => trim($urls[$i])
+                    ];
+                }
+            }
+        }
+
+        // Kontrola audio souboru
+        $audioFilePath = __DIR__ . '/../../../web/uploads/audio/' . $article['id'] . '.mp3';
+        $fileExists = @file_exists($audioFilePath);
+        $audioUrl = $fileExists ? '/uploads/audio/' . $article['id'] . '.mp3' : null;
+
+        // Přidání trackingu k odkazům
+        if (isset($article['obsah'])) {
+            $article['obsah'] = \App\Helpers\LinkTrackingHelper::addTrackingToLinks($article['obsah'], $article['id']);
+        }
+
+        // Cesta k empty_clanek.php
+        $emptyArticlePath = '../app/Views/Web/templates/empty_clanek.php';
+
+        // Načtení autora článku (stejně jako na veřejném webu)
+        $author = null;
+        if (isset($article['user_id'])) {
+            $userModel = new \App\Models\User($this->model);
+            $author = $userModel->getById($article['user_id']);
+        }
+
+        // Použijeme admin layout s veřejnými CSS styly pro náhled
+        $adminTitle = "Náhled článku: " . $article['nazev'] . " | Admin Panel - Cyklistickey magazín";
+        $css = ["main-page", "clanek", "autor_clanku"];
+        $useFullWidth = true; // Pro náhled použijeme plnou šířku
+        
+        // Nastavíme proměnné pro view
+        $view = '../app/Views/Admin/articles/preview.php';
+        include '../app/Views/Admin/layout/base.php';
+    }
+
     private function createThumbnail($sourcePath, $targetPath, $maxWidth, $maxHeight, $quality = 85, $highQuality = false) {
         // Načtení EXIF dat pro zjištění orientace
         $exif = @exif_read_data($sourcePath);
