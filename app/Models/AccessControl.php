@@ -95,26 +95,36 @@ class AccessControl
 
     public function getAccessibleSections($role)
     {
-        $stmt = $this->db->prepare("SELECT DISTINCT page FROM admin_access");
-        $stmt->execute();
-        $allLinks = $stmt->fetchAll(\PDO::FETCH_COLUMN) ?: [];
-
-        // Přidáme home na začátek a access-control na konec seznamu
-        array_unshift($allLinks, 'home');
-        $allLinks[] = 'access-control';
-
-        // Pokud je role 3, vrátíme pouze základní odkazy (bez lomítek)
+        // Pokud je role 3, vrátíme všechny základní sekce (bez lomítek)
         if ($role === 3) {
+            $stmt = $this->db->prepare("SELECT DISTINCT page FROM admin_access");
+            $stmt->execute();
+            $allLinks = $stmt->fetchAll(\PDO::FETCH_COLUMN) ?: [];
+            
+            // Přidáme home na začátek a access-control na konec seznamu
+            array_unshift($allLinks, 'home');
+            $allLinks[] = 'access-control';
+            
+            // Vrátíme jen základní sekce bez lomítka
             return array_filter($allLinks, function ($link) {
-                return strpos($link, '/') === false; // Vrátí jen ty bez lomítka
+                return strpos($link, '/') === false;
             });
         }
 
-        // Filtrujeme pouze odkazy, ke kterým má role přístup
-        $stmt = $this->db->prepare("SELECT page FROM admin_access WHERE role_1 = :role OR role_2 = :role");
-        $stmt->bindParam(':role', $role, \PDO::PARAM_INT);
+        // Pro role 1 a 2: filtrujeme pouze odkazy, ke kterým má role přístup
+        $stmt = $this->db->prepare("
+            SELECT DISTINCT page 
+            FROM admin_access 
+            WHERE 
+                (role_1 = 1 AND :role = 1) OR 
+                (role_2 = 1 AND :role = 2)
+        ");
+        $stmt->bindValue(':role', $role, \PDO::PARAM_INT);
         $stmt->execute();
         $accessibleLinks = $stmt->fetchAll(\PDO::FETCH_COLUMN) ?: [];
+
+        // Přidáme home na začátek (všichni přihlášení mají přístup k home)
+        array_unshift($accessibleLinks, 'home');
 
         // Vrátíme jen základní sekce bez lomítka
         return array_filter($accessibleLinks, function ($link) {

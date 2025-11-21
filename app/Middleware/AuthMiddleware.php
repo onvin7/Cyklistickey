@@ -3,6 +3,7 @@
 namespace App\Middleware;
 
 use App\Models\AccessControl;
+use App\Helpers\LogHelper;
 
 class AuthMiddleware
 {
