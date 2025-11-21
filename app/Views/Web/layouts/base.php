@@ -14,19 +14,89 @@
     ?>
 
     <!-- ✅ Dynamické SEO (pokud není nastavena proměnná, použije se výchozí hodnota) -->
-    <title><?= htmlspecialchars($title ?? $defaultTitle) ?></title>
-    <meta name="description" content="<?= htmlspecialchars($description ?? $defaultDescription) ?>">
-    <meta name="robots" content="noindex, nofollow">
+    <?php
+    use App\Helpers\SEOHelper;
+    $seoTitle = SEOHelper::generateTitle($title ?? null, null, $keywords ?? []);
+    $seoDescription = SEOHelper::generateDescription(null, $description ?? null, $keywords ?? []);
+    $seoKeywords = !empty($keywords) ? SEOHelper::generateKeywords(null, $keywords) : SEOHelper::generateKeywords();
+    $robotsMeta = SEOHelper::generateRobotsMeta();
+    $canonicalUrlFinal = $canonicalUrl ?? SEOHelper::generateCanonicalUrl($canonicalPath ?? '');
+    ?>
+    <title><?= htmlspecialchars($seoTitle) ?></title>
+    <meta name="description" content="<?= htmlspecialchars($seoDescription) ?>">
+    <meta name="keywords" content="<?= htmlspecialchars($seoKeywords) ?>">
+    <meta name="robots" content="<?= htmlspecialchars($robotsMeta) ?>">
+    <meta name="author" content="<?= htmlspecialchars(SEOHelper::getConfig()['site']['author']) ?>">
 
     <!-- Open Graph pro sociální sítě -->
-    <meta property="og:title" content="<?= htmlspecialchars($ogTitle ?? $title ?? $defaultTitle) ?>">
-    <meta property="og:description" content="<?= htmlspecialchars($ogDescription ?? $description ?? $defaultDescription) ?>">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="<?= htmlspecialchars($ogUrl ?? $defaultOgUrl) ?>">
-    <meta property="og:image" content="<?= htmlspecialchars($ogImage ?? $defaultOgImage) ?>">
+    <?php
+    $ogData = SEOHelper::generateOpenGraph(
+        $ogTitle ?? $seoTitle,
+        $ogDescription ?? $seoDescription,
+        $ogImage ?? $defaultOgImage,
+        $ogType ?? 'website',
+        $ogUrl ?? $canonicalUrlFinal
+    );
+    $twitterData = SEOHelper::generateTwitterCard(
+        $ogTitle ?? $seoTitle,
+        $ogDescription ?? $seoDescription,
+        $ogImage ?? $defaultOgImage
+    );
+    ?>
+    <meta property="og:title" content="<?= htmlspecialchars($ogData['og:title']) ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($ogData['og:description']) ?>">
+    <meta property="og:type" content="<?= htmlspecialchars($ogData['og:type']) ?>">
+    <meta property="og:url" content="<?= htmlspecialchars($ogData['og:url']) ?>">
+    <meta property="og:image" content="<?= htmlspecialchars($ogData['og:image']) ?>">
+    <meta property="og:site_name" content="<?= htmlspecialchars($ogData['og:site_name']) ?>">
+    <meta property="og:locale" content="<?= htmlspecialchars($ogData['og:locale']) ?>">
+    <?php if (isset($ogImage) && $ogImage): ?>
+    <meta property="og:image:width" content="<?= htmlspecialchars(SEOHelper::getConfig()['defaults']['image_width'] ?? '1200') ?>">
+    <meta property="og:image:height" content="<?= htmlspecialchars(SEOHelper::getConfig()['defaults']['image_height'] ?? '630') ?>">
+    <meta property="og:image:alt" content="<?= htmlspecialchars($seoTitle) ?>">
+    <?php endif; ?>
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="<?= htmlspecialchars($twitterData['twitter:card']) ?>">
+    <meta name="twitter:title" content="<?= htmlspecialchars($twitterData['twitter:title']) ?>">
+    <meta name="twitter:description" content="<?= htmlspecialchars($twitterData['twitter:description']) ?>">
+    <meta name="twitter:image" content="<?= htmlspecialchars($twitterData['twitter:image']) ?>">
+    <?php if (!empty($twitterData['twitter:site'])): ?>
+    <meta name="twitter:site" content="<?= htmlspecialchars($twitterData['twitter:site']) ?>">
+    <?php endif; ?>
+    <?php if (!empty($twitterData['twitter:creator'])): ?>
+    <meta name="twitter:creator" content="<?= htmlspecialchars($twitterData['twitter:creator']) ?>">
+    <?php endif; ?>
+    <?php if (isset($ogImage) && $ogImage): ?>
+    <meta name="twitter:image:alt" content="<?= htmlspecialchars($seoTitle) ?>">
+    <?php endif; ?>
+    
+    <?php if (isset($articlePublishedTime)): ?>
+    <meta property="article:published_time" content="<?= htmlspecialchars($articlePublishedTime) ?>">
+    <?php endif; ?>
+    <?php if (isset($articleModifiedTime)): ?>
+    <meta property="article:modified_time" content="<?= htmlspecialchars($articleModifiedTime) ?>">
+    <?php endif; ?>
+    <?php if (isset($articleAuthor)): ?>
+    <meta property="article:author" content="<?= htmlspecialchars($articleAuthor) ?>">
+    <?php endif; ?>
 
     <!-- ✅ Canonical URL -->
-    <link rel="canonical" href="<?= htmlspecialchars($canonicalUrl ?? $defaultOgUrl) ?>">
+    <link rel="canonical" href="<?= htmlspecialchars($canonicalUrlFinal) ?>">
+    
+    <!-- hreflang tags -->
+    <?php
+    $hreflangData = SEOHelper::generateHreflangData($canonicalUrlFinal);
+    foreach ($hreflangData as $lang => $url):
+    ?>
+    <link rel="alternate" hreflang="<?= htmlspecialchars($lang) ?>" href="<?= htmlspecialchars($url) ?>">
+    <?php endforeach; ?>
+    
+    <!-- Preconnect pro externí zdroje -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tiny.cloud">
+    <link rel="preconnect" href="https://connect.facebook.net">
 
     <!-- Favicon -->
     <link id="favicon" rel="icon" href="/assets/graphics/icon.ico" type="image/x-icon">
@@ -77,9 +147,19 @@
 
     <!-- ✅ Structured Data (JSON-LD) -->
     <?php if (isset($structuredData)): ?>
-        <script type="application/ld+json">
-            <?= json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) ?>
-        </script>
+        <?php if (is_array($structuredData) && isset($structuredData[0])): ?>
+            <!-- Multiple structured data -->
+            <?php foreach ($structuredData as $schema): ?>
+                <script type="application/ld+json">
+                    <?= json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) ?>
+                </script>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <!-- Single structured data -->
+            <script type="application/ld+json">
+                <?= json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) ?>
+            </script>
+        <?php endif; ?>
     <?php endif; ?>
 
     <script>

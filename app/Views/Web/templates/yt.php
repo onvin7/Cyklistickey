@@ -1,5 +1,4 @@
 <script>
-    /*
     document.addEventListener('DOMContentLoaded', fetchLatestVideo);
 
     function fetchLatestVideo() {
@@ -38,14 +37,13 @@
         iframe.referrerpolicy = 'strict-origin-when-cross-origin';
         iframe.allowfullscreen = true;
     }
-    */
 </script>
 
 <div class="iframe-container">
     <div class="text-mobile">
         <h1>Nejnovější youtube video</h1>
     </div>
-    <iframe width="100%" height="450px" src="https://www.youtube.com/embed/IloJ0OxAZzQ?mute=1" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe>
+    <iframe width="100%" height="450px" src="" title="YouTube video player" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe>
     <div class="text">
         <h1>Pusť si naše nejnovější video na youtube kanálu!</h1>
         <div class="cist-clanek">

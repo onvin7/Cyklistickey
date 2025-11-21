@@ -255,3 +255,67 @@ use App\Helpers\TextHelper;
     }
     addBanners();
 </script>
+
+<script>
+    // Tracking času na stránce a scroll depth pro link clicks
+    (function() {
+        const pageLoadTime = Date.now();
+        let maxScrollDepth = 0;
+        let viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+        let viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        
+        // Trackování scroll depth
+        function updateScrollDepth() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const documentHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = documentHeight > 0 ? Math.round((scrollTop / documentHeight) * 100) : 0;
+            maxScrollDepth = Math.max(maxScrollDepth, scrollPercent);
+        }
+        
+        // Trackování změny velikosti viewportu
+        function updateViewport() {
+            viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+            viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        }
+        
+        // Přidání tracking parametrů ke všem tracking odkazům
+        function enhanceTrackingLinks() {
+            const trackingLinks = document.querySelectorAll('a[href^="/track/"]');
+            
+            trackingLinks.forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    const timeOnPage = Math.round((Date.now() - pageLoadTime) / 1000); // v sekundách
+                    const currentScrollDepth = maxScrollDepth;
+                    
+                    // Získáme původní href
+                    const originalHref = link.getAttribute('href');
+                    
+                    // Přidáme tracking parametry
+                    const separator = originalHref.includes('?') ? '&' : '?';
+                    const enhancedHref = originalHref + separator + 
+                        'time=' + encodeURIComponent(timeOnPage) + 
+                        '&scroll=' + encodeURIComponent(currentScrollDepth) +
+                        '&vw=' + encodeURIComponent(viewportWidth) +
+                        '&vh=' + encodeURIComponent(viewportHeight);
+                    
+                    // Nastavíme nový href
+                    link.setAttribute('href', enhancedHref);
+                });
+            });
+        }
+        
+        // Inicializace
+        window.addEventListener('scroll', updateScrollDepth, { passive: true });
+        window.addEventListener('resize', updateViewport, { passive: true });
+        
+        // Po načtení DOM
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', enhanceTrackingLinks);
+        } else {
+            enhanceTrackingLinks();
+        }
+        
+        // Periodické aktualizace scroll depth (pro případ, že uživatel scrolluje rychle)
+        setInterval(updateScrollDepth, 100);
+    })();
+</script>

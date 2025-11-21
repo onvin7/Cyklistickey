@@ -80,4 +80,11 @@
     <div class="prava">
         <p>Všechna práva vyhrazena. &copy; <?= date('Y') ?> Ondřej Vincenc</p>
     </div>
+    <div class="prava">
+
+        <p>
+            <a href="/obchodni-podminky">Obchodní podmínky</a> | <a href="/ochrana-osobnich-udaju">Ochrana osobních údajů</a>
+        </p>
+
+    </div>
 </div>
