@@ -47,9 +47,13 @@
     <?php if (!isset($disableNavbar) || !$disableNavbar): ?>
         <?php include 'navbar.php'; ?>
     <?php endif; ?>
-    <div class="container">
+    <?php if (isset($useFullWidth) && $useFullWidth): ?>
         <?php include $view; ?>
-    </div>
+    <?php else: ?>
+        <div class="container">
+            <?php include $view; ?>
+        </div>
+    <?php endif; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

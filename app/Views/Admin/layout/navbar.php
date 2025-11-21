@@ -22,6 +22,33 @@ if (isset($roleData[$_SESSION['role']])) {
     $userRoleText = "Neznámá role";
 }
 
+// Načtení databázového připojení a AccessControl pro filtrování menu
+$accessibleSections = [];
+$currentRole = (int)($_SESSION['role'] ?? 0);
+
+if ($isLoggedIn && $currentRole > 0) {
+    // Cesta k config z navbar.php: app/Views/Admin/layout/navbar.php -> ../../../../config/
+    // navbar.php je v app/Views/Admin/layout/, takže potřebujeme jít 4 úrovně nahoru
+    $configDir = __DIR__ . '/../../../../config';
+    require_once $configDir . '/db.php';
+    require_once $configDir . '/autoloader.php';
+    
+    $db = (new Database())->connect();
+    $accessControl = new \App\Models\AccessControl($db);
+    $accessibleSections = $accessControl->getAccessibleSections($currentRole);
+}
+
+// Pomocná funkce pro kontrolu přístupu
+function hasAccess($page, $accessibleSections, $role) {
+    // Role 3 (Administrátor) má přístup ke všemu
+    if ($role === 3) {
+        return true;
+    }
+    
+    // Kontrola, zda je stránka v seznamu přístupných sekcí
+    return in_array($page, $accessibleSections);
+}
+
 // Určení aktivní stránky
 $currentUri = $_SERVER['REQUEST_URI'];
 $activeLinks = [
@@ -33,6 +60,7 @@ $activeLinks = [
     'flashnews' => strpos($currentUri, '/admin/flashnews') !== false,
     'users' => strpos($currentUri, '/admin/users') !== false,
     'access-control' => strpos($currentUri, '/admin/access-control') !== false,
+    'link-clicks' => strpos($currentUri, '/admin/link-clicks') !== false,
 ];
 
 ?>
@@ -50,27 +78,46 @@ $activeLinks = [
                     <li class="nav-item">
                         <a class="nav-link <?= $activeLinks['home'] ? 'active' : '' ?>" href="/admin">Home</a>
                     </li>
+                    <?php if (hasAccess('articles', $accessibleSections, $currentRole)): ?>
                     <li class="nav-item">
                         <a class="nav-link <?= $activeLinks['articles'] ? 'active' : '' ?>" href="/admin/articles">Články</a>
                     </li>
+                    <?php endif; ?>
+                    <?php if (hasAccess('categories', $accessibleSections, $currentRole)): ?>
                     <li class="nav-item">
                         <a class="nav-link <?= $activeLinks['categories'] ? 'active' : '' ?>" href="/admin/categories">Kategorie</a>
                     </li>
+                    <?php endif; ?>
+                    <?php if (hasAccess('statistics', $accessibleSections, $currentRole)): ?>
                     <li class="nav-item">
                         <a class="nav-link <?= $activeLinks['statistics'] ? 'active' : '' ?>" href="/admin/statistics">Statistiky</a>
                     </li>
+                    <?php endif; ?>
+                    <?php if (hasAccess('promotions', $accessibleSections, $currentRole)): ?>
                     <li class="nav-item">
                         <a class="nav-link <?= $activeLinks['promotions'] ? 'active' : '' ?>" href="/admin/promotions">Propagace</a>
                     </li>
+                    <?php endif; ?>
+                    <?php if ($currentRole === 3): // Flash News jen pro admina ?>
                     <li class="nav-item">
                         <a class="nav-link <?= $activeLinks['flashnews'] ? 'active' : '' ?>" href="/admin/flashnews">Flash News</a>
                     </li>
+                    <?php endif; ?>
+                    <?php if (hasAccess('users', $accessibleSections, $currentRole)): ?>
                     <li class="nav-item">
                         <a class="nav-link <?= $activeLinks['users'] ? 'active' : '' ?>" href="/admin/users">Uživatelé</a>
                     </li>
+                    <?php endif; ?>
+                    <?php if ($currentRole === 3): // Správa přístupů jen pro admina ?>
                     <li class="nav-item">
                         <a class="nav-link <?= $activeLinks['access-control'] ? 'active' : '' ?>" href="/admin/access-control">Správa přístupů</a>
                     </li>
+                    <?php endif; ?>
+                    <?php if ($currentRole === 3): // Statistiky kliků jen pro admina ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $activeLinks['link-clicks'] ? 'active' : '' ?>" href="/admin/link-clicks">Prokliky</a>
+                    </li>
+                    <?php endif; ?>
                 <?php endif; ?>
             </ul>
 

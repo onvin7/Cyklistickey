@@ -96,17 +96,22 @@
                         </td>
                         <td><?= htmlspecialchars($article['autor_jmeno'] . ' ' . $article['autor_prijmeni']) ?></td>
                         <td>
-                            <span style="background-color: <?= $color ?>; color: #000; padding: 4px 8px; border-radius: 4px;">
+                            <span style="background-color: <?= $color ?>; color: #000; padding: 8px 16px; border-radius: 4px; font-size: 14px; font-weight: 500; display: inline-block; min-width: 50px; text-align: center;">
                                 <?= htmlspecialchars($article['pocet_zobrazeni'] ?? 0) ?>
                             </span>
                         </td>
                         <td>
-                            <a href="/admin/articles/edit/<?= htmlspecialchars($article['id']) ?>" class="btn btn-sm btn-primary">
-                                <i class="fa-solid fa-pen"></i> Upravit
-                            </a>
-                            <a href="/admin/articles/delete/<?= htmlspecialchars($article['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete smazat tento článek?')">
-                                <i class="fa-solid fa-trash"></i> Smazat
-                            </a>
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+                                <a href="/admin/articles/preview/<?= htmlspecialchars($article['id']) ?>" class="btn btn-sm btn-success text-white" target="_blank" style="margin-bottom: 5px; width: 100%; max-width: 120px;">
+                                    <i class="fa-solid fa-eye"></i> Náhled
+                                </a>
+                                <a href="/admin/articles/edit/<?= htmlspecialchars($article['id']) ?>" class="btn btn-sm btn-primary" style="margin-bottom: 5px; width: 100%; max-width: 120px;">
+                                    <i class="fa-solid fa-pen"></i> Upravit
+                                </a>
+                                <a href="/admin/articles/delete/<?= htmlspecialchars($article['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete smazat tento článek?')" style="width: 100%; max-width: 120px;">
+                                    <i class="fa-solid fa-trash"></i> Smazat
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 <?php endforeach; ?>

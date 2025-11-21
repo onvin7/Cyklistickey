@@ -1,9 +1,17 @@
+<?php
+use App\Helpers\CSRFHelper;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$csrfToken = CSRFHelper::generateToken();
+?>
 <div class="ohraniceni new">
     <div class="logo register">
         <img src="/assets/graphics/logo_text_cyklistickey.png" alt="Cyklistickey logo">
     </div>
     <div class="inputy">
         <form method="POST" action="/register/submit">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                 <div class="prvek">
                     <span class="form-title">Registrace</span>
                 </div>
@@ -57,3 +65,37 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form[action="/register/submit"]');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            console.log('Register form submit event triggered');
+            console.log('Form method:', form.method);
+            console.log('Form action:', form.action);
+            
+            // Zkontrolujeme HTML5 validaci
+            if (!form.checkValidity()) {
+                console.log('HTML5 validation failed');
+                // Necháme browser zobrazit default validační hlášky
+                return;
+            }
+            
+            // Kontrola shody hesel
+            const password = document.getElementById('heslo').value;
+            const confirmPassword = document.getElementById('confirm_heslo').value;
+            
+            if (password !== confirmPassword) {
+                console.log('Password mismatch');
+                e.preventDefault();
+                alert('Hesla se neshodují!');
+                return false;
+            }
+            
+            console.log('Form is valid, submitting...');
+            // Necháme formulář se odeslat normálně
+        });
+    }
+});
+</script>
