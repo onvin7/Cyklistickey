@@ -6,6 +6,7 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\User;
 use App\Helpers\SEOHelper;
+use App\Helpers\LinkTrackingHelper;
 
 class ArticleController
 {
@@ -58,15 +59,23 @@ class ArticleController
         
         // SEO nastavení
         $title = isset($article['nazev']) ? $article['nazev'] : "Cyklistický magazín";
-        $description = isset($article['obsah']) ? substr(strip_tags($article['obsah']), 0, 155) . "..." : "Cyklistický magazín";
         $canonicalPath = "article/" . (isset($article['url']) ? $article['url'] : "");
-        $ogImage = isset($article['nahled_foto']) && $article['nahled_foto'] ? "https://www.cyklistickey.cz/" . $article['nahled_foto'] : null;
+        $canonicalUrl = SEOHelper::generateCanonicalUrl($canonicalPath);
+        $ogImage = isset($article['nahled_foto']) && $article['nahled_foto'] ? SEOHelper::generateCanonicalUrl($article['nahled_foto']) : null;
         $keywords = [];
         
         // Extrahuj klíčová slova z obsahu článku
         if (isset($article['obsah'])) {
             $keywords = SEOHelper::extractKeywords($article['obsah'], 8);
         }
+        
+        // Generuj description pomocí SEOHelper
+        $description = SEOHelper::generateDescription($article['obsah'] ?? null, null, $keywords);
+        
+        // Article meta tags
+        $articlePublishedTime = isset($article['datum']) ? date('c', strtotime($article['datum'])) : null;
+        $articleModifiedTime = isset($article['updated_at']) ? date('c', strtotime($article['updated_at'])) : $articlePublishedTime;
+        $articleAuthor = $author ? ($author['name'] . ' ' . $author['surname']) : null;
         
         // Breadcrumbs pro článek
         $breadcrumbs = [
@@ -75,8 +84,27 @@ class ArticleController
             ['name' => $title, 'url' => '/article/' . $article['url']]
         ];
         
-        // Structured data pro článek
-        $structuredData = SEOHelper::generateArticleSchema($article, $author);
+        // Structured data pro článek - Article + NewsArticle (pokud je novinka do 3 dnů)
+        $articleDate = isset($article['datum']) ? strtotime($article['datum']) : time();
+        $daysSincePublication = (time() - $articleDate) / (60 * 60 * 24);
+        
+        $structuredData = [];
+        
+        if ($daysSincePublication <= 3) {
+            // Novinka - použij NewsArticle
+            $structuredData[] = SEOHelper::generateNewsArticleSchema($article, $author);
+        } else {
+            // Starší článek - použij Article
+            $structuredData[] = SEOHelper::generateArticleSchema($article, $author);
+        }
+        
+        // Přidání breadcrumb schema
+        $structuredData[] = SEOHelper::generateBreadcrumbSchema($breadcrumbs);
+        
+        // Přidání ImageObject pokud existuje obrázek
+        if ($ogImage) {
+            $structuredData[] = SEOHelper::generateImageSchema($ogImage, $title, $description);
+        }
         
         // Absolutní cesta k audio souboru
         $audioFilePath = __DIR__ . '/../../../web/uploads/audio/' . $article['id'] . '.mp3';
@@ -93,6 +121,11 @@ class ArticleController
         
         // Cesta k empty_clanek.php pro případ, že nejsou nalezeny žádné články
         $emptyArticlePath = '../app/Views/Web/templates/empty_clanek.php';
+
+        // Přidání trackingu k odkazům v obsahu článku
+        if (isset($article['obsah'])) {
+            $article['obsah'] = LinkTrackingHelper::addTrackingToLinks($article['obsah'], $article['id']);
+        }
 
         $css = ["main-page", "clanek", "autor_clanku"];
 

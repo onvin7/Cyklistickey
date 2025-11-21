@@ -22,18 +22,31 @@ class UserController
         $css = ['authors', 'kategorie'];
         
         // SEO nastavení
+        $keywords = ["redakce", "autoři", "fotografové", "editoři", "cyklistika"];
         $title = "Redakce";
         $description = "Seznamte se s redakčním týmem Cyklistického magazínu - naši autoři, fotografové a editoři.";
         $canonicalPath = "authors";
-        $keywords = ["redakce", "autoři", "fotografové", "editoři", "cyklistika"];
+        $canonicalUrl = SEOHelper::generateCanonicalUrl($canonicalPath);
+        
+        // Breadcrumbs
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/'],
+            ['name' => 'Redakce', 'url' => '/authors']
+        ];
         
         // Structured data pro seznam autorů
         $structuredData = [
             "@context" => "https://schema.org",
             "@type" => "CollectionPage",
             "name" => "Redakce Cyklistického magazínu",
-            "url" => "https://www.cyklistickey.cz/authors",
+            "url" => $canonicalUrl,
             "description" => $description
+        ];
+        
+        // Přidání breadcrumb schema
+        $structuredData = [
+            $structuredData,
+            SEOHelper::generateBreadcrumbSchema($breadcrumbs)
         ];
 
         $view = '../app/Views/Web/user/index.php';
@@ -67,11 +80,12 @@ class UserController
         $css = ["main-page", "autor_clanku"];
         
         // SEO nastavení
-        $title = $user['name'] . " " . $user['surname'];
-        $description = $user['popis'] ? substr(strip_tags($user['popis']), 0, 155) . "..." : "Profil autora " . $user['name'] . " " . $user['surname'] . " a seznam jeho článků.";
-        $canonicalPath = "author/" . $user['name'] . "-" . $user['surname'];
-        $ogImage = $user['profil_foto'] ? "https://www.cyklistickey.cz/" . $user['profil_foto'] : null;
         $keywords = SEOHelper::extractKeywords($user['popis'] ?? '', 5);
+        $title = $user['name'] . " " . $user['surname'];
+        $description = SEOHelper::generateDescription($user['popis'] ?? null, null, $keywords);
+        $canonicalPath = "author/" . $user['name'] . "-" . $user['surname'];
+        $canonicalUrl = SEOHelper::generateCanonicalUrl($canonicalPath);
+        $ogImage = $user['profil_foto'] ? SEOHelper::generateCanonicalUrl($user['profil_foto']) : null;
         
         // Breadcrumbs pro detail autora
         $breadcrumbs = [

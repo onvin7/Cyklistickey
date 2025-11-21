@@ -24,10 +24,11 @@ class CategoryController
         $css = ["main-page", "kategorie"];
         
         // SEO nastavení
+        $keywords = ["kategorie", "témata", "cyklistika", "články"];
         $title = "Kategorie";
         $description = "Prohlédněte si články z našeho magazínu rozdělené do tematických kategorií.";
         $canonicalPath = "categories";
-        $keywords = ["kategorie", "témata", "cyklistika", "články"];
+        $canonicalUrl = SEOHelper::generateCanonicalUrl($canonicalPath);
         
         // Breadcrumbs pro kategorie
         $breadcrumbs = [
@@ -40,8 +41,14 @@ class CategoryController
             "@context" => "https://schema.org",
             "@type" => "CollectionPage",
             "name" => "Kategorie Cyklistického magazínu",
-            "url" => "https://www.cyklistickey.cz/categories",
+            "url" => $canonicalUrl,
             "description" => $description
+        ];
+        
+        // Přidání breadcrumb schema
+        $structuredData = [
+            $structuredData,
+            SEOHelper::generateBreadcrumbSchema($breadcrumbs)
         ];
 
         $view = '../app/Views/Web/category/index.php';
@@ -68,11 +75,19 @@ class CategoryController
         $css = ["kategorie"];
         
         // SEO nastavení
+        $keywords = ["kategorie", $category['nazev_kategorie'], "cyklistika", "články"];
         $title = $category['nazev_kategorie'] . " | Cyklistický magazín";
         $description = $category['popis'] ?? "Přečtěte si články z kategorie " . $category['nazev_kategorie'] . " na Cyklistickém magazínu.";
         $ogTitle = "Kategorie " . $category['nazev_kategorie'] . " | Cyklistický magazín";
         $ogDescription = $description;
-        $canonicalUrl = "https://www.cyklistickey.cz/category/" . $category['url'];
+        $canonicalUrl = SEOHelper::generateCanonicalUrl("category/" . $category['url']);
+        
+        // Breadcrumbs
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/'],
+            ['name' => 'Kategorie', 'url' => '/categories'],
+            ['name' => $category['nazev_kategorie'], 'url' => '/category/' . $category['url']]
+        ];
         
         // Structured data pro kategorii
         $structuredData = [
@@ -81,6 +96,12 @@ class CategoryController
             "name" => "Kategorie " . $category['nazev_kategorie'],
             "url" => $canonicalUrl,
             "description" => $description
+        ];
+        
+        // Přidání breadcrumb schema
+        $structuredData = [
+            $structuredData,
+            SEOHelper::generateBreadcrumbSchema($breadcrumbs)
         ];
 
         $view = '../app/Views/Web/category/categoryDetail.php';

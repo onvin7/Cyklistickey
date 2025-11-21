@@ -4,6 +4,7 @@ namespace App\Controllers\Web;
 
 use App\Models\Category;
 use App\Models\Article;
+use App\Helpers\SEOHelper;
 
 class HomeController
 {
@@ -31,10 +32,11 @@ class HomeController
         $css = ['main-page'];
         
         // SEO nastavení pro hlavní stránku
+        $keywords = ["cyklistika", "kolo", "závody", "trénink", "technika", "novinky"];
         $title = "Cyklistický magazín – Novinky, závody a technika";
         $description = "Sledujte nejnovější zprávy, tréninkové tipy, technické novinky a rozhovory ze světa cyklistiky.";
         $canonicalPath = "";
-        $keywords = ["cyklistika", "kolo", "závody", "trénink", "technika", "novinky"];
+        $canonicalUrl = SEOHelper::generateCanonicalUrl($canonicalPath);
         
         // Breadcrumbs pro hlavní stránku
         $breadcrumbs = [
@@ -42,16 +44,16 @@ class HomeController
         ];
         
         // Structured data pro webovou stránku
+        $structuredData = SEOHelper::generateWebSiteSchema();
+        
+        // Přidání Organization schema
+        $organizationSchema = SEOHelper::generateOrganizationSchema();
+        
+        // Kombinace structured data
         $structuredData = [
-            "@context" => "https://schema.org",
-            "@type" => "WebSite",
-            "name" => "Cyklistický magazín",
-            "url" => "https://www.cyklistickey.cz",
-            "potentialAction" => [
-                "@type" => "SearchAction",
-                "target" => "https://www.cyklistickey.cz/search?q={search_term_string}",
-                "query-input" => "required name=search_term_string"
-            ]
+            $structuredData,
+            $organizationSchema,
+            SEOHelper::generateBreadcrumbSchema($breadcrumbs)
         ];
 
         $view = '../app/Views/Web/home/index.php';
@@ -64,11 +66,18 @@ class HomeController
         $script = ['kontakt'];
         
         // SEO nastavení
+        $keywords = ["kontakt", "redakce", "cyklistika", "dotazy", "spolupráce"];
         $title = "Kontakt | Cyklistický magazín";
         $description = "Kontaktujte redakci Cyklistického magazínu. Jsme tu pro vaše dotazy, návrhy, či spolupráci.";
         $ogTitle = "Kontaktujte nás | Cyklistický magazín";
         $ogDescription = "Máte dotaz nebo návrh? Kontaktujte redakci Cyklistického magazínu a budeme rádi za vaši zpětnou vazbu.";
-        $canonicalUrl = "https://www.cyklistickey.cz/kontakt";
+        $canonicalUrl = SEOHelper::generateCanonicalUrl("kontakt");
+        
+        // Breadcrumbs
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/'],
+            ['name' => 'Kontakt', 'url' => '/kontakt']
+        ];
         
         // Structured data pro kontaktní stránku
         $structuredData = [
@@ -76,6 +85,13 @@ class HomeController
             "@type" => "ContactPage",
             "name" => "Kontaktní stránka - Cyklistický magazín",
             "url" => $canonicalUrl
+        ];
+        
+        // Přidání Organization schema
+        $structuredData = [
+            $structuredData,
+            SEOHelper::generateOrganizationSchema(),
+            SEOHelper::generateBreadcrumbSchema($breadcrumbs)
         ];
 
         $view = '../app/Views/Web/home/kontakt.php';
@@ -230,6 +246,60 @@ class HomeController
         $css = ['appka'];
 
         $view = '../app/Views/Web/home/appka.php';
+        require '../app/Views/Web/layouts/base.php';
+    }
+
+    public function obchodniPodminky()
+    {
+        $css = ['kontakt'];
+        
+        // SEO nastavení
+        $keywords = ["obchodní podmínky", "podmínky", "pravidla", "cyklistika"];
+        $title = "Obchodní podmínky | Cyklistický magazín";
+        $description = "Obchodní podmínky Cyklistického magazínu. Pravidla a podmínky používání našich služeb.";
+        $ogTitle = "Obchodní podmínky | Cyklistický magazín";
+        $ogDescription = "Přečtěte si obchodní podmínky a pravidla používání služeb Cyklistického magazínu.";
+        $canonicalUrl = SEOHelper::generateCanonicalUrl("obchodni-podminky");
+        
+        // Breadcrumbs
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/'],
+            ['name' => 'Obchodní podmínky', 'url' => '/obchodni-podminky']
+        ];
+        
+        // Structured data
+        $structuredData = [
+            SEOHelper::generateBreadcrumbSchema($breadcrumbs)
+        ];
+
+        $view = '../app/Views/Web/home/obchodni-podminky.php';
+        require '../app/Views/Web/layouts/base.php';
+    }
+
+    public function ochranaOsobnichUdaju()
+    {
+        $css = ['kontakt'];
+        
+        // SEO nastavení
+        $keywords = ["ochrana osobních údajů", "GDPR", "soukromí", "osobní údaje"];
+        $title = "Ochrana osobních údajů | Cyklistický magazín";
+        $description = "Zásady ochrany osobních údajů a zpracování osobních údajů v souladu s GDPR.";
+        $ogTitle = "Ochrana osobních údajů | Cyklistický magazín";
+        $ogDescription = "Informace o zpracování a ochraně osobních údajů v souladu s nařízením GDPR.";
+        $canonicalUrl = SEOHelper::generateCanonicalUrl("ochrana-osobnich-udaju");
+        
+        // Breadcrumbs
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/'],
+            ['name' => 'Ochrana osobních údajů', 'url' => '/ochrana-osobnich-udaju']
+        ];
+        
+        // Structured data
+        $structuredData = [
+            SEOHelper::generateBreadcrumbSchema($breadcrumbs)
+        ];
+
+        $view = '../app/Views/Web/home/ochrana-osobnich-udaju.php';
         require '../app/Views/Web/layouts/base.php';
     }
 
