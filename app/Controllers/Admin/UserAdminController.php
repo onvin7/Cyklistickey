@@ -87,12 +87,15 @@ class UserAdminController
         $role = isset($postData['role']) ? (int)$postData['role'] : (int)$existingUser['role'];
         $role = max(0, min(3, $role));
 
+        $public_visible = isset($postData['public_visible']) && $postData['public_visible'] == '1' ? 1 : 0;
+
         $data = [
             'id' => (int)$id,
             'email' => $email,
             'name' => $name,
             'surname' => $surname,
             'role' => $role,
+            'public_visible' => $public_visible,
             'profil_foto' => $existingUser['profil_foto'] ?? null,
             'popis' => $postData['popis'] ?? $existingUser['popis'] ?? ''
         ];

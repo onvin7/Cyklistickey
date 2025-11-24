@@ -48,6 +48,14 @@ use App\Helpers\CSRFHelper;
                             </select>
                         </div>
                         <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="public_visible" name="public_visible" value="1" <?= isset($user['public_visible']) && (int)$user['public_visible'] === 1 ? 'checked' : (!isset($user['public_visible']) ? 'checked' : '') ?>>
+                                <label class="form-check-label" for="public_visible">
+                                    <i class="fas fa-eye me-2"></i>Veřejně viditelný v sekci redakce
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
                             <label for="editor" class="form-label"><i class="fas fa-pen me-2"></i>Popis</label>
                             <textarea id="editor" name="popis" lang="cs" spellcheck="true"><?= htmlspecialchars($user['popis'] ?? '') ?></textarea>
                         </div>

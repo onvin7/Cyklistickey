@@ -13,7 +13,7 @@ class User
 
     public function getAll()
     {
-        $query = "SELECT u.*, (SELECT MAX(datum) FROM clanky WHERE user_id = u.id AND viditelnost = 1 AND datum <= NOW()) as last_article FROM users u ORDER BY last_article DESC";
+        $query = "SELECT u.*, (SELECT MAX(datum) FROM clanky WHERE user_id = u.id AND viditelnost = 1 AND datum <= NOW()) as last_article FROM users u WHERE u.public_visible = 1 ORDER BY last_article DESC";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -56,13 +56,14 @@ class User
     public function update($data)
     {
         $query = "UPDATE users SET email = :email, name = :name, surname = :surname, role = :role,
-                profil_foto = :profil_foto, popis = :popis WHERE id = :id";
+                public_visible = :public_visible, profil_foto = :profil_foto, popis = :popis WHERE id = :id";
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':id', $data['id'], \PDO::PARAM_INT);
         $stmt->bindValue(':email', $data['email'], \PDO::PARAM_STR);
         $stmt->bindValue(':name', $data['name'], \PDO::PARAM_STR);
         $stmt->bindValue(':surname', $data['surname'], \PDO::PARAM_STR);
         $stmt->bindValue(':role', $data['role'], \PDO::PARAM_INT);
+        $stmt->bindValue(':public_visible', $data['public_visible'] ?? 1, \PDO::PARAM_INT);
         $stmt->bindValue(':profil_foto', $data['profil_foto'] ?? null, \PDO::PARAM_STR);
         $stmt->bindValue(':popis', $data['popis'] ?? '', \PDO::PARAM_STR);
         return $stmt->execute();
