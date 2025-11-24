@@ -5,6 +5,7 @@ namespace App\Controllers\Web;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\User;
+use App\Models\Ad;
 use App\Helpers\SEOHelper;
 use App\Helpers\LinkTrackingHelper;
 
@@ -13,12 +14,14 @@ class ArticleController
     private $articleModel;
     private $categoryModel;
     private $userModel;
+    private $adModel;
 
     public function __construct($db)
     {
         $this->articleModel = new Article($db);
         $this->categoryModel = new Category($db);
         $this->userModel = new User($db);
+        $this->adModel = new Ad($db);
     }
 
     // Zobrazení všech článků
@@ -125,6 +128,16 @@ class ArticleController
         // Přidání trackingu k odkazům v obsahu článku
         if (isset($article['obsah'])) {
             $article['obsah'] = LinkTrackingHelper::addTrackingToLinks($article['obsah'], $article['id']);
+        }
+
+        // Načtení aktivních reklam pro zobrazení v článku
+        $activeAds = $this->adModel->getActiveAds();
+        // Pokud nejsou aktivní reklamy, zkusíme výchozí
+        if (empty($activeAds)) {
+            $defaultAd = $this->adModel->getDefaultAd();
+            if ($defaultAd) {
+                $activeAds = [$defaultAd];
+            }
         }
 
         $css = ["main-page", "clanek", "autor_clanku"];

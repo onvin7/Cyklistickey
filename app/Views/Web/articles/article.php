@@ -196,22 +196,14 @@ use App\Helpers\TextHelper;
 </div>
 
 <script>
-    const bannerFiles = [
-        'banner1.jpg',
-        'banner2.jpg',
-        'banner3.jpg',
-        'banner4.jpg',
-        'banner5.jpg',
-        'banner6.jpg',
-        'banner7.jpg'
-    ];
-
-    function createRandomBanner() {
-        const randomBannerName = bannerFiles[Math.floor(Math.random() * bannerFiles.length)];
+    <?php if (!empty($activeAds)): ?>
+    const activeAds = <?= json_encode($activeAds) ?>;
+    
+    function createAdBanner(ad) {
         const bannerImg = document.createElement('div');
         bannerImg.style.width = "100%";
         bannerImg.style.height = "15vh";
-        const imgPath = "https://cyklistickey.cz/assets/img/banner/" + randomBannerName;
+        const imgPath = "/uploads/ads/" + ad.obrazek;
         bannerImg.style.backgroundImage = `url('${imgPath}')`;
         bannerImg.style.backgroundSize = 'contain';
         bannerImg.style.backgroundRepeat = "no-repeat";
@@ -220,30 +212,57 @@ use App\Helpers\TextHelper;
         bannerImg.style.marginTop = "5vh";
         bannerImg.style.marginBottom = "5vh";
         const sponsorHref = document.createElement('a');
-        sponsorHref.href = "https://www.cycli.cz/";
+        sponsorHref.href = ad.odkaz;
         sponsorHref.target = "_blank";
-        sponsorHref.classList = "ad-banner"
+        sponsorHref.rel = "nofollow";
+        sponsorHref.classList = "ad-banner";
         sponsorHref.appendChild(bannerImg);
         return sponsorHref;
     }
 
+    function getRandomAd() {
+        if (activeAds.length === 0) return null;
+        if (activeAds.length === 1) return activeAds[0];
+        
+        // Vážený výběr podle frekvence (nižší frekvence = častěji)
+        const weightedAds = [];
+        activeAds.forEach(ad => {
+            const weight = Math.max(1, Math.floor(10 / ad.frekvence));
+            for (let i = 0; i < weight; i++) {
+                weightedAds.push(ad);
+            }
+        });
+        
+        return weightedAds[Math.floor(Math.random() * weightedAds.length)];
+    }
+
     function addBanners() {
         const textEditorDiv = document.querySelector('div.text-editor');
-        if (textEditorDiv) {
+        if (textEditorDiv && activeAds.length > 0) {
             let secondParagraphIndex = findNthParagraph(textEditorDiv.children);
-            textEditorDiv.insertBefore(createRandomBanner(), textEditorDiv.children[secondParagraphIndex]);
-            textEditorDiv.append(createRandomBanner())
+            
+            // Reklama po 2. odstavci
+            const ad1 = getRandomAd();
+            if (ad1 && secondParagraphIndex !== null) {
+                textEditorDiv.insertBefore(createAdBanner(ad1), textEditorDiv.children[secondParagraphIndex]);
+            }
+            
+            // Reklama na konci
+            const ad2 = getRandomAd();
+            if (ad2) {
+                textEditorDiv.appendChild(createAdBanner(ad2));
+            }
         }
     }
 
     function findNthParagraph(children, n = 2) {
         let paragraphCount = 0;
-        if (children[0].textContent.toLowerCase()[0] != "<") {
+        if (children[0] && children[0].textContent && children[0].textContent.toLowerCase()[0] != "<") {
             paragraphCount++;
         }
         for (let i = 0; i < children.length; i++) {
             if (["p", "div"].includes(children[i].tagName.toLowerCase())) {
-                if (children[i].innerHtml != "" || !children[i].innerHtml.contains("<br>")) {
+                if (children[i].innerHTML != "" && !children[i].innerHTML.includes("<br>")) {
                     paragraphCount++;
                 }
                 if (paragraphCount >= n && i > 0 && !children[i - 1].tagName.toLowerCase().includes("h")) {
@@ -253,7 +272,9 @@ use App\Helpers\TextHelper;
         }
         return null;
     }
+    
     addBanners();
+    <?php endif; ?>
 </script>
 
 <script>

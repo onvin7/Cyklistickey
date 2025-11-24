@@ -48,12 +48,14 @@ require '../config/autoloader.php';
 
 use App\Middleware\AuthMiddleware;
 use App\Controllers\Admin\HomeAdminController;
+use App\Controllers\Admin\AdAdminController;
 use App\Controllers\Admin\StatisticsAdminController;
 use App\Controllers\Admin\ArticleAdminController;
 use App\Controllers\Admin\CategoryAdminController;
 use App\Controllers\Admin\UserAdminController;
 use App\Controllers\Admin\AccessControlAdminController;
 use App\Controllers\Admin\PromotionAdminController;
+use App\Controllers\Admin\AdAdminController;
 use App\Controllers\Admin\FlashNewsJSONAdminController;
 use App\Controllers\Admin\LinkClicksAdminController;
 use App\Controllers\Admin\LogsAdminController;
@@ -127,6 +129,14 @@ $routes = [
     'promotions/upcoming' => [PromotionAdminController::class, 'upcoming'],
     'promotions/history' => [PromotionAdminController::class, 'history'],
     'promotions/delete' => [PromotionAdminController::class, 'delete', 'id'],
+    'ads' => [AdAdminController::class, 'index'],
+    'ads/create' => [AdAdminController::class, 'create'],
+    'ads/store' => [AdAdminController::class, 'store'],
+    'ads/edit/(\d+)' => [AdAdminController::class, 'edit', 'id'],
+    'ads/update/(\d+)' => [AdAdminController::class, 'update', 'id'],
+    'ads/delete/(\d+)' => [AdAdminController::class, 'delete', 'id'],
+    'ads/toggle-active/(\d+)' => [AdAdminController::class, 'toggleActive', 'id'],
+    'ads/set-default/(\d+)' => [AdAdminController::class, 'setDefault', 'id'],
     'settings' => [UserAdminController::class, 'settings'],
     'settings/update' => [UserAdminController::class, 'updateSettings'],
     'social-sites' => [UserAdminController::class, 'socialSites'],
