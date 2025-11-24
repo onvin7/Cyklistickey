@@ -121,6 +121,27 @@ CREATE TABLE `propagace` (
 -- --------------------------------------------------------
 
 --
+-- Struktura tabulky `reklamy`
+--
+
+CREATE TABLE `reklamy` (
+  `id` int(11) NOT NULL,
+  `nazev` varchar(255) NOT NULL,
+  `obrazek` varchar(255) NOT NULL,
+  `odkaz` varchar(500) NOT NULL,
+  `zacatek` datetime NOT NULL,
+  `konec` datetime NOT NULL,
+  `aktivni` tinyint(1) NOT NULL DEFAULT 1,
+  `vychozi` tinyint(1) NOT NULL DEFAULT 0,
+  `frekvence` int(11) NOT NULL DEFAULT 1,
+  `user_id` int(11) NOT NULL,
+  `vytvoreno` datetime NOT NULL,
+  `upraveno` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktura tabulky `socials`
 --
 
@@ -220,7 +241,7 @@ ALTER TABLE `password_resets`
   ADD KEY `idx_user_id_password_resets` (`user_id`);
 
 --
--- Indexy pro tabulku `propagace`
+-- Indexy pro tabulku `propagace`
 --
 ALTER TABLE `propagace`
   ADD PRIMARY KEY (`id`),
@@ -228,7 +249,14 @@ ALTER TABLE `propagace`
   ADD KEY `idx_id_clanku_propagace` (`id_clanku`);
 
 --
--- Indexy pro tabulku `socials`
+-- Indexy pro tabulku `reklamy`
+--
+ALTER TABLE `reklamy`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_users_TO_reklamy` (`user_id`);
+
+--
+-- Indexy pro tabulku `socials`
 --
 ALTER TABLE `socials`
   ADD PRIMARY KEY (`id`);
@@ -300,6 +328,12 @@ ALTER TABLE `propagace`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT pro tabulku `reklamy`
+--
+ALTER TABLE `reklamy`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT pro tabulku `socials`
 --
 ALTER TABLE `socials`
@@ -358,6 +392,12 @@ ALTER TABLE `password_resets`
 ALTER TABLE `propagace`
   ADD CONSTRAINT `FK_clanky_TO_propagace` FOREIGN KEY (`id_clanku`) REFERENCES `clanky` (`id`),
   ADD CONSTRAINT `FK_users_TO_propagace` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Omezení pro tabulku `reklamy`
+--
+ALTER TABLE `reklamy`
+  ADD CONSTRAINT `FK_users_TO_reklamy` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Omezení pro tabulku `user_social`
