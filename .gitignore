@@ -1,0 +1,28 @@
+# Uploads - nahrané soubory (obrázky, audio, atd.)
+web/uploads/
+
+# Logs
+logs/*.log
+
+# Cache
+web/cache/
+
+# Environment files
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
