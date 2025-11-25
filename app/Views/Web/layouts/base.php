@@ -101,7 +101,8 @@
     <!-- Favicon -->
     <link id="favicon" rel="icon" href="/assets/graphics/icon.ico" type="image/x-icon">
 
-    <script src="https://kit.fontawesome.com/d74f0b379c.js" crossorigin="anonymous"></script>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.1/css/all.css" crossorigin="anonymous" />
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
@@ -112,7 +113,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://kit.fontawesome.com/9cc50b8ba6.js" crossorigin="anonymous"></script>
 
     <?php
         $metaPixelId = \App\Helpers\TrackingHelper::getMetaPixelId();

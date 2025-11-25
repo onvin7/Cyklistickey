@@ -300,4 +300,69 @@ class UserAdminController
         $view = '../app/Views/Admin/users/social_sites.php';
         include '../app/Views/Admin/layout/base.php';
     }
+
+    public function saveSocialSite()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // CSRF kontrola
+            if (!CSRFHelper::validateToken($_POST['csrf_token'] ?? '')) {
+                $_SESSION['error'] = 'Neplatný CSRF token.';
+                header('Location: /admin/social-sites');
+                exit;
+            }
+
+            $nazev = trim($_POST['nazev'] ?? '');
+            $fa_class = trim($_POST['fa_class'] ?? '');
+
+            if (empty($nazev) || empty($fa_class)) {
+                $_SESSION['error'] = 'Název a Font Awesome třída jsou povinné.';
+                header('Location: /admin/social-sites');
+                exit;
+            }
+
+            $result = $this->model->createSocialSite($nazev, $fa_class);
+
+            if ($result) {
+                LogHelper::admin('Social site created', 'Název: ' . $nazev);
+                $_SESSION['success'] = 'Sociální síť byla úspěšně přidána.';
+            } else {
+                $_SESSION['error'] = 'Chyba při přidávání sociální sítě.';
+            }
+
+            header('Location: /admin/social-sites');
+            exit;
+        } else {
+            header('Location: /admin/social-sites');
+            exit;
+        }
+    }
+
+    public function deleteSocialSite($id)
+    {
+        if (!is_numeric($id)) {
+            $_SESSION['error'] = 'Neplatné ID.';
+            header('Location: /admin/social-sites');
+            exit;
+        }
+
+        // Kontrola, zda někdo tuto síť nepoužívá
+        $usersUsing = $this->model->getUsersUsingSocialSite($id);
+        if (!empty($usersUsing)) {
+            $_SESSION['error'] = 'Tuto sociální síť používají někteří uživatelé. Nejprve ji odstraňte z jejich profilů.';
+            header('Location: /admin/social-sites');
+            exit;
+        }
+
+        $result = $this->model->deleteSocialSite($id);
+
+        if ($result) {
+            LogHelper::admin('Social site deleted', 'ID: ' . $id);
+            $_SESSION['success'] = 'Sociální síť byla úspěšně smazána.';
+        } else {
+            $_SESSION['error'] = 'Chyba při mazání sociální sítě.';
+        }
+
+        header('Location: /admin/social-sites');
+        exit;
+    }
 }

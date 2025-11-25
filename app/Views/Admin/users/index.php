@@ -1,6 +1,11 @@
 <section class="content-section">
     <div class="section-header">
         <h1 class="mb-4 text-center"><i class="fas fa-users me-2"></i>Správa uživatelů</h1>
+        <div class="text-end mb-3">
+            <a href="/admin/social-sites" class="btn btn-action">
+                <i class="fas fa-share-alt me-2"></i>Správa sociálních sítí
+            </a>
+        </div>
     </div>
 
     <?php if (!empty($_SESSION['error'])): ?>

@@ -57,6 +57,10 @@
                 <div class="card mt-4">
                     <div class="card-header"><i class="fas fa-share-alt me-2"></i>Sociální sítě</div>
                     <div class="card-body" id="social-links">
+                        <div class="alert alert-info mb-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Poznámka:</strong> Zadejte <strong>celý odkaz</strong> na váš profil (např. <code>https://www.instagram.com/vas_profil</code>), ne pouze uživatelské jméno.
+                        </div>
                         <?php foreach ($social_links as $social): ?>
                             <div class="d-flex mb-2 social-entry">
                                 <select class="form-select me-2" name="social_id[]">
@@ -67,7 +71,7 @@
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
-                                <input type="text" class="form-control me-2" name="link[]" placeholder="Odkaz" value="<?= htmlspecialchars($social['link']) ?>" required>
+                                <input type="text" class="form-control me-2" name="link[]" placeholder="https://www.instagram.com/vas_profil" value="<?= htmlspecialchars($social['link']) ?>" required>
                                 <button type="button" class="btn btn-danger remove-social"><i class="fas fa-times"></i></button>
                             </div>
                         <?php endforeach; ?>
@@ -174,7 +178,7 @@
         input.type = 'text';
         input.classList.add('form-control', 'me-2');
         input.name = 'link[]';
-        input.placeholder = 'Odkaz';
+        input.placeholder = 'https://www.instagram.com/vas_profil';
         input.required = true;
 
         let button = document.createElement('button');

@@ -314,6 +314,34 @@ class User
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    public function createSocialSite($nazev, $fa_class)
+    {
+        $query = "INSERT INTO socials (nazev, fa_class) VALUES (:nazev, :fa_class)";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':nazev', $nazev, \PDO::PARAM_STR);
+        $stmt->bindValue(':fa_class', $fa_class, \PDO::PARAM_STR);
+        return $stmt->execute();
+    }
+
+    public function deleteSocialSite($id)
+    {
+        $query = "DELETE FROM socials WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    public function getUsersUsingSocialSite($socialId)
+    {
+        $query = "SELECT u.id, u.name, u.surname FROM users u 
+                  INNER JOIN user_social us ON u.id = us.user_id 
+                  WHERE us.social_id = :social_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':social_id', $socialId, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function getVisiblePublishedArticlesCount($userId)
     {
         $query = "SELECT COUNT(*) FROM clanky WHERE user_id = :userId AND viditelnost = 1 AND datum <= NOW()";
