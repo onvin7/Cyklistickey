@@ -13,7 +13,7 @@ class User
 
     public function getAll()
     {
-        $query = "SELECT u.*, (SELECT MAX(datum) FROM clanky WHERE user_id = u.id AND viditelnost = 1 AND datum <= NOW()) as last_article FROM users u WHERE u.public_visible = 1 ORDER BY last_article DESC";
+        $query = "SELECT u.*, (SELECT MAX(datum) FROM clanky WHERE user_id = u.id AND viditelnost = 1 AND datum <= NOW()) as last_article FROM users u WHERE u.public_visible = 1 AND u.role > 1 ORDER BY last_article DESC";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -30,7 +30,7 @@ class User
 
     public function getByName($name, $surname)
     {
-        $query = "SELECT u.*, (SELECT COUNT(*) FROM clanky WHERE user_id = u.id AND viditelnost = 1 AND datum <= NOW()) AS views FROM users u WHERE u.name = :name AND u.surname = :surname";
+        $query = "SELECT u.*, (SELECT COUNT(*) FROM clanky WHERE user_id = u.id AND viditelnost = 1 AND datum <= NOW()) AS views FROM users u WHERE u.name = :name AND u.surname = :surname AND u.role > 1";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':name', $name, \PDO::PARAM_STR);
         $stmt->bindParam(':surname', $surname, \PDO::PARAM_STR);
@@ -119,12 +119,13 @@ class User
         try {
             $hashedPassword = password_hash($data['heslo'], PASSWORD_DEFAULT); // Hash hesla pro bezpečnost
             $stmt = $this->db->prepare("
-                INSERT INTO users (email, heslo, role, name, surname, profil_foto, popis)
-                VALUES (:email, :heslo, :role, :name, :surname, :profil_foto, :popis)
+                INSERT INTO users (email, heslo, role, public_visible, name, surname, profil_foto, popis)
+                VALUES (:email, :heslo, :role, :public_visible, :name, :surname, :profil_foto, :popis)
             ");
             $stmt->bindParam(':email', $data['email'], \PDO::PARAM_STR);
             $stmt->bindParam(':heslo', $hashedPassword, \PDO::PARAM_STR);
             $stmt->bindParam(':role', $data['role'], \PDO::PARAM_INT); // Výchozí role = 0
+            $stmt->bindParam(':public_visible', $data['public_visible'] ?? 0, \PDO::PARAM_INT); // Výchozí public_visible = 0
             $stmt->bindParam(':name', $data['name'], \PDO::PARAM_STR);
             $stmt->bindParam(':surname', $data['surname'], \PDO::PARAM_STR);
             $profil_foto = '';

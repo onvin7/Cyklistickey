@@ -6,6 +6,10 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 $csrfToken = CSRFHelper::generateToken();
 ?>
+<div class="flash-messages-container">
+    <?= FlashMessageHelper::showIfSet('registration_error', 'error') ?>
+    <?= FlashMessageHelper::showIfSet('login_success', 'success') ?>
+</div>
 <div class="ohraniceni new">
     <div class="logo register">
         <img src="/assets/graphics/logo_text_cyklistickey.png" alt="Cyklistickey logo">
@@ -16,8 +20,6 @@ $csrfToken = CSRFHelper::generateToken();
                 <div class="prvek">
                     <span class="form-title">Registrace</span>
                 </div>
-                <?= FlashMessageHelper::showIfSet('registration_error', 'error') ?>
-                <?= FlashMessageHelper::showIfSet('login_success', 'success') ?>
                 <div class="prvek">
                     <div class="input-group validator-msg-holder js-validated-element-wrapper">
                         <label class="input-group__label" for="email">EMAIL</label>
@@ -86,7 +88,21 @@ document.addEventListener('DOMContentLoaded', function() {
             if (password !== confirmPassword) {
                 console.log('Password mismatch');
                 e.preventDefault();
-                alert('Hesla se neshodují!');
+                // Odstraníme existující chybové zprávy
+                const container = document.querySelector('.flash-messages-container');
+                if (container) {
+                    const existingAlerts = container.querySelectorAll('.alert');
+                    existingAlerts.forEach(alert => alert.remove());
+                    
+                    // Vytvoříme novou flash zprávu
+                    const errorMsg = document.createElement('div');
+                    errorMsg.className = 'alert alert-danger alert-dismissible fade show';
+                    errorMsg.setAttribute('role', 'alert');
+                    errorMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Hesla se neshodují! <button type="button" class="alert-close" onclick="this.parentElement.remove()" aria-label="Close">&times;</button>';
+                    
+                    // Vložíme zprávu do kontejneru nahoře
+                    container.appendChild(errorMsg);
+                }
                 return false;
             }
             

@@ -6,6 +6,13 @@ if (session_status() === PHP_SESSION_NONE) {
 // Bezpečné získání tokenu z URL a zobrazení ve formuláři
 $token = isset($_GET['token']) ? htmlspecialchars($_GET['token']) : '';
 ?>
+<div class="flash-messages-container">
+    <?php if (empty($token)): ?>
+        <?= FlashMessageHelper::display('error', 'Chybí token pro reset hesla!') ?>
+    <?php endif; ?>
+    <?= FlashMessageHelper::showIfSet('reset_error', 'error') ?>
+    <?= FlashMessageHelper::showIfSet('reset_success', 'success') ?>
+</div>
 <div class="ohraniceni new">
     <div class="logo">
         <img src="/assets/graphics/logo_text_cyklistickey.png" alt="Cyklistickey logo">
@@ -16,11 +23,6 @@ $token = isset($_GET['token']) ? htmlspecialchars($_GET['token']) : '';
             <div class="prvek" style="margin-top: 10px;">
                 <span class="form-title">Obnova hesla</span>
             </div>
-            <?php if (empty($token)): ?>
-                <?= FlashMessageHelper::display('error', 'Chybí token pro reset hesla!') ?>
-            <?php endif; ?>
-            <?= FlashMessageHelper::showIfSet('reset_error', 'error') ?>
-            <?= FlashMessageHelper::showIfSet('reset_success', 'success') ?>
             <div class="prvek">
                 <div class="input-group validator-msg-holder js-validated-element-wrapper">
                     <label class="input-group__label" for="new_password">NOVÉ HESLO</label>
@@ -49,15 +51,21 @@ $token = isset($_GET['token']) ? htmlspecialchars($_GET['token']) : '';
 
         if (password !== confirmPassword) {
             e.preventDefault();
-            // Zobrazíme chybu pomocí flash zprávy místo alertu
-            const errorMsg = document.createElement('div');
-            errorMsg.className = 'flash-message flash-error';
-            errorMsg.innerHTML = '<span class="flash-icon">⚠️</span><span class="flash-text">Hesla se neshodují!</span>';
-            const form = document.querySelector('form');
-            const title = form.querySelector('.form-title').parentElement;
-            title.insertAdjacentElement('afterend', errorMsg);
-            // Scroll na chybu
-            errorMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            // Odstraníme existující chybové zprávy
+            const container = document.querySelector('.flash-messages-container');
+            if (container) {
+                const existingAlerts = container.querySelectorAll('.alert');
+                existingAlerts.forEach(alert => alert.remove());
+                
+                // Vytvoříme novou alert zprávu
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'alert alert-danger alert-dismissible fade show';
+                errorMsg.setAttribute('role', 'alert');
+                errorMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Hesla se neshodují! <button type="button" class="alert-close" onclick="this.parentElement.remove()" aria-label="Close">&times;</button>';
+                
+                // Vložíme zprávu do kontejneru nahoře
+                container.appendChild(errorMsg);
+            }
         }
     });
 </script>

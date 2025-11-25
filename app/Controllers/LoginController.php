@@ -311,6 +311,7 @@ class LoginController
             'heslo' => trim($_POST['heslo']),
             'confirm_heslo' => trim($_POST['confirm_heslo']),
             'role' => 0, // Výchozí role uživatele
+            'public_visible' => 0, // Noví uživatelé nejsou veřejně viditelní
             'name' => trim($_POST['name']),
             'surname' => trim($_POST['surname']),
         ];

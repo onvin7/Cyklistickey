@@ -4,6 +4,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 ?>
+<div class="flash-messages-container">
+    <?= FlashMessageHelper::showIfSet('login_error', 'error') ?>
+    <?= FlashMessageHelper::showIfSet('login_success', 'success') ?>
+</div>
 <form method="POST" action="/login/submit/">
     <div class="container">
         <div class="ohraniceni">
@@ -11,8 +15,6 @@ if (session_status() === PHP_SESSION_NONE) {
             </div>
             <div class="inputy">
                 <div class="input-wrapper">
-                    <?= FlashMessageHelper::showIfSet('login_error', 'error') ?>
-                    <?= FlashMessageHelper::showIfSet('login_success', 'success') ?>
                     <div class="prvek">
                         <div class="input-group validator-msg-holder js-validated-element-wrapper">
                             <label class="input-group__label" for="email">EMAIL</label>

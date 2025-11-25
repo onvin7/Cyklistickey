@@ -18,15 +18,26 @@ class FlashMessageHelper
             return '';
         }
 
-        $typeClass = 'flash-' . $type;
+        $alertClass = 'alert-' . self::mapTypeToBootstrap($type);
         $icon = self::getIcon($type);
-        $closeButton = $autoClose ? '<button type="button" class="flash-close" onclick="this.parentElement.remove()">&times;</button>' : '';
+        $closeButton = $autoClose ? '<button type="button" class="alert-close" onclick="this.parentElement.remove()" aria-label="Close">&times;</button>' : '';
 
-        return '<div class="flash-message ' . htmlspecialchars($typeClass) . '">' .
-               '<span class="flash-icon">' . $icon . '</span>' .
-               '<span class="flash-text">' . htmlspecialchars($message) . '</span>' .
+        return '<div class="alert ' . htmlspecialchars($alertClass) . ' alert-dismissible fade show" role="alert">' .
+               $icon . ' ' . htmlspecialchars($message) .
                $closeButton .
                '</div>';
+    }
+    
+    private static function mapTypeToBootstrap($type)
+    {
+        $map = [
+            'error' => 'danger',
+            'success' => 'success',
+            'warning' => 'warning',
+            'info' => 'info'
+        ];
+        
+        return $map[$type] ?? 'info';
     }
 
     /**
@@ -62,13 +73,13 @@ class FlashMessageHelper
     private static function getIcon($type)
     {
         $icons = [
-            'error' => '⚠️',
-            'success' => '✓',
-            'warning' => '⚠',
-            'info' => 'ℹ'
+            'error' => '<i class="fas fa-exclamation-triangle"></i>',
+            'success' => '<i class="fas fa-check-circle"></i>',
+            'warning' => '<i class="fas fa-exclamation-triangle"></i>',
+            'info' => '<i class="fas fa-info-circle"></i>'
         ];
 
-        return $icons[$type] ?? '•';
+        return $icons[$type] ?? '<i class="fas fa-info-circle"></i>';
     }
 
     /**

@@ -6,6 +6,11 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 $csrfToken = CSRFHelper::generateToken();
 ?>
+<div class="flash-messages-container">
+    <?= FlashMessageHelper::showIfSet('reset_error', 'error') ?>
+    <?= FlashMessageHelper::showIfSet('reset_success', 'success') ?>
+    <?= FlashMessageHelper::showIfSet('reset_info', 'info') ?>
+</div>
     <div class="ohraniceni">
         <div class="logo">
             <img src="/assets/graphics/logo_text_cyklistickey.png" alt="Cyklistickey logo">
@@ -16,9 +21,6 @@ $csrfToken = CSRFHelper::generateToken();
                 <div class="prvek">
                     <span class="form-title">Reset hesla</span>
                 </div>
-                <?= FlashMessageHelper::showIfSet('reset_error', 'error') ?>
-                <?= FlashMessageHelper::showIfSet('reset_success', 'success') ?>
-                <?= FlashMessageHelper::showIfSet('reset_info', 'info') ?>
                 <div class="prvek">
                     <div class="input-group validator-msg-holder js-validated-element-wrapper">
                         <label class="input-group__label" for="email">Email</label>

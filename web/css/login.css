@@ -103,7 +103,9 @@ button:active {
   align-items: center;
   height: 100vh;
   width: 100vw;
-  overflow: hidden;}
+  overflow: hidden;
+  position: relative;
+}
 
 .container .ohraniceni {
   background-color: #212121;
@@ -111,6 +113,8 @@ button:active {
   width: 650px;
   display: flex;    
   border-radius: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 .container .ohraniceni .inputy {
@@ -259,6 +263,8 @@ button:active {
   display: flex;    
   border-radius: 20px;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 
@@ -311,83 +317,100 @@ button:active {
   }
 }
 
-/* Flash Messages Styling */
-.flash-message {
+/* Alert Messages Container - Fixed position at top */
+.flash-messages-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  width: 90%;
+  max-width: 600px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 10px;
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  line-height: 1.5;
-  animation: slideIn 0.3s ease-out;
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.flash-message.flash-error {
-  background-color: rgba(220, 53, 69, 0.2);
-  border: 1px solid rgba(220, 53, 69, 0.5);
-  color: #ff6b6b;
-}
-
-.flash-message.flash-success {
-  background-color: rgba(40, 167, 69, 0.2);
-  border: 1px solid rgba(40, 167, 69, 0.5);
-  color: #51cf66;
-}
-
-.flash-message.flash-warning {
-  background-color: rgba(255, 193, 7, 0.2);
-  border: 1px solid rgba(255, 193, 7, 0.5);
-  color: #ffd43b;
-}
-
-.flash-message.flash-info {
-  background-color: rgba(23, 162, 184, 0.2);
-  border: 1px solid rgba(23, 162, 184, 0.5);
-  color: #74c0fc;
-}
-
-.flash-icon {
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.flash-text {
-  flex: 1;
-  word-wrap: break-word;
-}
-
-.flash-close {
-  background: none;
-  border: none;
-  color: inherit;
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
+  pointer-events: none;
+  margin: 0;
   padding: 0;
-  width: 24px;
-  height: 24px;
+}
+
+.flash-messages-container .alert {
+  pointer-events: auto;
+  margin: 0;
+}
+
+/* Alert Messages Styling - Bootstrap-like for login pages */
+.alert {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 0;
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.5rem;
+  animation: slideDown 0.3s ease-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.alert i {
+  margin-right: 0.25rem;
   flex-shrink: 0;
-  opacity: 0.7;
-  transition: opacity 0.2s;
 }
 
-.flash-close:hover {
-  opacity: 1;
+.alert-dismissible {
+  padding-right: 3rem;
 }
 
-@keyframes slideIn {
+.alert-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.75rem 1.25rem;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 1px 0 #fff;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.alert-close:hover {
+  opacity: 0.75;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.alert-warning {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeaa7;
+}
+
+.alert-info {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+}
+
+@keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
