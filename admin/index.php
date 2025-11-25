@@ -128,16 +128,6 @@ $routes = [
     'promotions/upcoming' => [PromotionAdminController::class, 'upcoming'],
     'promotions/history' => [PromotionAdminController::class, 'history'],
     'promotions/delete' => [PromotionAdminController::class, 'delete', 'id'],
-    /* TODO: Odkomentovat po dokončení implementace správy reklam
-    'ads' => [AdAdminController::class, 'index'],
-    'ads/create' => [AdAdminController::class, 'create'],
-    'ads/store' => [AdAdminController::class, 'store'],
-    'ads/edit/(\d+)' => [AdAdminController::class, 'edit', 'id'],
-    'ads/update/(\d+)' => [AdAdminController::class, 'update', 'id'],
-    'ads/delete/(\d+)' => [AdAdminController::class, 'delete', 'id'],
-    'ads/toggle-active/(\d+)' => [AdAdminController::class, 'toggleActive', 'id'],
-    'ads/set-default/(\d+)' => [AdAdminController::class, 'setDefault', 'id'],
-    */
     'settings' => [UserAdminController::class, 'settings'],
     'settings/update' => [UserAdminController::class, 'updateSettings'],
     'social-sites' => [UserAdminController::class, 'socialSites'],
