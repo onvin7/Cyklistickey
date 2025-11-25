@@ -48,7 +48,6 @@ require '../config/autoloader.php';
 
 use App\Middleware\AuthMiddleware;
 use App\Controllers\Admin\HomeAdminController;
-// use App\Controllers\Admin\AdAdminController; // TODO: Odkomentovat po dokončení implementace správy reklam
 use App\Controllers\Admin\StatisticsAdminController;
 use App\Controllers\Admin\ArticleAdminController;
 use App\Controllers\Admin\CategoryAdminController;
