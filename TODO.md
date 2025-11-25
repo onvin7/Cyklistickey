@@ -328,18 +328,22 @@
   - Automaticky přidat `target="_blank"` a `rel="noopener noreferrer"` k odkazům
 
 ### 10. Sociální sítě
-- [ ] **Soc site - jaký??** - Rozhodnout, které sociální sítě integrovat
-- [ ] **Sociální sítě pro uživatele** - Přidat podporu pro:
-  - Instagram (ig)
-  - Strava
-  - Twitter/X
-  - LinkedIn
-  - Threads
-  - Facebook
-- [ ] Vytvořit databázovou strukturu pro sociální sítě uživatelů
-  - Možná použít existující `socials` a `user_social` tabulky (zmíněno v migrace_mapovani.md)
-  - Přidat pole do formuláře pro editaci uživatele
-  - Zobrazit ikony sociálních sítí na profilu uživatele
+- [x] **Soc site - jaký??** - Rozhodnout, které sociální sítě integrovat - ✅ HOTOVO
+  - Instagram, Strava, Twitter/X, LinkedIn, Threads, Facebook
+- [x] **Sociální sítě pro uživatele** - Přidat podporu pro: - ✅ HOTOVO
+  - Instagram (ig) - ✅
+  - Strava - ✅
+  - Twitter/X - ✅
+  - LinkedIn - ✅
+  - Threads - ✅
+  - Facebook - ✅
+- [x] **Vytvořit databázovou strukturu pro sociální sítě uživatelů** - ✅ HOTOVO
+  - Použity existující `socials` a `user_social` tabulky
+  - Přidána pole do formuláře pro editaci uživatele (`app/Views/Admin/users/settings.php`)
+  - Zobrazení ikon sociálních sítí na profilu uživatele (veřejná část)
+  - Správa sociálních sítí v admin panelu (`/admin/social-sites`)
+  - CRUD operace: UPDATE/INSERT/DELETE podle odeslaných dat
+  - Font Awesome 6.5.1 integrace pro ikony
 
 ---
 

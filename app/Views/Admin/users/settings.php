@@ -1,28 +1,4 @@
 <section class="content-section">
-    <?php if (!empty($_SESSION['debug_social'])): ?>
-        <div class="alert alert-warning">
-            <strong>DEBUG INFO:</strong><br>
-            POST social_ids: <?= count($_SESSION['debug_social']['post_social_ids']) ?><br>
-            POST links: <?= count($_SESSION['debug_social']['post_links']) ?><br>
-            Existující v DB: <?= $_SESSION['debug_social']['existing_count'] ?> (<?= implode(', ', $_SESSION['debug_social']['existing_ids']) ?>)<br>
-            Odeslané: <?= $_SESSION['debug_social']['submitted_count'] ?> (<?= implode(', ', $_SESSION['debug_social']['submitted_ids']) ?>)<br>
-            <pre style="max-height: 200px; overflow: auto;"><?= print_r($_SESSION['debug_social'], true) ?></pre>
-        </div>
-        <?php unset($_SESSION['debug_social']); ?>
-    <?php endif; ?>
-    
-    <?php 
-    // DEBUG - zobrazit načtené sociální sítě
-    if (!empty($social_links)): ?>
-        <div class="alert alert-info">
-            <strong>Načtené sociální sítě:</strong><br>
-            <?php foreach ($social_links as $index => $social): ?>
-                Řádek <?= $index ?>: ID: <?= $social['social_id'] ?>, Název: <?= $social['nazev'] ?>, Link: <?= $social['link'] ?><br>
-                <small>social_id type: <?= gettype($social['social_id']) ?>, value: "<?= $social['social_id'] ?>"</small><br>
-            <?php endforeach; ?>
-            <pre><?= print_r($social_links, true) ?></pre>
-        </div>
-    <?php endif; ?>
     
     <div class="section-header">
         <h2 class="mb-4"><i class="fas fa-cog me-2"></i>Nastavení účtu</h2>
