@@ -25,16 +25,16 @@
 - **Soubor:** `web/migrate_db.php` (existuje, ale potřebuje dokončit/testovat)
 
 ### 2. Přesměrování starých URL (301) - Opravit staré odkazy/kolínky
-- [ ] **Implementovat 301 redirecty pro staré URL (kolínky)**
+- [x] **Implementovat 301 redirecty pro staré URL (kolínky)** - ✅ HOTOVO
   - Opravit staré odkazy/kolínky, aby se přesměrovávaly na novou strukturu
   - Zachovat SEO hodnotu starých odkazů z Google
   - Zachovat funkčnost starých sdílených odkazů
   - Mapovat staré URL na nové struktury
-- [ ] **Přidat redirecty do PHP routing** (redirecty jsou přes routing, ne `.htaccess`)
-  - Staré URL struktury → nové URL struktury
-  - Ověřit, že všechny důležité stránky mají redirecty
-  - Zmapovat všechny staré "kolínky" (staré odkazy) na nové URL
-  - **Potřeba:** Vytvořit `RedirectHelper` nebo přidat redirecty do `web/index.php`
+- [x] **Přidat redirecty do PHP routing** - ✅ HOTOVO
+  - Staré URL struktury → nové URL struktury (/race → /events)
+  - Všechny důležité stránky mají správný routing
+  - RedirectHelper vytvořen v `app/Helpers/RedirectHelper.php`
+  - Redirecty přidány do `web/index.php` (řádky 88-94)
 - **Poznámka:** Redirecty jsou implementovány přes PHP routing, ne přes `.htaccess`
 
 ### 3. Odkaz na e-shop (hlavička + patička)
@@ -60,22 +60,22 @@
 
 ### 6. Přejmenování „race" na „events"
 - [x] **Frontend routing** - ✅ HOTOVO
-  - Route `/events` existuje v `web/index.php` (řádek 87)
-  - Route `/events/(\d+)/([^/]+)` pro detail eventu (řádek 88)
-- [ ] **Backend metody** - ⚠️ ČÁSTEČNĚ
-  - Stále existují metody `race()`, `raceCyklistickey()`, `raceBezeckey()` v `HomeController`
+  - Route `/events` existuje v `web/index.php` (řádek 97)
+  - Route `/events/(\d+)/([^/]+)` pro detail eventu (řádek 98)
+- [x] **Backend metody** - ✅ HOTOVO
+  - Metody `race()`, `raceCyklistickey()`, `raceBezeckey()` nyní obsahují 301 redirecty na `/events`
   - Metoda `events()` existuje a funguje
-  - **Potřeba:** Odstranit nebo přejmenovat staré `race*` metody, nebo je nechat pro zpětnou kompatibilitu s redirecty
+  - Staré metody zachovány pro zpětnou kompatibilitu s redirecty
 
 ### 7. Zobrazit historické + aktuální eventy v sekci Events
 - [x] **Základní implementace** - ✅ HOTOVO
   - Metoda `events()` v `HomeController` zobrazuje eventy
   - View `app/Views/Web/events/index.php` existuje
-- [ ] **V events dát všechny historické eventy + aktuální**
-  - Zkontrolovat, že se v sekci Events zobrazují všechny historické eventy (staré závody)
-  - Zkontrolovat, že se zobrazují aktuální eventy (nové závody)
+- [x] **V events dát všechny historické eventy + aktuální** - ✅ HOTOVO
+  - Zobrazují se historické eventy (2022, 2023) i aktuální (2024)
   - Přehledná sekce se starými i novými závody
-  - Ověřit, že se zobrazují správně seřazené (podle data)
+  - Správně seřazené podle roku (nejnovější nahoře)
+  - Jednotlivé závody + seriály závodů (CYCLI kritérium)
 
 ### 8. Flash news - Dát do kupy flash news aby fungovaly
 - [x] **Správa Flash News v adminu** - ✅ HOTOVO
@@ -91,12 +91,11 @@
   - Flash news fungují a zobrazují se správně
 
 ### 9. Automatický výběr kategorie při vytváření článku
-- [ ] **Přidat automaticky vybranou kategorii při vytváření článku**
-  - Když autor nevybere kategorii (nikdo nic nezadá), automaticky se vybere kategorie "Aktuality" (ID: 1)
-  - Upravit `app/Controllers/Admin/ArticleAdminController.php` (metoda `store`, řádek 157-159)
-  - Zajistit, že každý článek má alespoň jednu kategorii
-- **Současný stav:** Kategorie je volitelná, pokud není vybrána, článek nemá kategorii
-- **Potřeba:** Přidat logiku: pokud `empty($postData['kategorie'])`, automaticky přidat kategorii ID 1 ("Aktuality")
+- [x] **Přidat automaticky vybranou kategorii při vytváření článku** - ✅ HOTOVO
+  - Když autor nevybere kategorii, automaticky se vybere kategorie "Aktuality" (ID: 1)
+  - Upraveno v `app/Controllers/Admin/ArticleAdminController.php` (metoda `store`)
+  - Každý článek má nyní alespoň jednu kategorii
+- **Implementace:** Pokud `empty($postData['kategorie'])`, automaticky se přiřadí kategorie ID 1 ("Aktuality")
 
 ### 10. Odstranit kategorii „nevybráno"
 - [x] **Odstranit kategorii "Nevybráno" z databáze** - ✅ HOTOVO (podle uživatele)
