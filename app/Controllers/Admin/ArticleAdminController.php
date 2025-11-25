@@ -154,8 +154,11 @@ class ArticleAdminController
 
         if ($articleId) {
             // Zpracování kategorií článku
-            if (isset($postData['kategorie']) && is_array($postData['kategorie'])) {
+            if (isset($postData['kategorie']) && is_array($postData['kategorie']) && !empty($postData['kategorie'])) {
                 $this->articleModel->addCategories($articleId, $postData['kategorie']);
+            } else {
+                // Pokud není vybrána žádná kategorie, automaticky přiřadit "Aktuality" (ID: 1)
+                $this->articleModel->addCategories($articleId, [1]);
             }
             
             // Pokud byl nahrán zvukový soubor, přejmenujeme ho podle ID článku

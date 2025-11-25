@@ -84,6 +84,16 @@ $routes = [
     '/login/submit/' => [LoginController::class, 'login'],
     '/logout' => [LoginController::class, 'logout'],
     '/kontakt' => [HomeController::class, 'kontakt'],
+    
+    // Staré race URL - 301 redirecty na /events (pro SEO a zpětnou kompatibilitu)
+    '/race' => [HomeController::class, 'race'],
+    '/race/' => [HomeController::class, 'race'],
+    '/race/cyklistickey' => [HomeController::class, 'raceCyklistickey'],
+    '/race/cyklistickey/' => [HomeController::class, 'raceCyklistickey'],
+    '/race/bezeckey' => [HomeController::class, 'raceBezeckey'],
+    '/race/bezeckey/' => [HomeController::class, 'raceBezeckey'],
+    
+    // Nové events URL
     '/events' => [HomeController::class, 'events'],
     '/events/(\d+)/([^/]+)' => [HomeController::class, 'eventDetail'],
     '/appka' => [HomeController::class, 'appka'],

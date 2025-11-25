@@ -5,6 +5,7 @@ namespace App\Controllers\Web;
 use App\Models\Category;
 use App\Models\Article;
 use App\Helpers\SEOHelper;
+use App\Helpers\RedirectHelper;
 
 class HomeController
 {
@@ -100,44 +101,20 @@ class HomeController
 
     public function race()
     {
-        // SEO nastavení
-        $title = "Cyklistickey Race | Cyklistický magazín";
-        $description = "Informace o závodech Cyklistickey Race, registrace, výsledky a fotogalerie z akcí.";
-        $ogTitle = "Cyklistickey Race - Naše závody pro všechny nadšence cyklistiky";
-        $ogDescription = "Přehled závodů Cyklistickey Race, pravidla, trasy a možnosti registrace.";
-        $canonicalUrl = "https://www.cyklistickey.cz/race";
-        $css = ['race', 'race-main'];
-
-        $view = '../app/Views/Web/race/race.php';
-        require '../app/Views/Web/layouts/base.php';
+        // 301 Redirect na novou /events URL (zachování SEO)
+        RedirectHelper::permanent('/events');
     }
 
     public function raceCyklistickey()
     {
-        // SEO nastavení
-        $title = "Cyklistickey Race | Cyklistický magazín";
-        $description = "Detailní informace o závodě Cyklistickey Race, trasy, pravidla a praktické informace pro závodníky.";
-        $ogTitle = "Cyklistickey Race - Závod pro všechny cyklistické nadšence";
-        $ogDescription = "Kompletní informace o závodě Cyklistickey Race - trasy, registrace, pravidla a praktické informace.";
-        $canonicalUrl = "https://www.cyklistickey.cz/race/cyklistickey";
-        $css = ['race'];
-
-        $view = '../app/Views/Web/race/cyklistickey_race.php';
-        require '../app/Views/Web/layouts/base.php';
+        // 301 Redirect na novou /events URL (zachování SEO)
+        RedirectHelper::permanent('/events');
     }
     
     public function raceBezeckey()
     {
-        // SEO nastavení
-        $title = "Běžeckey Race | Cyklistický magazín";
-        $description = "Vše o běžeckém závodu Běžeckey Race - termíny, trasy, podmínky účasti a registrace.";
-        $ogTitle = "Běžeckey Race - Běžecký závod pro každého";
-        $ogDescription = "Detailní informace o běžeckém závodu Běžeckey Race - registrace, pravidla a další praktické informace.";
-        $canonicalUrl = "https://www.cyklistickey.cz/race/bezeckey";
-        $css = ['race'];
-
-        $view = '../app/Views/Web/race/bezeckey_race.php';
-        require '../app/Views/Web/layouts/base.php';
+        // 301 Redirect na novou /events URL (zachování SEO)
+        RedirectHelper::permanent('/events');
     }
 
     public function events()
