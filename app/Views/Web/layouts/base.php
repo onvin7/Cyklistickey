@@ -203,6 +203,7 @@
 
     <link rel="stylesheet" href="/css/navbar-web.css">
     <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/breadcrumbs.css">
 
     <?php if (isset($css) && is_array($css)): ?>
         <?php foreach ($css as $i): ?>
@@ -252,6 +253,10 @@
     include 'flash.php';
 
     include 'header.php';?>
+
+    <?php if (isset($breadcrumbs) && !empty($breadcrumbs)): ?>
+        <?php echo SEOHelper::generateBreadcrumbsHTML($breadcrumbs); ?>
+    <?php endif; ?>
 
     <main>
         <?php include $view; ?>

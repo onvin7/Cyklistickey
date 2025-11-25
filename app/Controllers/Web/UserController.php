@@ -99,7 +99,7 @@ class UserController
             "@context" => "https://schema.org",
             "@type" => "Person",
             "name" => $user['name'] . " " . $user['surname'],
-            "url" => "https://www.cyklistickey.cz/author/" . $user['name'] . "-" . $user['surname'],
+            "url" => $canonicalUrl,
             "jobTitle" => $user['role'] ?? "Autor",
             "description" => strip_tags($user['popis'] ?? ""),
             "image" => $ogImage
@@ -117,6 +117,12 @@ class UserController
                 $structuredData["sameAs"] = $sameAs;
             }
         }
+        
+        // Přidání breadcrumb schema
+        $structuredData = [
+            $structuredData,
+            SEOHelper::generateBreadcrumbSchema($breadcrumbs)
+        ];
 
         $view = '../app/Views/Web/user/detail.php';
         require '../app/Views/Web/layouts/base.php';
@@ -149,6 +155,7 @@ class UserController
         $title = "Články od " . $user['name'] . " " . $user['surname'];
         $description = "Kompletní seznam článků, které napsal " . $user['name'] . " " . $user['surname'] . " pro Cyklistický magazín.";
         $canonicalPath = "author/" . $user['name'] . "-" . $user['surname'] . "/articles";
+        $canonicalUrl = SEOHelper::generateCanonicalUrl($canonicalPath);
         $keywords = ["články", $user['name'], $user['surname'], "autor", "cyklistika"];
         
         // Breadcrumbs pro články autora
@@ -157,6 +164,21 @@ class UserController
             ['name' => 'Redakce', 'url' => '/authors'],
             ['name' => $user['name'] . " " . $user['surname'], 'url' => '/author/' . $user['name'] . "-" . $user['surname']],
             ['name' => 'Články', 'url' => '/author/' . $user['name'] . "-" . $user['surname'] . '/articles']
+        ];
+        
+        // Structured data pro seznam článků autora
+        $structuredData = [
+            "@context" => "https://schema.org",
+            "@type" => "CollectionPage",
+            "name" => "Články od " . $user['name'] . " " . $user['surname'],
+            "url" => $canonicalUrl,
+            "description" => $description
+        ];
+        
+        // Přidání breadcrumb schema
+        $structuredData = [
+            $structuredData,
+            SEOHelper::generateBreadcrumbSchema($breadcrumbs)
         ];
 
         $view = '../app/Views/Web/user/article.php';

@@ -26,6 +26,34 @@ class ArticleController
     {
         $articles = $this->articleModel->getAllWithAuthors();
         $css = ["main-page", "kategorie"];
+        
+        // SEO nastavení
+        $keywords = ["články", "cyklistika", "novinky", "závody", "trénink", "technika"];
+        $title = "Články | Cyklistický magazín";
+        $description = "Přehled všech článků z cyklistického magazínu - novinky, závody, tréninkové tipy a technické články.";
+        $canonicalPath = "articles";
+        $canonicalUrl = SEOHelper::generateCanonicalUrl($canonicalPath);
+        
+        // Breadcrumbs pro seznam článků
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/'],
+            ['name' => 'Články', 'url' => '/articles']
+        ];
+        
+        // Structured data pro seznam článků
+        $structuredData = [
+            "@context" => "https://schema.org",
+            "@type" => "CollectionPage",
+            "name" => "Články - Cyklistický magazín",
+            "url" => $canonicalUrl,
+            "description" => $description
+        ];
+        
+        // Přidání breadcrumb schema
+        $structuredData = [
+            $structuredData,
+            SEOHelper::generateBreadcrumbSchema($breadcrumbs)
+        ];
 
         $view = '../app/Views/Web/articles/index.php';
         require '../app/Views/Web/layouts/base.php';
@@ -61,7 +89,7 @@ class ArticleController
         $title = isset($article['nazev']) ? $article['nazev'] : "Cyklistický magazín";
         $canonicalPath = "article/" . (isset($article['url']) ? $article['url'] : "");
         $canonicalUrl = SEOHelper::generateCanonicalUrl($canonicalPath);
-        $ogImage = isset($article['nahled_foto']) && $article['nahled_foto'] ? SEOHelper::generateCanonicalUrl($article['nahled_foto']) : null;
+        $ogImage = isset($article['nahled_foto']) && $article['nahled_foto'] ? SEOHelper::generateCanonicalUrl('uploads/thumbnails/velke/' . $article['nahled_foto']) : null;
         $keywords = [];
         
         // Extrahuj klíčová slova z obsahu článku

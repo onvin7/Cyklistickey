@@ -120,11 +120,35 @@ class HomeController
     public function events()
     {
         // SEO nastavení
+        $keywords = ["events", "závody", "akce", "události", "cyklistika", "kalendář"];
         $title = "Events | Cyklistický magazín";
         $description = "Přehled všech akcí a událostí souvisejících s cyklistikou - závody, výstavy, workshopy a další.";
         $ogTitle = "Events - Cyklistické akce a události";
         $ogDescription = "Kalendář cyklistických akcí, závodů, výstav a dalších událostí pro všechny milovníky cyklistiky.";
-        $canonicalUrl = "https://www.cyklistickey.cz/events";
+        $canonicalPath = "events";
+        $canonicalUrl = SEOHelper::generateCanonicalUrl($canonicalPath);
+        
+        // Breadcrumbs
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/'],
+            ['name' => 'Events', 'url' => '/events']
+        ];
+        
+        // Structured data pro seznam eventů
+        $structuredData = [
+            "@context" => "https://schema.org",
+            "@type" => "CollectionPage",
+            "name" => "Events - Cyklistické akce a události",
+            "url" => $canonicalUrl,
+            "description" => $description
+        ];
+        
+        // Přidání breadcrumb schema
+        $structuredData = [
+            $structuredData,
+            SEOHelper::generateBreadcrumbSchema($breadcrumbs)
+        ];
+        
         $css = ['kategorie', 'events'];
 
         $view = '../app/Views/Web/events/index.php';
@@ -148,11 +172,33 @@ class HomeController
 
         // SEO nastavení
         $eventTitle = ucfirst($name) . " Race " . $year;
+        $keywords = ["závod", "race", $name, $year, "cyklistika", "běh", "událost"];
         $title = $eventTitle . " | Cyklistický magazín";
         $description = "Detailní informace o závodě " . $eventTitle . ", trasy, pravidla a praktické informace pro závodníky.";
         $ogTitle = $eventTitle . " - Závod pro všechny cyklistické nadšence";
         $ogDescription = "Kompletní informace o závodě " . $eventTitle . " - trasy, registrace, pravidla a praktické informace.";
-        $canonicalUrl = "https://www.cyklistickey.cz/events/" . $year . "/" . $name;
+        $canonicalPath = "events/" . $year . "/" . $name;
+        $canonicalUrl = SEOHelper::generateCanonicalUrl($canonicalPath);
+        
+        // Breadcrumbs
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/'],
+            ['name' => 'Events', 'url' => '/events'],
+            ['name' => $eventTitle, 'url' => '/events/' . $year . '/' . $name]
+        ];
+        
+        // Structured data pro event
+        $eventData = [
+            'nazev' => $eventTitle,
+            'popis' => $description,
+            'datum_zacatku' => $year . '-01-01',
+            'url' => $name
+        ];
+        $structuredData = [
+            SEOHelper::generateEventSchema($eventData),
+            SEOHelper::generateBreadcrumbSchema($breadcrumbs)
+        ];
+        
         $css = ['race'];
 
         $view = $eventViews[$name];
@@ -215,11 +261,35 @@ class HomeController
     public function appka()
     {
         // SEO nastavení
+        $keywords = ["aplikace", "app", "mobilní", "cyklistika", "novinky", "trasy"];
         $title = "Appka | Cyklistickey";
         $description = "Články a aktuality ze všech koutů cyklistiky. Vše hezky na jednom místě.";
         $ogTitle = "Cyklistickey App - Mobilní aplikace pro cyklisty";
         $ogDescription = "Mobilní aplikace Cyklistickey - novinky, trasy, závody a vše o cyklistice na jednom místě.";
-        $canonicalUrl = "https://www.cyklistickey.cz/appka";
+        $canonicalPath = "appka";
+        $canonicalUrl = SEOHelper::generateCanonicalUrl($canonicalPath);
+        
+        // Breadcrumbs
+        $breadcrumbs = [
+            ['name' => 'Domů', 'url' => '/'],
+            ['name' => 'Appka', 'url' => '/appka']
+        ];
+        
+        // Structured data pro stránku aplikace
+        $structuredData = [
+            "@context" => "https://schema.org",
+            "@type" => "WebPage",
+            "name" => "Cyklistickey App - Mobilní aplikace",
+            "url" => $canonicalUrl,
+            "description" => $description
+        ];
+        
+        // Přidání breadcrumb schema
+        $structuredData = [
+            $structuredData,
+            SEOHelper::generateBreadcrumbSchema($breadcrumbs)
+        ];
+        
         $css = ['appka'];
 
         $view = '../app/Views/Web/home/appka.php';
