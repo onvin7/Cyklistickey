@@ -1,3 +1,9 @@
+<?php
+use App\Helpers\FlashMessageHelper;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <form method="POST" action="/login/submit/">
     <div class="container">
         <div class="ohraniceni">
@@ -5,6 +11,8 @@
             </div>
             <div class="inputy">
                 <div class="input-wrapper">
+                    <?= FlashMessageHelper::showIfSet('login_error', 'error') ?>
+                    <?= FlashMessageHelper::showIfSet('login_success', 'success') ?>
                     <div class="prvek">
                         <div class="input-group validator-msg-holder js-validated-element-wrapper">
                             <label class="input-group__label" for="email">EMAIL</label>

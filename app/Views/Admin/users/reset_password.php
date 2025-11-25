@@ -1,5 +1,6 @@
 <?php
 use App\Helpers\CSRFHelper;
+use App\Helpers\FlashMessageHelper;
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -15,12 +16,9 @@ $csrfToken = CSRFHelper::generateToken();
                 <div class="prvek">
                     <span class="form-title">Reset hesla</span>
                 </div>
-                <?php if (isset($_SESSION['reset_error'])): ?>
-                <div class="prvek" style="color: red; margin-bottom: 10px;">
-                    <?= $_SESSION['reset_error']; ?>
-                    <?php unset($_SESSION['reset_error']); ?>
-                </div>
-                <?php endif; ?>
+                <?= FlashMessageHelper::showIfSet('reset_error', 'error') ?>
+                <?= FlashMessageHelper::showIfSet('reset_success', 'success') ?>
+                <?= FlashMessageHelper::showIfSet('reset_info', 'info') ?>
                 <div class="prvek">
                     <div class="input-group validator-msg-holder js-validated-element-wrapper">
                         <label class="input-group__label" for="email">Email</label>

@@ -2,69 +2,172 @@
     "news": {
         "titles": [
             {
-                "title": "Olympijští vítězové ve sprintu nemají na mistrovství světa na dráze co ztratit"
+                "title": "Olympijští vítězové ve sprintu nemají na mistrovství světa na dráze co ztratit",
+                "sort_order": 1,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Měl jsem nohu na špatnou stranu. Pozoruhodný návrat Katie Archibaldové ze zlomené nohy na mistrovství světa"
+                "title": "Měl jsem nohu na špatnou stranu. Pozoruhodný návrat Katie Archibaldové ze zlomené nohy na mistrovství světa",
+                "sort_order": 2,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Tadej Pogačar Loreně Wiebesové: Alternativní ceny pro cyklistickou sezónu 2024"
+                "title": "Tadej Pogačar Loreně Wiebesové: Alternativní ceny pro cyklistickou sezónu 2024",
+                "sort_order": 3,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Ještě jsem se úplně neodhodlal k tomu, co dělám - Mark Cavendish odmítá, že by závodil dál, ale příští rok poběží maraton"
+                "title": "Ještě jsem se úplně neodhodlal k tomu, co dělám - Mark Cavendish odmítá, že by závodil dál, ale příští rok poběží maraton",
+                "sort_order": 4,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Profesionální cyklokrosař diskvalifikován a pokutován poté, co rozšlápl kolo soupeře"
+                "title": "Profesionální cyklokrosař diskvalifikován a pokutován poté, co rozšlápl kolo soupeře",
+                "sort_order": 5,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Myslím, že lidé kolem Toma nepomáhají - Geraint Thomas o situaci Toma Pidcocka a Ineos Grenadiers"
+                "title": "Myslím, že lidé kolem Toma nepomáhají - Geraint Thomas o situaci Toma Pidcocka a Ineos Grenadiers",
+                "sort_order": 6,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Tadej Pogačar po čtvrtém titulu na Il Lombardii říká, že útok na Sormanu byl plánovaný"
+                "title": "Tadej Pogačar po čtvrtém titulu na Il Lombardii říká, že útok na Sormanu byl plánovaný",
+                "sort_order": 7,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Tadej Pogačar si po 48kilometrovém sólovém úniku dojel pro čtvrté vítězství na Il Lombardia v řadě"
+                "title": "Tadej Pogačar si po 48kilometrovém sólovém úniku dojel pro čtvrté vítězství na Il Lombardia v řadě",
+                "sort_order": 8,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Tom Pidcock 'vyřazen' z týmu Ineos Grenadiers pro Il Lombardia"
+                "title": "Tom Pidcock 'vyřazen' z týmu Ineos Grenadiers pro Il Lombardia",
+                "sort_order": 9,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Nechci přestat jezdit a závodit - Joss Lowden o těžkém rozhodnutí ukončit kariéru"
+                "title": "Nechci přestat jezdit a závodit - Joss Lowden o těžkém rozhodnutí ukončit kariéru",
+                "sort_order": 10,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             }
         ]
     },
     "tech": {
         "titles": [
             {
-                "title": "Už vás nebaví chodit v cyklistických botách? Ponožky\/obuv ve stylu barefoot jsou prý ideální pro cyklistická dobrodružství a navíc skvělé věci od Uvex, Lezyne, Topeak + Coospo"
+                "title": "Už vás nebaví chodit v cyklistických botách? Ponožky\/obuv ve stylu barefoot jsou prý ideální pro cyklistická dobrodružství a navíc skvělé věci od Uvex, Lezyne, Topeak + Coospo",
+                "sort_order": 11,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Specialized Vado SL 2 Carbon je ultra-prémiové elektrokolo... ale my si nemůžeme pomoct, ale urazit ho"
+                "title": "Specialized Vado SL 2 Carbon je ultra-prémiové elektrokolo... ale my si nemůžeme pomoct, ale urazit ho",
+                "sort_order": 12,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Dokonalá řídítka budou v roce 2025 největším aerodynamickým pokrokem, tvrdí tvůrci... plus regenerační ponožky schválené společností Ineos za 200 liber, nová aplikace pro cyklisty na sociálních sítích + další informace"
+                "title": "Dokonalá řídítka budou v roce 2025 největším aerodynamickým pokrokem, tvrdí tvůrci... plus regenerační ponožky schválené společností Ineos za 200 liber, nová aplikace pro cyklisty na sociálních sítích + další informace",
+                "sort_order": 13,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Pashley uvádí na trh novou kolekci Pathfinder s 3D tištěnými uchy a díly rámu"
+                "title": "Pashley uvádí na trh novou kolekci Pathfinder s 3D tištěnými uchy a díly rámu",
+                "sort_order": 14,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Kola se systémem samonafukovacích\/vyfukovacích pneumatik, která Marianne Vosová použila k vítězství na mistrovství světa ve šotolině, jsou nyní k dispozici k předobjednání za cenu od 3 200 liber"
+                "title": "Kola se systémem samonafukovacích\/vyfukovacích pneumatik, která Marianne Vosová použila k vítězství na mistrovství světa ve šotolině, jsou nyní k dispozici k předobjednání za cenu od 3 200 liber",
+                "sort_order": 15,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Mohou tyto cyklistické šortky z Kickstarteru skutečně snížit obsah kyseliny mléčné o 35 %? Ikonická obuv Sidi a Eroica vzdává hold 70. letům, nejnovější kolaborace Rapha Palace + spousta dalších nových technologií"
+                "title": "Mohou tyto cyklistické šortky z Kickstarteru skutečně snížit obsah kyseliny mléčné o 35 %? Ikonická obuv Sidi a Eroica vzdává hold 70. letům, nejnovější kolaborace Rapha Palace + spousta dalších nových technologií",
+                "sort_order": 16,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Jasná světla, odolné pneumatiky a nový Roubaix s dokonale hladkým chodem: road.cc doporučuje doplněný o nádherných sedm novinek"
+                "title": "Jasná světla, odolné pneumatiky a nový Roubaix s dokonale hladkým chodem: road.cc doporučuje doplněný o nádherných sedm novinek",
+                "sort_order": 17,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Technologie automatického řazení Q'Auto společnosti Shimano bude uvedena na trh v roce 2025, protože výrobce cyklistických komponentů přiznává, že nemůže zlomit pozici společnosti Bosch v oblasti elektrokol"
+                "title": "Technologie automatického řazení Q'Auto společnosti Shimano bude uvedena na trh v roce 2025, protože výrobce cyklistických komponentů přiznává, že nemůže zlomit pozici společnosti Bosch v oblasti elektrokol",
+                "sort_order": 18,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Nejnovější středový motor Bosch Performance Line CX ví, jak strmé je stoupání"
+                "title": "Nejnovější středový motor Bosch Performance Line CX ví, jak strmé je stoupání",
+                "sort_order": 19,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             },
             {
-                "title": "Scott Silence eRide je městské elektrokolo se středovým motorem o hmotnosti 14,5 kg, ale má svou cenu"
+                "title": "Scott Silence eRide je městské elektrokolo se středovým motorem o hmotnosti 14,5 kg, ale má svou cenu",
+                "sort_order": 20,
+                "is_active": 1,
+                "created_at": "2025-11-20 21:19:21",
+                "updated_at": "2025-11-20 21:19:21",
+                "created_by_name": "API"
             }
         ]
+    },
+    "custom": {
+        "titles": []
     }
 }

@@ -1,17 +1,17 @@
 // Inicializace TinyMCE po načtení stránky
 document.addEventListener('DOMContentLoaded', function() {
-    // Počkáme na načtení TinyMCE a SpellChecker
-    if (typeof tinymce !== 'undefined' && typeof SpellChecker !== 'undefined') {
+    // Počkáme na načtení TinyMCE
+    if (typeof tinymce !== 'undefined') {
         initTinyMCE();
     } else {
-        // Pokud TinyMCE nebo SpellChecker není načteno, počkáme
+        // Pokud TinyMCE není načteno, počkáme
         setTimeout(function() {
-            if (typeof tinymce !== 'undefined' && typeof SpellChecker !== 'undefined') {
+            if (typeof tinymce !== 'undefined') {
                 initTinyMCE();
             } else {
-                console.error('TinyMCE nebo SpellChecker se nepodařilo načíst');
+                console.error('TinyMCE se nepodařilo načíst');
             }
-        }, 2000);
+        }, 1000);
     }
 });
 
@@ -41,16 +41,63 @@ function initTinyMCE() {
             // Vytvoření vlastní kontroly pravopisu
             const spellChecker = new SpellChecker();
             
-            // Počkáme na načtení slovníku
-            const checkDictionary = () => {
-                if (spellChecker.isReady()) {
-                    setupSpellCheckButtons(editor, spellChecker);
-                } else {
-                    setTimeout(checkDictionary, 500);
-                }
-            };
+                            // Přidání tlačítka pro kontrolu pravopisu
+                editor.ui.registry.addButton('customspellcheck', {
+                    text: '🔍 Kontrola pravopisu',
+                    tooltip: 'Zkontrolovat pravopis v textu',
+                    onAction: function() {
+                        const content = editor.getContent({format: 'text'});
+                        const misspelled = spellChecker.checkText(content);
+                        
+                        if (misspelled.length > 0) {
+                            // Vytvoření lepšího dialogu s chybami
+                            let errorText = `Nalezeno ${misspelled.length} chyb:\n\n`;
+                            misspelled.forEach((word, index) => {
+                                errorText += `${index + 1}. ${word}\n`;
+                            });
+                            errorText += '\nChyby budou zvýrazněny v textu červeně.';
+                            
+                            // Použití TinyMCE dialogu
+                            editor.windowManager.alert(errorText, function() {
+                                // Zvýraznění chybných slov v editoru
+                                spellChecker.highlightErrors(editor, misspelled);
+                            });
+                        } else {
+                            editor.windowManager.alert('✅ Žádné chyby nenalezeny!', function() {});
+                        }
+                    }
+                });
+                
+                // Přidání tlačítka pro odstranění zvýraznění
+                editor.ui.registry.addButton('removespellcheck', {
+                    text: '🗑️ Odstranit zvýraznění',
+                    tooltip: 'Odstranit zvýraznění chyb pravopisu',
+                    onAction: function() {
+                        spellChecker.removeHighlighting(editor);
+                        editor.windowManager.alert('Zvýraznění chyb bylo odstraněno.', function() {});
+                    }
+                });
             
-            checkDictionary();
+            // Přidání klávesové zkratky Ctrl+Shift+S pro kontrolu pravopisu
+            editor.addShortcut('meta+shift+s', 'Kontrola pravopisu', function() {
+                // Spustit vlastní kontrolu pravopisu
+                const content = editor.getContent({format: 'text'});
+                const misspelled = spellChecker.checkText(content);
+                
+                if (misspelled.length > 0) {
+                    let errorText = `Nalezeno ${misspelled.length} chyb:\n\n`;
+                    misspelled.forEach((word, index) => {
+                        errorText += `${index + 1}. ${word}\n`;
+                    });
+                    errorText += '\nChyby budou zvýrazněny v textu červeně.';
+                    
+                    editor.windowManager.alert(errorText, function() {
+                        spellChecker.highlightErrors(editor, misspelled);
+                    });
+                } else {
+                    editor.windowManager.alert('✅ Žádné chyby nenalezeny!', function() {});
+                }
+            });
         },
 
         images_upload_handler: function (blobInfo, progress) {
@@ -73,68 +120,5 @@ function initTinyMCE() {
                 .catch(error => reject(`Chyba při uploadu: ${error.message}`));
             });
         },
-    });
-}
-
-/**
- * Nastaví tlačítka pro kontrolu pravopisu
- */
-function setupSpellCheckButtons(editor, spellChecker) {
-    // Přidání tlačítka pro kontrolu pravopisu
-    editor.ui.registry.addButton('customspellcheck', {
-        text: '🔍 Kontrola pravopisu',
-        tooltip: 'Zkontrolovat pravopis v textu',
-        onAction: function() {
-            const content = editor.getContent({format: 'text'});
-            const misspelled = spellChecker.checkText(content);
-            
-            if (misspelled.length > 0) {
-                // Vytvoření lepšího dialogu s chybami
-                let errorText = `Nalezeno ${misspelled.length} chyb:\n\n`;
-                misspelled.forEach((word, index) => {
-                    errorText += `${index + 1}. ${word}\n`;
-                });
-                errorText += '\nChyby budou zvýrazněny v textu červeně.';
-                
-                // Použití TinyMCE dialogu
-                editor.windowManager.alert(errorText, function() {
-                    // Zvýraznění chybných slov v editoru
-                    spellChecker.highlightErrors(editor, misspelled);
-                });
-            } else {
-                editor.windowManager.alert('✅ Žádné chyby nenalezeny!', function() {});
-            }
-        }
-    });
-    
-    // Přidání tlačítka pro odstranění zvýraznění
-    editor.ui.registry.addButton('removespellcheck', {
-        text: '🗑️ Odstranit zvýraznění',
-        tooltip: 'Odstranit zvýraznění chyb pravopisu',
-        onAction: function() {
-            spellChecker.removeHighlighting(editor);
-            editor.windowManager.alert('Zvýraznění chyb bylo odstraněno.', function() {});
-        }
-    });
-
-    // Přidání klávesové zkratky Ctrl+Shift+S pro kontrolu pravopisu
-    editor.addShortcut('meta+shift+s', 'Kontrola pravopisu', function() {
-        // Spustit vlastní kontrolu pravopisu
-        const content = editor.getContent({format: 'text'});
-        const misspelled = spellChecker.checkText(content);
-        
-        if (misspelled.length > 0) {
-            let errorText = `Nalezeno ${misspelled.length} chyb:\n\n`;
-            misspelled.forEach((word, index) => {
-                errorText += `${index + 1}. ${word}\n`;
-            });
-            errorText += '\nChyby budou zvýrazněny v textu červeně.';
-            
-            editor.windowManager.alert(errorText, function() {
-                spellChecker.highlightErrors(editor, misspelled);
-            });
-        } else {
-            editor.windowManager.alert('✅ Žádné chyby nenalezeny!', function() {});
-        }
     });
 }

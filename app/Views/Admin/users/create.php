@@ -1,5 +1,6 @@
 <?php
 use App\Helpers\CSRFHelper;
+use App\Helpers\FlashMessageHelper;
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -10,17 +11,13 @@ $csrfToken = CSRFHelper::generateToken();
         <img src="/assets/graphics/logo_text_cyklistickey.png" alt="Cyklistickey logo">
     </div>
     <div class="inputy">
-        <form method="POST" action="/register/submit">
+        <form method="POST" action="/register/submit" enctype="application/x-www-form-urlencoded">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                 <div class="prvek">
                     <span class="form-title">Registrace</span>
                 </div>
-                <?php if (isset($_SESSION['registration_error'])): ?>
-                <div class="prvek" style="color: red; margin-bottom: 10px;">
-                    <?= $_SESSION['registration_error']; ?>
-                    <?php unset($_SESSION['registration_error']); ?>
-                </div>
-                <?php endif; ?>
+                <?= FlashMessageHelper::showIfSet('registration_error', 'error') ?>
+                <?= FlashMessageHelper::showIfSet('login_success', 'success') ?>
                 <div class="prvek">
                     <div class="input-group validator-msg-holder js-validated-element-wrapper">
                         <label class="input-group__label" for="email">EMAIL</label>

@@ -149,7 +149,7 @@ class LoginController
 
         if (!$user) {
             @LogHelper::login("Login failed - User not found - Email: " . $email . " - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
-            $_SESSION['login_error'] = 'Uživatel neexistuje!';
+            $_SESSION['login_error'] = 'Uživatel s tímto e-mailem neexistuje. Zkontrolujte prosím zadanou e-mailovou adresu.';
             header('Location: /login');
             exit();
         }
@@ -159,7 +159,7 @@ class LoginController
 
         if (!password_verify($password, $user['heslo'])) {
             @LogHelper::login("Login failed - Wrong password - Email: " . $email . ", User ID: " . $user['id'] . " - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
-            $_SESSION['login_error'] = 'Špatné heslo!';
+            $_SESSION['login_error'] = 'Nesprávné heslo. Zkuste to prosím znovu nebo použijte odkaz pro obnovu hesla.';
             header('Location: /login');
             exit();  
         }
@@ -169,7 +169,7 @@ class LoginController
         // Kontrola role - pouze uživatelé s rolí > 0 mají přístup do administrace
         if ($user['role'] <= 0) {
             @LogHelper::login("Login failed - Insufficient permissions - Email: " . $email . ", User ID: " . $user['id'] . ", Role: " . $user['role'] . " - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
-            $_SESSION['login_error'] = 'Nemáte oprávnění pro přístup do administrace!';
+            $_SESSION['login_error'] = 'Váš účet čeká na schválení administrátorem. Po schválení budete moci přistupovat do administrace.';
             header('Location: /login');
             exit();
         }
@@ -317,21 +317,35 @@ class LoginController
 
         // Validace povinných polí
         if (empty($data['email']) || empty($data['heslo']) || empty($data['confirm_heslo']) || empty($data['name']) || empty($data['surname'])) {
-            $_SESSION['registration_error'] = 'Vyplňte všechna povinná pole.';
+            $_SESSION['registration_error'] = 'Prosím vyplňte všechna povinná pole (email, jméno, příjmení, heslo a potvrzení hesla).';
+            header('Location: /register');
+            exit;
+        }
+
+        // Validace formátu emailu
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['registration_error'] = 'Zadejte prosím platnou e-mailovou adresu.';
             header('Location: /register');
             exit;
         }
 
         // Ověření shody hesel
         if ($data['heslo'] !== $data['confirm_heslo']) {
-            $_SESSION['registration_error'] = 'Hesla se neshodují.';
+            $_SESSION['registration_error'] = 'Hesla se neshodují. Zkontrolujte, že jste zadali stejné heslo v obou polích.';
+            header('Location: /register');
+            exit;
+        }
+
+        // Kontrola minimální délky hesla
+        if (strlen($data['heslo']) < 6) {
+            $_SESSION['registration_error'] = 'Heslo musí obsahovat alespoň 6 znaků.';
             header('Location: /register');
             exit;
         }
 
         // Kontrola, zda e-mail již existuje
         if ($this->model->checkEmailExists($data['email'])) {
-            $_SESSION['registration_error'] = 'Účet s tímto e-mailem již existuje.';
+            $_SESSION['registration_error'] = 'Účet s tímto e-mailem již existuje. Zkuste se přihlásit nebo použijte jiný e-mail.';
             header('Location: /register');
             exit;
         }
@@ -339,11 +353,11 @@ class LoginController
         // Uložení uživatele do databáze
         if ($this->model->createUser($data)) {
             @LogHelper::login("User registered - Email: " . $data['email'] . ", Name: " . $data['name'] . " " . $data['surname']);
-            $_SESSION['login_success'] = 'Registrace byla úspěšná.';
+            $_SESSION['login_success'] = 'Registrace byla úspěšná! Nyní se můžete přihlásit. Váš účet čeká na schválení administrátorem.';
             header('Location: /login');
             exit;
         } else {
-            $_SESSION['registration_error'] = 'Chyba při registraci. Zkuste to znovu.';
+            $_SESSION['registration_error'] = 'Chyba při registraci. Zkuste to prosím znovu. Pokud problém přetrvá, kontaktujte administrátora.';
             header('Location: /register');
             exit;
         }
@@ -371,7 +385,14 @@ class LoginController
         $email = trim($_POST['email'] ?? '');
         
         if (empty($email)) {
-            $_SESSION['reset_error'] = 'Vyplňte email!';
+            $_SESSION['reset_error'] = 'Prosím vyplňte e-mailovou adresu.';
+            header('Location: /reset-password');
+            exit();
+        }
+
+        // Validace formátu emailu
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['reset_error'] = 'Zadejte prosím platnou e-mailovou adresu.';
             header('Location: /reset-password');
             exit();
         }
@@ -382,7 +403,7 @@ class LoginController
 
         if (!$user) {
             error_log("ERROR: Uživatel s emailem " . $email . " neexistuje");
-            $_SESSION['reset_error'] = 'Účet s tímto e-mailem neexistuje.';
+            $_SESSION['reset_error'] = 'Účet s tímto e-mailem neexistuje. Zkontrolujte prosím zadanou e-mailovou adresu.';
             header('Location: /reset-password');
             exit();
         }
@@ -400,7 +421,7 @@ class LoginController
         
         if (!$tokenSaved) {
             error_log("ERROR: Chyba při ukládání tokenu do databáze");
-            $_SESSION['reset_error'] = 'Chyba při ukládání tokenu do databáze.';
+            $_SESSION['reset_error'] = 'Chyba při generování resetovacího odkazu. Zkuste to prosím znovu.';
             header('Location: /reset-password');
             exit();
         }
@@ -463,7 +484,11 @@ class LoginController
         $resetInfo = $this->model->getValidResetToken($token);
         
         if (!$resetInfo) {
-            echo "<script>alert('Neplatný nebo expirovaný token pro reset hesla.'); window.location.href='/reset-password';</script>";
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            $_SESSION['reset_error'] = 'Neplatný nebo expirovaný token pro reset hesla. Požádejte prosím o nový odkaz.';
+            header('Location: /reset-password');
             exit;
         }
         
@@ -478,6 +503,10 @@ class LoginController
 
     public function saveNewPassword()
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $token = trim($_POST['token'] ?? '');
         $newPassword = trim($_POST['new_password'] ?? '');
         $confirmPassword = trim($_POST['confirm_password'] ?? '');
@@ -485,20 +514,30 @@ class LoginController
         // Kontrola přítomnosti povinných údajů
         if (empty($token)) {
             error_log("ERROR: Chybí token v požadavku pro reset hesla.");
-            echo "<script>alert('Chybí token pro změnu hesla.'); window.location.href='/reset-password';</script>";
-            return;
+            $_SESSION['reset_error'] = 'Chybí token pro změnu hesla. Požádejte prosím o nový odkaz.';
+            header('Location: /reset-password');
+            exit;
         }
 
         if (empty($newPassword) || empty($confirmPassword)) {
             error_log("ERROR: Chybí heslo v požadavku pro reset hesla. Token: " . $token);
-            echo "<script>alert('Prosím vyplňte obě pole s heslem.'); window.history.back();</script>";
-            return;
+            $_SESSION['reset_error'] = 'Prosím vyplňte obě pole s heslem.';
+            header('Location: /reset-password?token=' . urlencode($token));
+            exit;
+        }
+
+        // Kontrola minimální délky hesla
+        if (strlen($newPassword) < 6) {
+            $_SESSION['reset_error'] = 'Heslo musí obsahovat alespoň 6 znaků.';
+            header('Location: /reset-password?token=' . urlencode($token));
+            exit;
         }
 
         if ($newPassword !== $confirmPassword) {
             error_log("ERROR: Hesla se neshodují při resetu hesla. Token: " . $token);
-            echo "<script>alert('Hesla se neshodují.'); window.history.back();</script>";
-            return;
+            $_SESSION['reset_error'] = 'Hesla se neshodují. Zkontrolujte, že jste zadali stejné heslo v obou polích.';
+            header('Location: /reset-password?token=' . urlencode($token));
+            exit;
         }
 
         // Získání dat o resetu hesla
@@ -507,16 +546,18 @@ class LoginController
         if (!$resetData) {
             @LogHelper::login("Password reset failed - Invalid or expired token");
             error_log("ERROR: Token pro reset hesla nebyl nalezen v databázi nebo expiroval: " . $token);
-            echo "<script>alert('Token je neplatný nebo expirovaný.'); window.location.href='/reset-password';</script>";
-            return;
+            $_SESSION['reset_error'] = 'Token je neplatný nebo expirovaný. Požádejte prosím o nový odkaz.';
+            header('Location: /reset-password');
+            exit;
         }
 
         // Kontrola, zda e-mail existuje v DB
         $user = $this->model->getByEmail($resetData['email']);
         if (!$user) {
             error_log("ERROR: Uživatel s emailem " . $resetData['email'] . " nebyl nalezen.");
-            echo "<script>alert('Účet s tímto e-mailem neexistuje.'); window.location.href='/reset-password';</script>";
-            return;
+            $_SESSION['reset_error'] = 'Účet s tímto e-mailem neexistuje.';
+            header('Location: /reset-password');
+            exit;
         }
 
         // Aktualizace hesla podle user_id
@@ -528,11 +569,15 @@ class LoginController
             $this->model->deleteResetToken($token);
             @LogHelper::login("Password reset completed - User ID: " . $user['id'] . ", Email: " . $resetData['email']);
             error_log("SUCCESS: Heslo bylo úspěšně změněno pro uživatele ID: " . $user['id']);
-            echo "<script>alert('Heslo bylo úspěšně změněno.'); window.location.href='/login';</script>";
+            $_SESSION['login_success'] = 'Heslo bylo úspěšně změněno! Nyní se můžete přihlásit s novým heslem.';
+            header('Location: /login');
+            exit;
         } else {
             @LogHelper::login("Password reset failed - Update error for User ID: " . $user['id']);
             error_log("ERROR: Chyba při změně hesla pro uživatele ID: " . $user['id']);
-            echo "<script>alert('Chyba při změně hesla.'); window.location.href='/reset-password';</script>";
+            $_SESSION['reset_error'] = 'Chyba při změně hesla. Zkuste to prosím znovu.';
+            header('Location: /reset-password?token=' . urlencode($token));
+            exit;
         }
     }
 }

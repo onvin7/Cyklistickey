@@ -164,83 +164,20 @@ try {
         exit;
     }
     
-    // Omezit počet, pokud je zadán limit (před zobrazením tabulky)
-    $clanky_audio_to_process = $clanky_audio;
+    // Zobrazit prvních 10 záznamů pro kontrolu
+    zprava("");
+    zprava("📋 Prvních 10 záznamů k zpracování:");
+    foreach (array_slice($clanky_audio, 0, 10) as $item) {
+        zprava("   - Článek ID: {$item['id_clanku']}, soubor: {$item['nazev_souboru']}");
+    }
+    zprava("");
+    
+    // Omezit počet, pokud je zadán limit
     if ($limit > 0 && $total > $limit) {
-        $clanky_audio_to_process = array_slice($clanky_audio, 0, $limit);
+        $clanky_audio = array_slice($clanky_audio, 0, $limit);
         zprava("⚠️ Zpracováno bude jen prvních " . $limit . " článků (kvůli limitu).");
+        zprava("");
     }
-    
-    // Zobrazit kompletní tabulku se všemi záznamy
-    zprava("");
-    zprava("📋 Kompletní přehled všech záznamů k zpracování:");
-    zprava("");
-    
-    // HTML tabulka
-    if (php_sapi_name() !== 'cli') {
-        echo '<style>
-            table.migrate-table {
-                border-collapse: collapse;
-                width: 100%;
-                max-width: 1200px;
-                margin: 20px 0;
-                font-family: Arial, sans-serif;
-                font-size: 14px;
-            }
-            table.migrate-table th {
-                background-color: #4CAF50;
-                color: white;
-                padding: 12px;
-                text-align: left;
-                border: 1px solid #ddd;
-            }
-            table.migrate-table td {
-                padding: 10px;
-                border: 1px solid #ddd;
-            }
-            table.migrate-table tr:nth-child(even) {
-                background-color: #f2f2f2;
-            }
-            table.migrate-table tr:hover {
-                background-color: #e8f5e9;
-            }
-            .table-container {
-                max-height: 600px;
-                overflow-y: auto;
-                border: 1px solid #ddd;
-                margin: 20px 0;
-            }
-        </style>';
-        echo '<div class="table-container">';
-        echo '<table class="migrate-table">';
-        echo '<thead><tr><th>ID článku</th><th>Název souboru</th></tr></thead>';
-        echo '<tbody>';
-        
-        foreach ($clanky_audio_to_process as $item) {
-            echo '<tr>';
-            echo '<td>' . htmlspecialchars($item['id_clanku']) . '</td>';
-            echo '<td>' . htmlspecialchars($item['nazev_souboru']) . '</td>';
-            echo '</tr>';
-        }
-        
-        echo '</tbody>';
-        echo '</table>';
-        echo '</div>';
-    } else {
-        // CLI výstup - jednoduchá tabulka
-        zprava("ID článku | Název souboru");
-        zprava(str_repeat("-", 80));
-        foreach ($clanky_audio_to_process as $item) {
-            zprava(sprintf("%-10s | %s", $item['id_clanku'], $item['nazev_souboru']));
-        }
-    }
-    
-    zprava("");
-    zprava("Celkem záznamů v tabulce: " . count($clanky_audio_to_process));
-    zprava("");
-    
-    // Uložit omezený seznam pro zpracování
-    $clanky_audio = $clanky_audio_to_process;
     
 } catch (Exception $e) {
     zprava("❌ Chyba při načítání článků: " . $e->getMessage());
