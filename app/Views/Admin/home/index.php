@@ -12,9 +12,14 @@
                         <br>
                         <small class="text-muted">Publikováno: <?= htmlspecialchars($article['datum']) ?></small>
                     </div>
-                    <a href="/admin/articles/edit/<?= htmlspecialchars($article['id']) ?>" class="btn btn-action">
-                        <i class="fa-solid fa-pen"></i> Upravit
-                    </a>
+                    <div style="display: flex; gap: 8px;">
+                        <a href="/admin/articles/preview/<?= htmlspecialchars($article['id']) ?>" class="btn btn-success text-white" target="_blank">
+                            <i class="fa-solid fa-eye"></i> Náhled
+                        </a>
+                        <a href="/admin/articles/edit/<?= htmlspecialchars($article['id']) ?>" class="btn btn-action">
+                            <i class="fa-solid fa-pen"></i> Upravit
+                        </a>
+                    </div>
                 </li>
             <?php endforeach; ?>
         </ul>
@@ -49,9 +54,14 @@
                                     <?= htmlspecialchars($article['autor_prijmeni'] ?? '') ?>
                                 </td>
                                 <td>
-                                    <a href="/admin/articles/edit/<?= htmlspecialchars($article['id']) ?>" class="btn btn-action btn-sm">
-                                        <i class="fa-solid fa-pen"></i> Upravit
-                                    </a>
+                                    <div style="display: flex; gap: 5px;">
+                                        <a href="/admin/articles/preview/<?= htmlspecialchars($article['id']) ?>" class="btn btn-success btn-sm text-white" target="_blank">
+                                            <i class="fa-solid fa-eye"></i> Náhled
+                                        </a>
+                                        <a href="/admin/articles/edit/<?= htmlspecialchars($article['id']) ?>" class="btn btn-action btn-sm">
+                                            <i class="fa-solid fa-pen"></i> Upravit
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
