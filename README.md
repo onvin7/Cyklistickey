@@ -138,12 +138,14 @@ Nechtěl bych ti to komplikovat, takže jsem to udělal tak, aby to fungovalo pr
 - 🎯 **Click tracking analytics** - Detailní metriky kliků (IP, geolokace, device, referrer, scroll depth)
 - 📝 **Logování** - Access logs, admin logs, error logs pro monitoring
 - 🎨 **Správa reklam** - Upload a správa bannerů v článcích (časově omezené, frekvenční)
+- 🏷️ **Automatický výběr kategorie** - Pokud autor při vytváření článku nevybere kategorii, automaticky se přiřadí výchozí kategorie "Aktuality"
 
 ### 🔧 Technické funkce
 
 - 🔒 **Bezpečnost** - CSRF protection, SQL injection prevention, XSS protection, password hashing
 - ⚡ **Performance** - Caching (sitemap cache), optimalizace dotazů, indexing, gzip compression
 - 🌐 **SEO pokročilé** - Structured Data (JSON-LD), Open Graph, Twitter Cards, Image SEO, News sitemap
+- 🔄 **301 Redirecty** - Automatické 301 redirecty pro staré URL (zachování SEO hodnoty, zpětná kompatibilita)
 - 📊 **Analytics ready** - Meta Pixel (Facebook), Google Analytics připraveno k zapojení
 - 🔄 **Migrace dat** - Nástroje a skripty pro migraci dat ze staré databáze
 - 🐍 **Python skripty** - Fuzzy matching algoritmus pro automatické párování audio souborů s články
@@ -285,7 +287,7 @@ $routes = [
 - `RateLimitHelper.php` - ochrana proti spamu a DDoS
 - `AISEOHelper.php` - AI generování SEO meta tagů (volitelné)
 - `LogHelper.php` - logování událostí do souborů
-- `RedirectHelper.php` - bezpečné redirecty s ochranou proti open redirect
+- `RedirectHelper.php` - bezpečné 301/302 redirecty s ochranou proti open redirect, mapování starých URL na nové (např. `/race` → `/events`)
 
 ---
 
@@ -519,6 +521,9 @@ private $password = getenv('DB_PASS') ?: '';
 | GET | `/user/{username}/articles` | Články autora | `username` - URL jméno |
 | GET | `/events` | Seznam eventů/závodů | - |
 | GET | `/events/{year}/{name}` | Detail eventu | `year`, `name` |
+| GET | `/race` | ⚠️ 301 Redirect na `/events` | - |
+| GET | `/race/cyklistickey` | ⚠️ 301 Redirect na `/events` | - |
+| GET | `/race/bezeckey` | ⚠️ 301 Redirect na `/events` | - |
 | GET | `/kontakt` | Kontaktní stránka | - |
 | GET | `/login` | Login formulář | - |
 | POST | `/login/submit` | Přihlášení | `email`, `password` |
@@ -544,7 +549,7 @@ Všechny admin endpointy vyžadují autentizaci a začínají `/admin/`. Příst
 |--------|----------|-------|------|
 | GET | `/admin/articles` | Seznam článků | 1, 2, 3 |
 | GET | `/admin/articles/create` | Formulář nového článku | 1, 2, 3 |
-| POST | `/admin/articles/store` | Uložení nového článku | 1, 2, 3 |
+| POST | `/admin/articles/store` | Uložení nového článku (automaticky přiřadí kategorii "Aktuality" pokud není vybrána) | 1, 2, 3 |
 | GET | `/admin/articles/edit/{id}` | Editace článku | 1, 2, 3 |
 | POST | `/admin/articles/update/{id}` | Update článku | 1, 2, 3 |
 | POST | `/admin/articles/delete/{id}` | Smazání článku | 1, 2, 3 |
@@ -733,6 +738,27 @@ Systém má zabudovanou pokročilou SEO optimalizaci na světové úrovni.
 - ✅ **Image SEO** - Alt texty, sitemap s obrázky
 - ✅ **Mobile-friendly** - Plně responzivní design
 - ✅ **Page Speed** - Optimalizace rychlosti načítání
+- ✅ **301 Redirecty** - Automatické 301 redirecty pro staré URL (zachování SEO hodnoty, zpětná kompatibilita)
+
+### 301 Redirecty pro SEO
+
+Systém automaticky přesměrovává staré URL na nové pomocí 301 redirectů, což zachovává SEO hodnotu a zajišťuje zpětnou kompatibilitu:
+
+```php
+// Příklad: Staré race URL → nové events URL
+// /race → /events (301 redirect)
+// /race/cyklistickey → /events (301 redirect)
+// /race/bezeckey → /events (301 redirect)
+
+// Použití RedirectHelper
+RedirectHelper::permanent('/events'); // 301 redirect
+```
+
+**Výhody:**
+- ✅ Zachování SEO hodnoty starých odkazů z Google
+- ✅ Zpětná kompatibilita se starými sdílenými odkazy
+- ✅ Automatické mapování starých URL na nové struktury
+- ✅ Bezpečné redirecty s ochranou proti open redirect útokům
 
 ### SEOHelper třída
 
