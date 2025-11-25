@@ -162,6 +162,7 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `heslo` varchar(255) NOT NULL,
   `role` tinyint(1) NOT NULL,
+  `public_visible` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Zobrazit uzivatele v sekci redakce (1=ano, 0=ne)',
   `name` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
   `profil_foto` varchar(255) NOT NULL,
