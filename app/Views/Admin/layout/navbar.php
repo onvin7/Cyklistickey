@@ -99,13 +99,13 @@ $activeLinks = [
                         <a class="nav-link <?= $activeLinks['promotions'] ? 'active' : '' ?>" href="/admin/promotions">Propagace</a>
                     </li>
                     <?php endif; ?>
-                    <?php /* TODO: Odkomentovat po dokončení implementace správy reklam
                     <?php if ($currentRole === 3): // Reklamy jen pro admina ?>
                     <li class="nav-item">
-                        <a class="nav-link <?= $activeLinks['ads'] ? 'active' : '' ?>" href="/admin/ads">Reklamy</a>
+                        <a class="nav-link <?= $activeLinks['ads'] ? 'active' : '' ?>" href="/admin/ads">
+                            <i class="fas fa-ad me-2"></i>Reklamy
+                        </a>
                     </li>
                     <?php endif; ?>
-                    */ ?>
                     <?php if ($currentRole === 3): // Flash News jen pro admina ?>
                     <li class="nav-item">
                         <a class="nav-link <?= $activeLinks['flashnews'] ? 'active' : '' ?>" href="/admin/flashnews">Flash News</a>
