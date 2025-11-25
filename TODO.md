@@ -30,11 +30,12 @@
   - Zachovat SEO hodnotu starých odkazů z Google
   - Zachovat funkčnost starých sdílených odkazů
   - Mapovat staré URL na nové struktury
-- [ ] **Přidat redirecty do `.htaccess` nebo PHP routing**
+- [ ] **Přidat redirecty do PHP routing** (redirecty jsou přes routing, ne `.htaccess`)
   - Staré URL struktury → nové URL struktury
   - Ověřit, že všechny důležité stránky mají redirecty
   - Zmapovat všechny staré "kolínky" (staré odkazy) na nové URL
-- **Poznámka:** V `.htaccess` jsou základní redirecty, ale chybí specifické pro staré URL/kolínky
+  - **Potřeba:** Vytvořit `RedirectHelper` nebo přidat redirecty do `web/index.php`
+- **Poznámka:** Redirecty jsou implementovány přes PHP routing, ne přes `.htaccess`
 
 ### 3. Odkaz na e-shop (hlavička + patička)
 - [x] **Odkaz na e-shop v hlavičce** - ✅ HOTOVO
@@ -52,10 +53,10 @@
   - Stránka existuje: `app/Views/Web/home/appka.php`
 
 ### 5. Odstranit popup
-- [ ] **Zkontrolovat a odstranit rušivé popupy**
+- [x] **Zkontrolovat a odstranit rušivé popupy** - ✅ HOTOVO
   - UX zlepšení, odstranění rušivého elementu
-  - Ověřit, že nejsou žádné modální okna nebo popupy, které ruší uživatelský zážitek
-- **Poznámka:** V kódu nebyly nalezeny žádné popupy, možná už byly odstraněny
+  - Ověřeno: V kódu nebyly nalezeny žádné popupy v `app/Views/Web`
+  - Žádné modální okna nebo popupy, které by rušily uživatelský zážitek
 
 ### 6. Přejmenování „race" na „events"
 - [x] **Frontend routing** - ✅ HOTOVO
@@ -91,36 +92,47 @@
 
 ### 9. Automatický výběr kategorie při vytváření článku
 - [ ] **Přidat automaticky vybranou kategorii při vytváření článku**
-  - Když autor nevybere kategorii (nikdo nic nezadá), automaticky se vybere kategorie
-  - Možnosti: použít výchozí kategorii, nebo nejčastěji používanou kategorii autora
-  - Upravit `app/Controllers/Admin/ArticleAdminController.php` (metoda `store`)
+  - Když autor nevybere kategorii (nikdo nic nezadá), automaticky se vybere kategorie "Aktuality" (ID: 1)
+  - Upravit `app/Controllers/Admin/ArticleAdminController.php` (metoda `store`, řádek 157-159)
   - Zajistit, že každý článek má alespoň jednu kategorii
 - **Současný stav:** Kategorie je volitelná, pokud není vybrána, článek nemá kategorii
+- **Potřeba:** Přidat logiku: pokud `empty($postData['kategorie'])`, automaticky přidat kategorii ID 1 ("Aktuality")
 
 ### 10. Odstranit kategorii „nevybráno"
-- [ ] **Odstranit kategorii "Nevybráno" z databáze**
+- [x] **Odstranit kategorii "Nevybráno" z databáze** - ✅ HOTOVO (podle uživatele)
   - Úklid taxonomie, méně chyb
   - Ověřit, že žádné články nejsou přiřazeny k této kategorii
   - Pokud jsou, přesunout je do jiné kategorie nebo odstranit vazby
-- **Současný stav:** Kategorie "Nevybráno" (id: 6, url: 'nevybrano') stále existuje v databázi
+- **Poznámka:** Uživatel potvrdil, že je hotovo. Kategorie "Nevybráno" (id: 6, url: 'nevybrano') by již neměla existovat v databázi
 
 ### 11. Počítání prokliků v článku
 - [x] **Click tracking systém** - ✅ HOTOVO
   - Controller: `app/Controllers/Web/LinkTrackingController.php`
   - Model: `app/Models/LinkClickEvent.php`
+  - Helper: `app/Helpers/LinkTrackingHelper.php`
   - Tabulka: `link_click_events` (detailní tracking)
   - Tabulka: `link_clicks` (agregované statistiky)
   - Admin rozhraní: `app/Controllers/Admin/LinkClicksAdminController.php`
 - [x] **Zjištění, na co lidi opravdu klikají** - ✅ HOTOVO
   - Sledování všech kliků na odkazy v článcích
   - Detailní metriky (IP, User Agent, Geolokace, čas, scroll, atd.)
+- **Návrhy na vylepšení (volitelné):**
+  - Asynchronní geolokace (neblokuje redirect)
+  - Agregace dat pro rychlejší dotazy
+  - Dashboard s grafy (Chart.js)
+  - Export dat do CSV/Excel
+  - Filtrování botů (přeskočit ukládání)
+  - Rate limiting na IP adresu
 
 ### 12. Gramatická kontrola v editoru
-- [ ] **Implementovat gramatickou kontrolu**
-  - Pomoc autorům s pravopisem
-  - Možnosti: LanguageTool API, nebo jiná služba
-  - Integrace do TinyMCE editoru
-- **Soubor:** `web/js/tinymce-config.js` (upravit konfiguraci TinyMCE)
+- [x] **Základní kontrola pravopisu** - ✅ HOTOVO
+  - SpellChecker (hunspell) implementován v `web/js/tinymce-config.js`
+  - Tlačítka pro kontrolu pravopisu a odstranění zvýraznění
+  - Klávesová zkratka Ctrl+Shift+S
+- [ ] **Pokročilá gramatická kontrola** - ⚠️ ČÁSTEČNĚ
+  - LanguageTool API pro pokročilou gramatickou kontrolu (volitelné vylepšení)
+  - Současný stav: základní kontrola pravopisu funguje, pokročilá gramatika chybí
+- **Soubor:** `web/js/tinymce-config.js` (základní kontrola je implementována)
 
 ### 13. Kompletní SEO (titles, popisky, AI modely, helm modely, indexace Google)
 - [x] **Základní SEO implementace** - ✅ HOTOVO
@@ -133,14 +145,15 @@
   - Robots.txt optimalizace
 - [ ] **Indexace Google** - ⚠️ ČÁSTEČNĚ
   - Udělat kompletní SEO, aby to vyšlo indexovat od Googlu
-  - Ověřit web v Google Search Console
-  - Odeslat sitemapy do Google Search Console
-  - Přidat do Google News Publisher Center
+  - **Chybí:** Ověřit web v Google Search Console
+  - **Chybí:** Odeslat sitemapy do Google Search Console
+  - **Chybí:** Přidat do Google News Publisher Center
   - Zkontrolovat, že všechny stránky jsou indexovatelné
 - [ ] **AI modely pro SEO** - ⚠️ ČÁSTEČNĚ
   - AISEOHelper existuje: `app/Helpers/AISEOHelper.php`
-  - Potřeba ověřit, že je plně funkční a integrovaný
-  - SEO pro všechny AI modely, aby to šlo najít co nejlíp
+  - AISEOHelper je volitelně používán v SEOHelper (pokud existuje)
+  - **Chybí:** Aktivní použití AISEOHelper ve všech kontrolerech pro optimalizaci
+  - **Chybí:** Plná integrace pro všechny AI modely
 - [x] **Helm modely (HTML head)** - ✅ HOTOVO
   - Kompletní SEO meta tagy v `app/Views/Web/layouts/base.php`
   - SEO pro všechny helm modely, aby to šlo najít co nejlíp
@@ -148,18 +161,16 @@
 ### 14. Integrace Meta Pixelu a SEO (jako v realitách)
 - [x] **Meta Pixel (Facebook Pixel) tracking** - ✅ HOTOVO
   - Meta Pixel ID nastaveno v `web/config/seo_config.json` (1295970118998945)
-  - Přidat Pixel a SEO jaké máš v realitách
-  - Meta Pixel kód vložen do `app/Views/Web/layouts/base.php`
+  - Meta Pixel kód vložen do `app/Views/Web/layouts/base.php` (řádek 121-139)
   - Automatické trackování PageView na všech stránkách
-  - Měření a remarketing funkční
+  - TrackingHelper podporuje Meta Pixel generování
+  - **Doporučení:** Ověřit funkčnost v Facebook Events Manager a pomocí Facebook Pixel Helper
+  - **Doporučení:** Přidat custom eventy (ViewContent, Lead) pro lepší tracking
 - [x] **SEO implementace (jako v realitách)** - ✅ HOTOVO
   - Kompletní SEO meta tagy
   - Structured Data
   - Sitemapy
-  - Google Search Console připraveno
-  - Meta Pixel kód vložen do `app/Views/Web/layouts/base.php`
-  - Automatické trackování PageView na všech stránkách
-  - Měření a remarketing funkční
+  - Google Search Console připraveno (ale chybí ověření)
   - Stejné jako máš v realitách
 - [x] **SEO konfigurace** - ✅ HOTOVO
   - SEO nastavení v `web/config/seo_config.json`
