@@ -278,11 +278,16 @@
 - [ ] (Volitelné) Odstranit staré PHP soubory závodů
 
 ### 5. Click Tracking - GDPR
-- [ ] Implementovat anonymizaci IP adres (poslední oktet = 0)
-- [ ] Nebo hashování IP adres
-- [ ] Nebo ukládání pouze první 3 oktety
-- [ ] Přidat informace o tracking do cookies/privacy policy
-- [ ] Aktuálně se IP adresy ukládají v plné formě - **DŮLEŽITÉ PRO GDPR!**
+- [x] **Implementovat anonymizaci IP adres** - ✅ HOTOVO
+  - Anonymizace posledního oktetu pro IPv4 (192.168.1.123 → 192.168.1.0)
+  - Anonymizace posledních 80 bitů pro IPv6 (poslední 5 hexadecimálních skupin)
+  - IPAnonymizerHelper vytvořen: `app/Helpers/IPAnonymizerHelper.php`
+  - LinkTrackingController upraven: `app/Controllers/Web/LinkTrackingController.php`
+  - IP adresy se anonymizují před uložením do databáze
+  - Geolokace stále používá původní IP pro přesnější výsledky
+- [ ] **Přidat informace o tracking do cookies/privacy policy** - ⚠️ VOLITELNÉ
+  - Přidat informace o tracking do cookies/privacy policy
+  - Informovat uživatele o anonymizaci IP adres
 
 ### 6. Migrace databáze
 - [ ] **Poznámka:** Detailní úkoly migrace jsou v ČÁSTI 1, úkol 1 - "Migrace databáze - Převést ze staré databáze všechny data do nové databáze"
@@ -297,15 +302,14 @@
 - [ ] Zpracovat přeskočené soubory (ty, které nenašly shodu) - buď manuálně nebo upravit matching
 
 ### 8. Sekce redakce a uživatelé
-- [ ] **Vypnout sekci redakce** - Skrýt uživatele, kteří nejsou potřeba vidět
+- [x] **Vypnout sekci redakce** - Skrýt uživatele, kteří nejsou potřeba vidět - ✅ HOTOVO
   - ✅ Už implementováno: `public_visible` sloupec v databázi
   - ✅ Už implementováno: checkbox v admin formuláři
-  - [ ] Zkontrolovat, že sekce redakce filtruje pouze viditelné uživatele (`public_visible = 1`)
-- [ ] **Výchozí avatar** - Kdo nemá fotku, tak nějakého avatara tam dát
-  - Vytvořit výchozí avatar obrázek
-  - Upravit zobrazení uživatelů, aby používali výchozí avatar když nemají fotku
-  - Možná použít inicialy nebo generovaný avatar
-- [ ] **Aktualizovat stránku O nás** - Aktualizovat obsah stránky "O nás"
+  - ✅ Zkontrolováno: sekce redakce filtruje pouze viditelné uživatele (`public_visible = 1`) - implementováno v `app/Models/User.php::getAll()`
+- [x] **Výchozí avatar** - Kdo nemá fotku, tak nějakého avatara tam dát - ✅ HOTOVO
+  - ✅ Výchozí avatar `noimage.png` je používán v `app/Views/Web/user/index.php` (řádek 12)
+  - ✅ Zobrazení uživatelů používá výchozí avatar když nemají fotku
+- [ ] **Aktualizovat stránku O nás** - Aktualizovat obsah stránky "O nás" - ⏳ ČEKÁ NA DOMINIKA
   - Zkontrolovat aktuální obsah
   - Aktualizovat text, informace o redakci, atd.
 
