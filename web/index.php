@@ -34,7 +34,10 @@ use App\Controllers\LoginController;
 
 $db = (new Database())->connect();
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$uri = rtrim($uri, '/');
+// Normalizace URI - odstranění koncových lomítek (kromě root "/")
+if ($uri !== '/') {
+    $uri = rtrim($uri, '/');
+}
 
 if (preg_match('/^\/uploads\/(.+)$/', $uri, $matches)) {
     $filePath = __DIR__ . $uri;
@@ -81,17 +84,13 @@ $routes = [
     '/authors' => [UserController::class, 'index'],
     '/login' => [LoginController::class, 'showLoginForm'],
     '/login/submit' => [LoginController::class, 'login'],
-    '/login/submit/' => [LoginController::class, 'login'],
     '/logout' => [LoginController::class, 'logout'],
     '/kontakt' => [HomeController::class, 'kontakt'],
     
     // Staré race URL - 301 redirecty na /events (pro SEO a zpětnou kompatibilitu)
     '/race' => [HomeController::class, 'race'],
-    '/race/' => [HomeController::class, 'race'],
     '/race/cyklistickey' => [HomeController::class, 'raceCyklistickey'],
-    '/race/cyklistickey/' => [HomeController::class, 'raceCyklistickey'],
     '/race/bezeckey' => [HomeController::class, 'raceBezeckey'],
-    '/race/bezeckey/' => [HomeController::class, 'raceBezeckey'],
     
     // Nové events URL
     '/events' => [HomeController::class, 'events'],
