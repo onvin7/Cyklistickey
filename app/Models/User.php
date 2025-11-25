@@ -307,6 +307,29 @@ class User
         ]);
     }
 
+    public function updateUserSocialLink($userId, $socialId, $link)
+    {
+        $query = "UPDATE user_social SET link = :link 
+                  WHERE user_id = :userId AND social_id = :socialId";
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute([
+            ':userId' => $userId,
+            ':socialId' => $socialId,
+            ':link' => $link
+        ]);
+    }
+
+    public function deleteUserSocialLink($userId, $socialId)
+    {
+        $query = "DELETE FROM user_social 
+                  WHERE user_id = :userId AND social_id = :socialId";
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute([
+            ':userId' => $userId,
+            ':socialId' => $socialId
+        ]);
+    }
+
     public function getAvailableSocialSites()
     {
         $query = "SELECT * FROM socials ORDER BY nazev ASC";

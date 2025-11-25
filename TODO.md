@@ -285,9 +285,12 @@
   - LinkTrackingController upraven: `app/Controllers/Web/LinkTrackingController.php`
   - IP adresy se anonymizují před uložením do databáze
   - Geolokace stále používá původní IP pro přesnější výsledky
-- [ ] **Přidat informace o tracking do cookies/privacy policy** - ⚠️ VOLITELNÉ
-  - Přidat informace o tracking do cookies/privacy policy
-  - Informovat uživatele o anonymizaci IP adres
+- [ ] **Cookie Consent Banner pro GDPR** - ⚠️ POTŘEBA DODĚLAT
+  - Vytvořit cookie consent banner (informace o cookies, souhlas/nesouhlas)
+  - Blokovat tracking skripty (Meta Pixel, Google Analytics) dokud uživatel nesouhlasí
+  - Ukládat preferenci uživatele do cookie/localStorage
+  - Implementovat JavaScript pro načtení trackingu až po souhlasu
+  - Aktualizovat privacy policy o informace o anonymizaci IP adres v Click Trackingu
 
 ### 6. Migrace databáze
 - [ ] **Poznámka:** Detailní úkoly migrace jsou v ČÁSTI 1, úkol 1 - "Migrace databáze - Převést ze staré databáze všechny data do nové databáze"

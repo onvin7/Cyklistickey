@@ -18,9 +18,15 @@
                         <h6 class="author-email"><span><?php echo htmlspecialchars($user["email"]); ?></span></h6>
                     <?php endif; ?>
                 </div>
-                <?php if (!empty($user["popis"])): ?>
-                    <p class="author-description"><?php echo TextHelper::truncate($user["popis"], 120); ?></p>
-                <?php endif; ?>
+                <p class="author-description">
+                    <?php 
+                    if (!empty($user["popis"])) {
+                        echo TextHelper::truncate(strip_tags($user["popis"]), 120);
+                    } else {
+                        echo "Popis autora zatím není k dispozici.";
+                    }
+                    ?>
+                </p>
             </div>
             <div class="author-link">
                 <span>Zobrazit profil<i class="fa-solid fa-angle-right"></i></span>

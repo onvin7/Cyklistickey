@@ -1,4 +1,29 @@
 <section class="content-section">
+    <?php if (!empty($_SESSION['debug_social'])): ?>
+        <div class="alert alert-warning">
+            <strong>DEBUG INFO:</strong><br>
+            POST social_ids: <?= count($_SESSION['debug_social']['post_social_ids']) ?><br>
+            POST links: <?= count($_SESSION['debug_social']['post_links']) ?><br>
+            Existující v DB: <?= $_SESSION['debug_social']['existing_count'] ?> (<?= implode(', ', $_SESSION['debug_social']['existing_ids']) ?>)<br>
+            Odeslané: <?= $_SESSION['debug_social']['submitted_count'] ?> (<?= implode(', ', $_SESSION['debug_social']['submitted_ids']) ?>)<br>
+            <pre style="max-height: 200px; overflow: auto;"><?= print_r($_SESSION['debug_social'], true) ?></pre>
+        </div>
+        <?php unset($_SESSION['debug_social']); ?>
+    <?php endif; ?>
+    
+    <?php 
+    // DEBUG - zobrazit načtené sociální sítě
+    if (!empty($social_links)): ?>
+        <div class="alert alert-info">
+            <strong>Načtené sociální sítě:</strong><br>
+            <?php foreach ($social_links as $index => $social): ?>
+                Řádek <?= $index ?>: ID: <?= $social['social_id'] ?>, Název: <?= $social['nazev'] ?>, Link: <?= $social['link'] ?><br>
+                <small>social_id type: <?= gettype($social['social_id']) ?>, value: "<?= $social['social_id'] ?>"</small><br>
+            <?php endforeach; ?>
+            <pre><?= print_r($social_links, true) ?></pre>
+        </div>
+    <?php endif; ?>
+    
     <div class="section-header">
         <h2 class="mb-4"><i class="fas fa-cog me-2"></i>Nastavení účtu</h2>
         <div class="text-end">
@@ -62,11 +87,11 @@
                             <strong>Poznámka:</strong> Zadejte <strong>celý odkaz</strong> na váš profil (např. <code>https://www.instagram.com/vas_profil</code>), ne pouze uživatelské jméno.
                         </div>
                         <?php foreach ($social_links as $social): ?>
-                            <div class="d-flex mb-2 social-entry">
-                                <select class="form-select me-2" name="social_id[]">
+                            <div class="d-flex mb-2 social-entry align-items-center">
+                                <select class="form-select me-2 social-select" name="social_id[]" required>
                                     <option value="">Vyber sociální síť</option>
                                     <?php foreach ($available_socials as $site): ?>
-                                        <option value="<?= $site['id'] ?>" <?= $social['social_id'] == $site['id'] ? 'selected' : '' ?>>
+                                        <option value="<?= $site['id'] ?>" data-icon="<?= htmlspecialchars($site['fa_class']) ?>" <?= isset($social['social_id']) && (int)$social['social_id'] == (int)$site['id'] ? 'selected="selected"' : '' ?>>
                                             <?php echo htmlspecialchars($site['nazev']); ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -110,6 +135,36 @@
     .preview-box, #preview-container {
         transition: all 0.3s ease;
     }
+    
+    /* Styling pro dropdown sociálních sítí */
+    .social-select {
+        font-size: 1rem;
+        padding: 0.625rem 0.875rem;
+        line-height: 1.6;
+        min-height: 42px;
+    }
+    
+    .social-select option {
+        padding: 0.625rem 0.875rem;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    /* Vylepšení pro lepší vzhled */
+    .social-entry {
+        align-items: center;
+    }
+    
+    .social-entry .form-select {
+        flex: 0 0 auto;
+        width: auto;
+        min-width: 200px;
+    }
+    
+    .social-entry .form-control {
+        flex: 1 1 auto;
+    }
+    
 </style>
 
 <!-- TinyMCE + konfigurace -->
@@ -134,13 +189,20 @@
 <script>
     function filterAvailableSocials() {
         let selectedSocials = [...document.querySelectorAll('select[name="social_id[]"]')]
-            .map(select => select.value);
-        document.querySelectorAll('select[name="social_id[]"] option').forEach(option => {
-            if (selectedSocials.includes(option.value) && option.value !== "") {
-                option.disabled = true;
-            } else {
-                option.disabled = false;
-            }
+            .map(select => select.value)
+            .filter(val => val !== ''); // Pouze neprázdné hodnoty
+        
+        document.querySelectorAll('select[name="social_id[]"]').forEach(select => {
+            const currentValue = select.value;
+            select.querySelectorAll('option').forEach(option => {
+                // Pokud je option vybraná v jiném selectu a není to aktuální select, disable
+                // ALE nikdy nedisable aktuálně vybranou option
+                if (selectedSocials.includes(option.value) && option.value !== "" && option.value !== currentValue) {
+                    option.disabled = true;
+                } else {
+                    option.disabled = false;
+                }
+            });
         });
     }
 
@@ -152,10 +214,10 @@
         let availableSocials = <?php echo json_encode($available_socials); ?>;
 
         let div = document.createElement('div');
-        div.classList.add('d-flex', 'mb-2', 'social-entry');
+        div.classList.add('d-flex', 'mb-2', 'social-entry', 'align-items-center');
 
         let select = document.createElement('select');
-        select.classList.add('form-select', 'me-2');
+        select.classList.add('form-select', 'me-2', 'social-select');
         select.name = 'social_id[]';
         select.onchange = filterAvailableSocials;
 
@@ -167,7 +229,8 @@
         availableSocials.forEach(site => {
             let option = document.createElement('option');
             option.value = site.id;
-            option.text = site.nazev;
+            option.textContent = site.nazev;
+            option.setAttribute('data-icon', site.fa_class || '');
             if (existingSocials.includes(site.id.toString())) {
                 option.disabled = true;
             }
@@ -195,6 +258,11 @@
         div.appendChild(input);
         div.appendChild(button);
         
+        // Přidat event listener
+        select.addEventListener('change', function() {
+            filterAvailableSocials();
+        });
+        
         // Vložíme nový řádek před tlačítko
         container.insertBefore(div, document.getElementById('add-social'));
         filterAvailableSocials();
@@ -213,6 +281,32 @@
     });
 
     filterAvailableSocials();
+    
+    
+    // Před odesláním formuláře - odstranit pouze prázdné řádky a zkontrolovat disabled optiony
+    document.querySelector('form')?.addEventListener('submit', function(e) {
+        // Nejdřív povolit všechny disabled optiony, aby se odeslaly
+        document.querySelectorAll('select[name="social_id[]"] option').forEach(option => {
+            option.disabled = false;
+        });
+        
+        const socialEntries = document.querySelectorAll('.social-entry');
+        
+        socialEntries.forEach((entry) => {
+            const select = entry.querySelector('select[name="social_id[]"]');
+            const input = entry.querySelector('input[name="link[]"]');
+            
+            if (select && input) {
+                const socialId = select.value;
+                const link = input.value.trim();
+                
+                // Pokud je select prázdný NEBO link prázdný, odstranit celý řádek
+                if (!socialId || socialId === '' || !link || link === '') {
+                    entry.remove();
+                }
+            }
+        });
+    });
 </script>
 
 <!-- Přidání JavaScriptu pro náhled fotografií -->

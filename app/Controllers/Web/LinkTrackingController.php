@@ -6,6 +6,7 @@ use App\Models\LinkClick;
 use App\Models\LinkClickEvent;
 use App\Helpers\UserAgentHelper;
 use App\Helpers\GeoLocationHelper;
+use App\Helpers\IPAnonymizerHelper;
 
 class LinkTrackingController
 {
@@ -66,6 +67,7 @@ class LinkTrackingController
         $sessionId = session_id();
         
         // Geolokace (asynchronně, aby nezpomalovala redirect)
+        // POZNÁMKA: Používáme původní IP pro geolokaci, anonymizujeme až před uložením
         $geoData = null;
         if ($ipAddress && $deviceType !== 'bot') {
             // Použijeme rychlé volání, ale s timeoutem
@@ -78,9 +80,12 @@ class LinkTrackingController
         $viewportWidth = isset($_GET['vw']) ? (int)$_GET['vw'] : null;
         $viewportHeight = isset($_GET['vh']) ? (int)$_GET['vh'] : null;
 
+        // Anonymizace IP adresy pro GDPR kompatibilitu (před uložením do DB)
+        $anonymizedIP = IPAnonymizerHelper::anonymizeIP($ipAddress);
+
         // Příprava dat pro event
         $eventData = [
-            'ip_address' => $ipAddress,
+            'ip_address' => $anonymizedIP,
             'user_agent' => $userAgent,
             'referrer' => $referrer,
             'session_id' => $sessionId,

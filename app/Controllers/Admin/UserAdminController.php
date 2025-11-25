@@ -202,25 +202,73 @@ class UserAdminController
         $this->model->updateUser($userId, $name, $surname, $email, $description, $profile_photo);
         @LogHelper::admin('User settings updated', 'User ID: ' . $userId . ', Email: ' . $email);
 
-        $social_ids = $_POST['social_id'] ?? [];
-        $links = $_POST['link'] ?? [];
+        // Zpracování sociálních sítí
+        $social_ids = isset($_POST['social_id']) && is_array($_POST['social_id']) ? $_POST['social_id'] : [];
+        $links = isset($_POST['link']) && is_array($_POST['link']) ? $_POST['link'] : [];
 
-        error_log("DEBUG: Social ID - " . print_r($social_ids, true));
-        error_log("DEBUG: Links - " . print_r($links, true));
+        error_log("=== SOCIAL SITES DEBUG ===");
+        error_log("POST social_ids: " . print_r($social_ids, true));
+        error_log("POST links: " . print_r($links, true));
+        error_log("Count social_ids: " . count($social_ids));
+        error_log("Count links: " . count($links));
 
-        if (!empty($social_ids) && !empty($links)) {
-            // Nejprve smažeme existující sociální odkazy
-            $this->model->deleteUserSocialLinks($userId);
-            
-            // Potom uložíme nové
-            foreach ($social_ids as $key => $socialId) {
-                if (!empty($socialId) && !empty($links[$key])) {
-                    $this->model->saveUserSocialLink($userId, $socialId, $links[$key]);
+        // Načíst všechny existující sociální sítě uživatele
+        $existingSocials = $this->model->getSocials($userId);
+        $existingSocialIds = [];
+        foreach ($existingSocials as $existing) {
+            $existingSocialIds[$existing['social_id']] = $existing;
+        }
+        error_log("Existing socials count: " . count($existingSocialIds));
+        error_log("Existing social IDs: " . implode(', ', array_keys($existingSocialIds)));
+
+        // Zpracovat všechny odeslané sociální sítě
+        $submittedSocialIds = [];
+        
+        // Projít všechny odeslané hodnoty
+        foreach ($social_ids as $key => $socialId) {
+            error_log("Processing key $key: socialId='$socialId'");
+            if (!empty($socialId) && isset($links[$key])) {
+                $link = trim($links[$key]);
+                error_log("Link for key $key: '$link'");
+                if (!empty($link)) {
+                    $submittedSocialIds[] = $socialId;
+                    error_log("Adding to submitted: $socialId");
+                    
+                    // Pokud už existuje, aktualizovat
+                    if (isset($existingSocialIds[$socialId])) {
+                        error_log("Updating existing: $socialId");
+                        $this->model->updateUserSocialLink($userId, $socialId, $link);
+                    } else {
+                        // Pokud neexistuje, vytvořit nový
+                        error_log("Creating new: $socialId");
+                        $this->model->saveUserSocialLink($userId, $socialId, $link);
+                    }
                 }
             }
-        } else {
-            error_log("✖️ Žádná sociální síť nebyla odeslána.");
         }
+
+        error_log("Submitted social IDs: " . implode(', ', $submittedSocialIds));
+
+        // Smazat ty, které už nejsou v POST (uživatel je odstranil)
+        foreach ($existingSocialIds as $socialId => $existing) {
+            if (!in_array($socialId, $submittedSocialIds)) {
+                error_log("DELETING: $socialId (not in submitted)");
+                $this->model->deleteUserSocialLink($userId, $socialId);
+            }
+        }
+        
+        error_log("=== END DEBUG ===");
+        
+        // DEBUG - zobrazit na stránce (dočasně)
+        $debugInfo = [
+            'post_social_ids' => $social_ids,
+            'post_links' => $links,
+            'existing_count' => count($existingSocialIds),
+            'existing_ids' => array_keys($existingSocialIds),
+            'submitted_count' => count($submittedSocialIds),
+            'submitted_ids' => $submittedSocialIds
+        ];
+        $_SESSION['debug_social'] = $debugInfo;
 
         $_SESSION['success'] = "Nastavení bylo úspěšně aktualizováno.";
         header("Location: /admin/settings");
@@ -366,3 +414,4 @@ class UserAdminController
         exit;
     }
 }
+
