@@ -55,7 +55,6 @@ use App\Controllers\Admin\CategoryAdminController;
 use App\Controllers\Admin\UserAdminController;
 use App\Controllers\Admin\AccessControlAdminController;
 use App\Controllers\Admin\PromotionAdminController;
-use App\Controllers\Admin\AdAdminController;
 use App\Controllers\Admin\FlashNewsJSONAdminController;
 use App\Controllers\Admin\LinkClicksAdminController;
 use App\Controllers\Admin\LogsAdminController;
