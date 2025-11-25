@@ -13,7 +13,7 @@ class User
 
     public function getAll()
     {
-        $query = "SELECT u.*, (SELECT MAX(datum) FROM clanky WHERE user_id = u.id AND viditelnost = 1 AND datum <= NOW()) as last_article FROM users u WHERE u.public_visible = 1 AND u.role > 1 ORDER BY last_article DESC";
+        $query = "SELECT u.*, (SELECT MAX(datum) FROM clanky WHERE user_id = u.id AND viditelnost = 1 AND datum <= NOW()) as last_article FROM users u WHERE u.public_visible = 1 AND u.role >= 1 ORDER BY last_article DESC";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -30,7 +30,7 @@ class User
 
     public function getByName($name, $surname)
     {
-        $query = "SELECT u.*, (SELECT COUNT(*) FROM clanky WHERE user_id = u.id AND viditelnost = 1 AND datum <= NOW()) AS views FROM users u WHERE u.name = :name AND u.surname = :surname AND u.role > 1";
+        $query = "SELECT u.*, (SELECT COUNT(*) FROM clanky WHERE user_id = u.id AND viditelnost = 1 AND datum <= NOW()) AS views FROM users u WHERE u.name = :name AND u.surname = :surname AND u.role >= 1";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':name', $name, \PDO::PARAM_STR);
         $stmt->bindParam(':surname', $surname, \PDO::PARAM_STR);
