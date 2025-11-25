@@ -7,3 +7,4 @@ ADD COLUMN `public_visible` TINYINT(1) NOT NULL DEFAULT 1
 AFTER `role`;
 
 
+
