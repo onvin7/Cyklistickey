@@ -326,6 +326,17 @@
 - [ ] **Odkaz v novém okně** - Přidat možnost otevřít odkaz v novém okně
   - V editoru přidat checkbox "Otevřít v novém okně"
   - Automaticky přidat `target="_blank"` a `rel="noopener noreferrer"` k odkazům
+- [x] **Varování před zavřením stránky při neuložených změnách** - ✅ HOTOVO
+  - Implementován JavaScript modul `web/js/article-unsaved-warning.js` pro detekci neuložených změn
+  - Při pokusu o zavření stránky se zobrazí standardní prohlížečový dialog, pokud jsou neuložené změny
+  - Sleduje změny v: obsahu TinyMCE editoru, názvu článku, datu publikace, viditelnosti a vybraných kategoriích
+  - Alert se nezobrazí po úspěšném odeslání formuláře
+  - Integrováno do `app/Views/Admin/articles/create.php` a `app/Views/Admin/articles/edit.php`
+  - **Jak to funguje:**
+    - Při načtení stránky se uloží původní hodnoty všech polí formuláře
+    - Při pokusu o zavření stránky (beforeunload event) se porovnají aktuální hodnoty s původními
+    - Pokud jsou rozdíly, zobrazí se standardní prohlížečový dialog s varováním
+    - Po odeslání formuláře se nastaví flag `formSubmitted`, který zabrání zobrazení alertu
 
 ### 10. Sociální sítě
 - [x] **Soc site - jaký??** - Rozhodnout, které sociální sítě integrovat - ✅ HOTOVO

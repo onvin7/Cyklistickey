@@ -169,3 +169,5 @@
         }, 1000);
     });
 </script>
+<!-- Varování před zavřením stránky při neuložených změnách -->
+<script src="/js/article-unsaved-warning.js"></script>
