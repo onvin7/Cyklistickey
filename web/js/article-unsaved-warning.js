@@ -11,13 +11,23 @@
     let editorReady = false;
 
     /**
+     * Normalizace HTML pro porovnání (odstraní prázdné znaky a normalizuje)
+     */
+    function normalizeHTML(html) {
+        if (!html) return '';
+        // Odstranit prázdné znaky na začátku a konci
+        return html.trim().replace(/\s+/g, ' ');
+    }
+
+    /**
      * Získání aktuálního obsahu TinyMCE editoru
      */
     function getEditorContent() {
         try {
             const editor = tinymce.get('editor');
             if (editor) {
-                return editor.getContent();
+                const content = editor.getContent();
+                return normalizeHTML(content);
             }
         } catch (e) {
             console.warn('TinyMCE editor není dostupný:', e);
@@ -50,19 +60,33 @@
      * Uložení původních hodnot formuláře
      */
     function saveOriginalValues() {
-        // Počkáme na inicializaci TinyMCE
+        // Nejdřív uložit hodnoty z ostatních polí (nezávisle na editoru)
+        const nazevEl = document.getElementById('nazev');
+        const datumEl = document.getElementById('datum_publikace');
+        const viditelnostEl = document.getElementById('viditelnost');
+        
+        originalValues = {
+            nazev: nazevEl ? nazevEl.value : '',
+            datumPublikace: datumEl ? datumEl.value : '',
+            viditelnost: viditelnostEl ? viditelnostEl.checked : false,
+            kategorie: getSelectedCategories(),
+            editorContent: '' // Bude doplněno později
+        };
+
+        // Počkáme na inicializaci TinyMCE pro obsah editoru
         const waitForEditor = function(attempts = 0) {
-            if (attempts > 50) {
-                console.warn('TinyMCE editor se nepodařilo inicializovat včas');
+            if (attempts > 100) {
+                console.warn('TinyMCE editor se nepodařilo inicializovat včas, používám hodnoty bez editoru');
+                editorReady = true;
                 return;
             }
 
             try {
                 const editor = tinymce.get('editor');
                 if (editor && editor.initialized) {
-                    originalValues = getCurrentValues();
+                    originalValues.editorContent = getEditorContent();
                     editorReady = true;
-                    console.log('Původní hodnoty formuláře uloženy');
+                    console.log('Původní hodnoty formuláře uloženy (včetně editoru)');
                 } else {
                     setTimeout(() => waitForEditor(attempts + 1), 100);
                 }
@@ -79,33 +103,57 @@
      */
     function valuesChanged() {
         if (!editorReady) {
+            // Pokud editor ještě není připraven, zkontrolovat alespoň ostatní pole
+            const current = getCurrentValues();
+            const original = originalValues || {};
+            
+            // Porovnání názvu
+            if (current.nazev !== (original.nazev || '')) {
+                return true;
+            }
+            
+            // Porovnání data publikace
+            if (current.datumPublikace !== (original.datumPublikace || '')) {
+                return true;
+            }
+            
+            // Porovnání viditelnosti
+            if (current.viditelnost !== (original.viditelnost || false)) {
+                return true;
+            }
+            
+            // Porovnání kategorií (pole)
+            if (JSON.stringify(current.kategorie) !== JSON.stringify(original.kategorie || [])) {
+                return true;
+            }
+            
             return false;
         }
 
         const current = getCurrentValues();
 
         // Porovnání obsahu editoru
-        if (current.editorContent !== originalValues.editorContent) {
+        if (current.editorContent !== (originalValues.editorContent || '')) {
             return true;
         }
 
         // Porovnání názvu
-        if (current.nazev !== originalValues.nazev) {
+        if (current.nazev !== (originalValues.nazev || '')) {
             return true;
         }
 
         // Porovnání data publikace
-        if (current.datumPublikace !== originalValues.datumPublikace) {
+        if (current.datumPublikace !== (originalValues.datumPublikace || '')) {
             return true;
         }
 
         // Porovnání viditelnosti
-        if (current.viditelnost !== originalValues.viditelnost) {
+        if (current.viditelnost !== (originalValues.viditelnost || false)) {
             return true;
         }
 
         // Porovnání kategorií (pole)
-        if (JSON.stringify(current.kategorie) !== JSON.stringify(originalValues.kategorie)) {
+        if (JSON.stringify(current.kategorie) !== JSON.stringify(originalValues.kategorie || [])) {
             return true;
         }
 
@@ -123,10 +171,31 @@
 
         // Pokud jsou neuložené změny, zobrazit alert
         if (valuesChanged()) {
-            // Moderní prohlížeče ignorují vlastní zprávu, ale vyžadují nastavení returnValue
+            // Moderní prohlížeče vyžadují nastavení returnValue a preventDefault
+            const message = 'Máte neuložené změny. Opravdu chcete opustit stránku?';
             event.preventDefault();
-            event.returnValue = ''; // Chrome vyžaduje prázdný string
-            return ''; // Pro starší prohlížeče
+            event.returnValue = message; // Pro Chrome a Edge
+            return message; // Pro Firefox a starší prohlížeče
+        }
+    }
+
+    /**
+     * Handler pro tlačítko "Zpět" - zobrazí confirm dialog
+     */
+    function handleBackButton(event) {
+        // Pokud byl formulář odeslán, povolit navigaci
+        if (formSubmitted) {
+            return;
+        }
+
+        // Pokud jsou neuložené změny, zobrazit confirm dialog
+        if (valuesChanged()) {
+            const confirmed = confirm('Máte neuložené změny. Opravdu chcete opustit stránku? Neuložené změny budou ztraceny.');
+            if (!confirmed) {
+                event.preventDefault();
+                event.stopPropagation();
+                return false;
+            }
         }
     }
 
@@ -136,11 +205,20 @@
     function init() {
         // Uložit původní hodnoty po načtení stránky
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', saveOriginalValues);
+            document.addEventListener('DOMContentLoaded', function() {
+                saveOriginalValues();
+                setupEventListeners();
+            });
         } else {
             saveOriginalValues();
+            setupEventListeners();
         }
+    }
 
+    /**
+     * Nastavení event listenerů
+     */
+    function setupEventListeners() {
         // Přidat beforeunload event listener
         window.addEventListener('beforeunload', handleBeforeUnload);
 
@@ -152,18 +230,48 @@
             });
         }
 
+        // Přidat handler na tlačítko "Zpět"
+        const backButtons = document.querySelectorAll('a[href="/admin/articles"]');
+        backButtons.forEach(function(button) {
+            button.addEventListener('click', handleBackButton);
+        });
+
         // Sledovat změny v TinyMCE editoru
         if (typeof tinymce !== 'undefined') {
+            // Použít init event místo AddEditor pro lepší kompatibilitu
+            tinymce.on('init', function() {
+                const editor = tinymce.get('editor');
+                if (editor) {
+                    // Editor je připraven, aktualizovat původní hodnoty editoru
+                    setTimeout(function() {
+                        if (originalValues && !originalValues.editorContent) {
+                            originalValues.editorContent = getEditorContent();
+                            editorReady = true;
+                            console.log('Původní hodnoty editoru uloženy (z init event)');
+                        } else if (!editorReady) {
+                            originalValues.editorContent = getEditorContent();
+                            editorReady = true;
+                            console.log('Původní hodnoty editoru uloženy (z init event - aktualizace)');
+                        }
+                    }, 500);
+                }
+            });
+
+            // Také sledovat AddEditor pro jistotu
             tinymce.on('AddEditor', function(e) {
                 const editor = e.editor;
                 if (editor.id === 'editor') {
-                    editor.on('change keyup', function() {
-                        // Editor je připraven, můžeme aktualizovat původní hodnoty pokud ještě nejsou uloženy
-                        if (!editorReady) {
-                            originalValues = getCurrentValues();
+                    setTimeout(function() {
+                        if (originalValues && !originalValues.editorContent) {
+                            originalValues.editorContent = getEditorContent();
                             editorReady = true;
+                            console.log('Původní hodnoty editoru uloženy (z AddEditor event)');
+                        } else if (!editorReady) {
+                            originalValues.editorContent = getEditorContent();
+                            editorReady = true;
+                            console.log('Původní hodnoty editoru uloženy (z AddEditor event - aktualizace)');
                         }
-                    });
+                    }, 500);
                 }
             });
         }
@@ -172,4 +280,3 @@
     // Spustit inicializaci
     init();
 })();
-
