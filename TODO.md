@@ -329,14 +329,17 @@
 - [x] **Varování před zavřením stránky při neuložených změnách** - ✅ HOTOVO
   - Implementován JavaScript modul `web/js/article-unsaved-warning.js` pro detekci neuložených změn
   - Při pokusu o zavření stránky se zobrazí standardní prohlížečový dialog, pokud jsou neuložené změny
+  - Při kliknutí na tlačítko "Zpět" se zobrazí JavaScript `confirm()` dialog s varováním
   - Sleduje změny v: obsahu TinyMCE editoru, názvu článku, datu publikace, viditelnosti a vybraných kategoriích
   - Alert se nezobrazí po úspěšném odeslání formuláře
   - Integrováno do `app/Views/Admin/articles/create.php` a `app/Views/Admin/articles/edit.php`
   - **Jak to funguje:**
-    - Při načtení stránky se uloží původní hodnoty všech polí formuláře
+    - Při načtení stránky se uloží původní hodnoty všech polí formuláře (ihned pro ostatní pole, později pro editor)
     - Při pokusu o zavření stránky (beforeunload event) se porovnají aktuální hodnoty s původními
+    - Při kliknutí na tlačítko "Zpět" se zobrazí confirm dialog - pokud uživatel klikne "Zrušit", navigace se zruší
     - Pokud jsou rozdíly, zobrazí se standardní prohlížečový dialog s varováním
     - Po odeslání formuláře se nastaví flag `formSubmitted`, který zabrání zobrazení alertu
+    - HTML obsah editoru se normalizuje před porovnáním pro lepší detekci změn
 
 ### 10. Sociální sítě
 - [x] **Soc site - jaký??** - Rozhodnout, které sociální sítě integrovat - ✅ HOTOVO
