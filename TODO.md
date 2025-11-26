@@ -208,10 +208,10 @@
 ## 🔴 Kritické úkoly
 
 ### 1. Veřejná viditelnost uživatelů
-- [ ] **Spustit SQL migraci**
+- [x] **Spustit SQL migraci** - ✅ HOTOVO
   - Soubor: `config/add_public_visible_column.sql`
   - Přidá sloupec `public_visible TINYINT(1) DEFAULT 1` do tabulky `users`
-  - **BEZ TOHO NEBUDE FUNKCE FUNGOVAT!**
+  - SQL migrace byla spuštěna
 
 ### 2. SEO - Google Search Console a Google News
 - [ ] **Ověřit web v Google Search Console**
