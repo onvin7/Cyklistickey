@@ -165,6 +165,10 @@ class HomeController
 
         if (!isset($eventViews[$name])) {
             http_response_code(404);
+            // SEO pro 404 - noindex, nofollow
+            $title = "Event nenalezen | Cyklistický magazín";
+            $description = "Požadovaný event nebyl nalezen. Zkuste navštívit stránku s přehledem eventů.";
+            $robotsMeta = 'noindex, nofollow';
             $view = "../app/Views/Web/templates/404.php";
             require "../app/Views/Web/layouts/base.php";
             exit;
@@ -262,7 +266,7 @@ class HomeController
     {
         // SEO nastavení
         $keywords = ["aplikace", "app", "mobilní", "cyklistika", "novinky", "trasy"];
-        $title = "Appka | Cyklistickey";
+        $title = "Appka | Cyklistický magazín";
         $description = "Články a aktuality ze všech koutů cyklistiky. Vše hezky na jednom místě.";
         $ogTitle = "Cyklistickey App - Mobilní aplikace pro cyklisty";
         $ogDescription = "Mobilní aplikace Cyklistickey - novinky, trasy, závody a vše o cyklistice na jednom místě.";

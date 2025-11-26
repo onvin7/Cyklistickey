@@ -12,13 +12,8 @@ class AISEOHelper
         // Základní optimalizace
         $title = trim($title);
         
-        // Přidej klíčová slova pokud se nevejdou
-        if (!empty($keywords)) {
-            $primaryKeyword = $keywords[0] ?? '';
-            if ($primaryKeyword && !stripos($title, $primaryKeyword)) {
-                $title = $primaryKeyword . ' - ' . $title;
-            }
-        }
+        // NEPŘIDÁVÁME prefixy - title tagy jsou už správně nastavené v kontrolerech
+        // Prefixy jako "kontakt -", "events -" nejsou pro SEO ideální
         
         // Omezení délky
         if (strlen($title) > $maxLength) {

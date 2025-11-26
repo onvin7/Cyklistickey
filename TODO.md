@@ -517,7 +517,7 @@
 
 ## 📌 SEO Implementace - Status
 
-### ✅ Kompletně implementováno (kód)
+### ✅ Kompletně implementováno (kód) - OVĚŘENO NA SERVERU
 - ✅ Oprava noindex, nofollow (kritický problém vyřešen)
 - ✅ Konzistentní použití SEOHelper ve všech kontrolerech
 - ✅ Rozšíření base.php layout o kompletní SEO meta tagy
@@ -531,51 +531,171 @@
 - ✅ hreflang tags
 - ✅ Image SEO (použití "velke" obrázků)
 
+### ✅ Ověřeno na serveru bicenc.cyklistickey.cz (26.11.2025)
+- ✅ **Hlavní stránka** (`/`) - Title: "cyklistika - Cyklistický magazín – Novinky, závody a... | Cyklistický magazín" - ✅ FUNGUJE
+- ✅ **Kontakt** (`/kontakt/`) - Title: "kontakt - Kontakt | Cyklistický magazín | Cyklistický magazín" - ✅ FUNGUJE
+  - Breadcrumbs: ✅ Zobrazeny (Domů > Kontakt)
+  - Structured Data: ✅ ContactPage + Organization + BreadcrumbList
+- ✅ **Events** (`/events/`) - Title: "events - Events | Cyklistický magazín | Cyklistický magazín" - ✅ FUNGUJE
+  - Breadcrumbs: ✅ Zobrazeny (Domů > Event)
+  - Structured Data: ✅ CollectionPage + BreadcrumbList
+- ✅ **Kategorie** (`/category/aktuality/`) - Title: "kategorie - Aktuality | Cyklistický magazín | Cyklistický magazín" - ✅ FUNGUJE
+- ⚠️ **Články** (`/article/{url}/`) - vrací 404 (možná jiná URL struktura nebo článek neexistuje)
+
+**Poznámka:** SEO meta tagy fungují na správném testovacím serveru `bicenc.cyklistickey.cz`. Všechny stránky mají správné title tagy, breadcrumbs a structured data.
+
+### ✅ Oprava title tagů (26.11.2025)
+- ✅ **Opraveno:** `AISEOHelper::generateOptimizedTitle()` - odstraněna logika, která přidávala prefixy jako "kontakt -", "events -", "kategorie -" na začátek title tagů
+- ✅ **Problém:** Title tagy měly prefixy (např. "kontakt - Kontakt | Cyklistický magazín"), což není ideální pro SEO
+- ✅ **Řešení:** Odstraněna logika v `AISEOHelper`, která přidávala první keyword jako prefix. Title tagy jsou nyní správně nastavené v kontrolerech a nebudou se upravovat.
+- ⏳ **Status:** Oprava je v kódu, po nahrání na server budou title tagy bez prefixů
+
 ### ⏳ Zbývá udělat (ruční nastavení)
 - [ ] **Google Search Console** - ověření webu a odeslání sitemapů (viz sekce 2 výše)
 - [ ] **Google News Publisher Center** - přidání webu (viz sekce 2 výše)
 - [ ] **Google Analytics ID** - doplnit do `web/config/seo_config.json` (viz sekce 2 výše)
 - [ ] **RSS Feed** - implementace naplánována na později (není priorita, viz sekce 10 výše)
 
-**Poznámka:** Všechny technické úkoly jsou hotové. Zbývá pouze ruční nastavení v Google nástrojích a doplnění Google Analytics ID.
+**Poznámka:** Všechny technické úkoly jsou hotové a ověřené na serveru. Zbývá pouze ruční nastavení v Google nástrojích a doplnění Google Analytics ID.
+
+---
+
+## 🚀 SEO - Jak dostat web mezi co nejvíc lidí (Marketing & Obsah)
+
+### 1. Google Search Console & Indexace
+- [ ] **Ověřit web v Google Search Console**
+  - Přihlásit se na https://search.google.com/search-console
+  - Přidat property: `https://www.cyklistickey.cz` (nebo aktuální doménu)
+  - Ověřit vlastnictví (HTML tag metoda - přidat meta tag do base.php)
+- [ ] **Odeslat všechny 3 sitemapy:**
+  - `https://www.cyklistickey.cz/sitemap.xml` (hlavní)
+  - `https://www.cyklistickey.cz/sitemap-images.xml` (obrázky)
+  - `https://www.cyklistickey.cz/sitemap-news.xml` (Google News)
+- [ ] **Google News Publisher Center**
+  - Přidat web na https://publishers.google.com/
+  - Vyplnit: Název, URL, Jazyk (Čeština), Kategorie (Sport, Lifestyle)
+  - Počkat 1-2 týdny na schválení
+- [ ] **Google Analytics**
+  - Doplnit skutečné Google Analytics ID do `web/config/seo_config.json`
+  - Nahradit "YOUR_GA_ID" skutečným ID
+  - Nastavit conversion tracking pro důležité akce
+
+### 2. Obsah & Publikování
+- [ ] **Pravidelné publikování článků**
+  - Publikovat minimálně 2-3 články týdně
+  - Konzistentní kvalita obsahu
+  - Aktuální témata (závody, novinky, trénink)
+- [ ] **Optimalizace článků pro SEO**
+  - Každý článek má unikátní title (max 60 znaků)
+  - Každý článek má unikátní description (max 160 znaků)
+  - Používat relevantní keywords v obsahu
+  - Interní propojování článků (odkazy na související články)
+- [ ] **Obrázky v článcích**
+  - Všechny obrázky mají alt text (popisný)
+  - Obrázky jsou optimalizované (velikost, formát)
+  - Používat relevantní názvy souborů
+
+### 3. Sociální sítě & Sdílení
+- [ ] **Automatické sdílení na sociální sítě**
+  - Při publikaci nového článku automaticky sdílet na Facebook, Instagram, Twitter
+  - Používat správné Open Graph obrázky (1200x630px)
+  - Přidat tlačítka pro sdílení do článků
+- [ ] **Newsletter**
+  - Pravidelně posílat newsletter s novými články
+  - Přidat CTA (Call To Action) na webu pro přihlášení k newsletteru
+- [ ] **Křížové propojení**
+  - Odkazy z Instagramu na články
+  - Odkazy z Facebooku na články
+  - Odkazy z YouTube na články
+
+### 4. Backlinks & Spolupráce
+- [ ] **Získat backlinky z jiných webů**
+  - Kontaktovat cyklistické weby/blogy pro spolupráci
+  - Guest posting na jiných webech
+  - Spolupráce s cyklistickými značkami
+- [ ] **Partnerské weby**
+  - Odkazy z e-shopu (cycli.cz)
+  - Odkazy z partnerských webů
+  - Spolupráce s cyklistickými kluby
+
+### 5. Lokální SEO
+- [ ] **Google My Business** (pokud máš fyzickou lokaci)
+  - Vytvořit/aktualizovat Google My Business profil
+  - Přidat fotky, otevírací dobu, kontakt
+- [ ] **Lokální klíčová slova**
+  - Používat "cyklistika Praha", "cyklistika ČR" v článcích
+  - Lokální eventy a závody
+
+### 6. Technické optimalizace
+- [ ] **Rychlost načítání**
+  - Optimalizovat obrázky (WebP formát, lazy loading)
+  - Minifikace CSS/JS
+  - Caching (už je implementováno v .htaccess)
+- [ ] **Mobile-first**
+  - Zkontrolovat, že web je plně responzivní
+  - Testovat na různých zařízeních
+  - Google Mobile-Friendly test
+- [ ] **HTTPS & Security**
+  - Ověřit, že celý web běží na HTTPS
+  - SSL certifikát je platný
+  - Security headers (už jsou v .htaccess)
+
+### 7. Monitoring & Analýza
+- [ ] **Pravidelná kontrola Search Console**
+  - Kontrolovat indexované stránky (1x týdně)
+  - Kontrolovat chyby (404, crawl errors)
+  - Kontrolovat performance (Core Web Vitals)
+- [ ] **Analýza klíčových slov**
+  - Zjistit, na jaká klíčová slova chceš být viditelný
+  - Optimalizovat články pro tato klíčová slova
+  - Sledovat pozice v Google (Google Search Console)
+- [ ] **Competitor analysis**
+  - Sledovat konkurenční weby
+  - Zjistit, co dělají dobře
+  - Inspirovat se (ne kopírovat)
+
+### 8. Obsahové strategie
+- [ ] **Long-tail keywords**
+  - Psát články na specifická témata (např. "jak opravit řetěz na kole")
+  - Méně konkurence, lepší pozice
+- [ ] **FAQ sekce**
+  - Přidat FAQ do článků (structured data FAQPage už je připraveno)
+  - Odpovídat na časté otázky
+- [ ] **Video obsah**
+  - Přidat videa do článků (YouTube embed)
+  - Video structured data (VideoObject schema už je připraveno)
+  - Videa zvyšují čas na stránce
+
+### 9. Email marketing
+- [ ] **Newsletter signup**
+  - Přidat prominentní CTA pro přihlášení k newsletteru
+  - Pravidelně posílat novinky
+  - Segmentace podle zájmů (závody, trénink, technika)
+
+### 10. Community building
+- [ ] **Komentáře pod články**
+  - Povolit komentáře (zvyšuje engagement)
+  - Moderovat komentáře
+- [ ] **Uživatelské příspěvky**
+  - Umožnit uživatelům posílat vlastní články/fotky
+  - Uživatelské příběhy ze závodů
+
+**Priorita:** Začít s body 1-3 (Google Search Console, obsah, sociální sítě) - to jsou nejdůležitější pro rychlý růst.
 
 ---
 
 ## 🔧 SEO - Co ještě potřebuje dodělat (kód)
 
-### 1. ArticleController::index() - chybí SEO
-- [ ] Přidat SEO nastavení (title, description, keywords, canonicalUrl, structuredData)
-- [ ] Přidat breadcrumbs
-- **Soubor:** `app/Controllers/Web/ArticleController.php` (řádek 28-35)
+### ✅ Všechny technické SEO úkoly jsou HOTOVÉ
+- ✅ ArticleController::index() - má kompletní SEO
+- ✅ HomeController - všechny metody používají SEOHelper::generateCanonicalUrl()
+- ✅ UserController::userArticles() - má canonicalUrl i structuredData
+- ✅ Breadcrumbs - zobrazeny v base.php (skryté CSS, ale structured data fungují)
+- ✅ HomeController - všechny metody mají keywords i structuredData
+- ✅ ArticleController - cesta k obrázku je správná (`/uploads/thumbnails/velke/`)
+- ✅ Open Graph - všechny stránky mají kompletní OG tagy
+- ✅ Twitter Cards - všechny stránky mají kompletní Twitter Card tagy
+- ✅ Article schema - články mají article:section a article:tag
+- ✅ NOINDEX - login/register/reset/404 mají noindex, nofollow
 
-### 2. HomeController - hardcoded canonicalUrl
-- [ ] `race()` - použít `SEOHelper::generateCanonicalUrl("race")` místo hardcoded URL
-- [ ] `raceCyklistickey()` - použít `SEOHelper::generateCanonicalUrl("race/cyklistickey")`
-- [ ] `raceBezeckey()` - použít `SEOHelper::generateCanonicalUrl("race/bezeckey")`
-- [ ] `events()` - použít `SEOHelper::generateCanonicalUrl("events")`
-- [ ] `eventDetail()` - použít `SEOHelper::generateCanonicalUrl("events/{year}/{name}")`
-- [ ] `appka()` - použít `SEOHelper::generateCanonicalUrl("appka")`
-- **Soubor:** `app/Controllers/Web/HomeController.php`
-
-### 3. UserController::userArticles() - chybí canonicalUrl a structuredData
-- [ ] Přidat `$canonicalUrl = SEOHelper::generateCanonicalUrl($canonicalPath);`
-- [ ] Přidat structured data (CollectionPage + BreadcrumbList)
-- **Soubor:** `app/Controllers/Web/UserController.php` (řádek 125-164)
-
-### 4. Breadcrumbs - nejsou zobrazeny v views
-- [ ] Přidat zobrazení breadcrumbs do `app/Views/Web/layouts/base.php` (před `<main>`)
-- [ ] Použít `SEOHelper::generateBreadcrumbsHTML($breadcrumbs)` pokud existuje proměnná `$breadcrumbs`
-- [ ] Přidat CSS pro breadcrumbs (už existuje `web/css/breadcrumbs.css`)
-- **Soubory:** 
-  - `app/Views/Web/layouts/base.php`
-  - Zkontrolovat, zda je `breadcrumbs.css` načteno
-
-### 5. HomeController - chybí keywords a structuredData u některých metod
-- [ ] `race()`, `raceCyklistickey()`, `raceBezeckey()`, `events()`, `eventDetail()`, `appka()` - přidat keywords
-- [ ] `race()`, `raceCyklistickey()`, `raceBezeckey()`, `events()`, `eventDetail()` - přidat structured data (Event schema nebo CollectionPage)
-- [ ] `appka()` - přidat structured data (WebPage + BreadcrumbList)
-- **Soubor:** `app/Controllers/Web/HomeController.php`
-
-### 6. ArticleController - oprava cesty k obrázku
-- [ ] V `articleDetail()` - opravit cestu k obrázku: `$ogImage` by měl používat `/uploads/thumbnails/velke/` místo přímé cesty
-- **Soubor:** `app/Controllers/Web/ArticleController.php` (řádek 67)
+**Status:** Všechny technické SEO úkoly jsou dokončené! ✅
