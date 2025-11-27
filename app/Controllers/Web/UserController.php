@@ -64,9 +64,10 @@ class UserController
   
         if (!$user) {
             header("HTTP/1.0 404 Not Found"); 
-            // SEO pro 404
+            // SEO pro 404 - noindex, nofollow
             $title = "Autor nenalezen | Cyklistický magazín";
             $description = "Požadovaný autor nebyl nalezen. Zkuste navštívit stránku s přehledem redakce.";
+            $robotsMeta = 'noindex, nofollow';
             
             $view = '../app/Views/Web/templates/404.php';
             require '../app/Views/Web/layouts/base.php';
@@ -138,9 +139,10 @@ class UserController
   
         if (!$user) {
             header("HTTP/1.0 404 Not Found"); 
-            // SEO pro 404
+            // SEO pro 404 - noindex, nofollow
             $title = "Autor nenalezen | Cyklistický magazín";
             $description = "Požadovaný autor nebyl nalezen. Zkuste navštívit stránku s přehledem redakce.";
+            $robotsMeta = 'noindex, nofollow';
             
             $view = '../app/Views/Web/templates/404.php';
             require '../app/Views/Web/layouts/base.php';

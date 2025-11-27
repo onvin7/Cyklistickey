@@ -49,6 +49,10 @@ if (preg_match('/^\/uploads\/(.+)$/', $uri, $matches)) {
         exit;
     } else {
         http_response_code(404);
+        // SEO pro 404 stránku - noindex, nofollow
+        $title = "Stránka nenalezena | Cyklistický magazín";
+        $description = "Požadovaná stránka nebyla nalezena. Zkuste navštívit hlavní stránku nebo použít vyhledávání.";
+        $robotsMeta = 'noindex, nofollow';
         $view = "../app/Views/Web/templates/404.php";
         require "../app/Views/Web/layouts/base.php";
         exit;
@@ -244,6 +248,10 @@ foreach ($routes as $path => $route) {
 
 if (!$routeFound) {
     http_response_code(404);
+    // SEO pro 404 stránku - noindex, nofollow
+    $title = "Stránka nenalezena | Cyklistický magazín";
+    $description = "Požadovaná stránka nebyla nalezena. Zkuste navštívit hlavní stránku nebo použít vyhledávání.";
+    $robotsMeta = 'noindex, nofollow';
     $view = "../app/Views/Web/templates/404.php";
     require "../app/Views/Web/layouts/base.php";
     exit;

@@ -65,9 +65,10 @@ class ArticleController
         $article = $this->articleModel->getByUrl($url);
         if (!$article) {
             header("HTTP/1.0 404 Not Found");
-            // SEO pro 404
+            // SEO pro 404 - noindex, nofollow
             $title = "Stránka nenalezena | Cyklistický magazín";
             $description = "Hledaný článek nebyl nalezen. Zkuste navštívit hlavní stránku nebo použít vyhledávání.";
+            $robotsMeta = 'noindex, nofollow';
             
             $view = '../app/Views/Web/templates/404.php';
             require '../app/Views/Web/layouts/base.php';
@@ -104,6 +105,20 @@ class ArticleController
         $articlePublishedTime = isset($article['datum']) ? date('c', strtotime($article['datum'])) : null;
         $articleModifiedTime = isset($article['updated_at']) ? date('c', strtotime($article['updated_at'])) : $articlePublishedTime;
         $articleAuthor = $author ? ($author['name'] . ' ' . $author['surname']) : null;
+        
+        // Article section (první kategorie) a tags (všechny kategorie)
+        $articleSection = null;
+        $articleTags = [];
+        if (isset($article['kategorie']) && is_array($article['kategorie']) && !empty($article['kategorie'])) {
+            // První kategorie jako section
+            $articleSection = $article['kategorie'][0]['nazev_kategorie'] ?? null;
+            // Všechny kategorie jako tags
+            foreach ($article['kategorie'] as $kategorie) {
+                if (isset($kategorie['nazev_kategorie'])) {
+                    $articleTags[] = $kategorie['nazev_kategorie'];
+                }
+            }
+        }
         
         // Breadcrumbs pro článek
         $breadcrumbs = [

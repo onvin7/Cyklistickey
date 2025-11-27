@@ -61,9 +61,10 @@ class CategoryController
         
         if (!$category) {
             header("HTTP/1.0 404 Not Found");
-            // SEO pro 404
+            // SEO pro 404 - noindex, nofollow
             $title = "Kategorie nenalezena | Cyklistický magazín";
             $description = "Požadovaná kategorie nebyla nalezena. Zkuste navštívit stránku s přehledem kategorií.";
+            $robotsMeta = 'noindex, nofollow';
             
             $view = '../app/Views/Web/templates/404.php';
             require '../app/Views/Web/layouts/base.php';

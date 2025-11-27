@@ -80,6 +80,14 @@
     <?php if (isset($articleAuthor)): ?>
     <meta property="article:author" content="<?= htmlspecialchars($articleAuthor) ?>">
     <?php endif; ?>
+    <?php if (isset($articleSection)): ?>
+    <meta property="article:section" content="<?= htmlspecialchars($articleSection) ?>">
+    <?php endif; ?>
+    <?php if (isset($articleTags) && is_array($articleTags) && !empty($articleTags)): ?>
+        <?php foreach ($articleTags as $tag): ?>
+    <meta property="article:tag" content="<?= htmlspecialchars($tag) ?>">
+        <?php endforeach; ?>
+    <?php endif; ?>
 
     <!-- ✅ Canonical URL -->
     <link rel="canonical" href="<?= htmlspecialchars($canonicalUrlFinal) ?>">
