@@ -74,6 +74,23 @@
                 </div>
             </div>
         </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card">
+                <div class="stat-border" style="background-color: #9b59b6;"></div>
+                <div class="stat-content">
+                        <div>
+                        <div class="stat-value"><?= number_format($totalClicks ?? 0) ?></div>
+                        <div class="stat-label">Celkový počet kliků</div>
+                        </div>
+                    <div class="stat-icon" style="color: #9b59b6;">
+                            <i class="fa-solid fa-mouse-pointer"></i>
+                    </div>
+                </div>
+                <div class="pt-2 mt-2 border-top px-3 pb-3">
+                    <a href="/admin/statistics/clicks" class="btn btn-sm btn-primary w-100">Zobrazit detail <i class="fas fa-angle-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Filtry -->

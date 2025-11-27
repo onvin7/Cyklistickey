@@ -33,6 +33,10 @@ class StatisticsAdminController
         $totalArticles = $this->model->getTotalArticles();
         $totalCategories = $this->model->getTotalCategories();
         $avgViewsPerArticle = $totalArticles > 0 ? $totalViews / $totalArticles : 0;
+        
+        // Click tracking statistiky pro kartu
+        $totalClicks = $this->model->getTotalClicks();
+        $avgClicksPerArticle = $this->model->getAvgClicksPerArticle();
 
         // Získání dat pro grafy
         $topArticles = $this->model->getTopArticles(5);
@@ -78,8 +82,8 @@ class StatisticsAdminController
         $categories = $this->model->getAllCategories();
         $authors = $this->model->getAllAuthors();
 
-        // Získání statistik článků
-        $articles = $this->model->getArticleStatistics($dateRange, $selectedCategory, $selectedAuthor, $sort);
+        // Získání statistik článků (včetně kliků)
+        $articles = $this->model->getArticleStatisticsWithClicks($dateRange, $selectedCategory, $selectedAuthor, $sort);
         
         // Vypočítáme trend pro každý článek
         foreach ($articles as &$article) {
@@ -94,6 +98,14 @@ class StatisticsAdminController
                 $article['trend'] = $trend;
             } else {
                 $article['trend'] = 0;
+            }
+            
+            // Zajistíme, že total_clicks a ctr jsou vždy nastavené
+            if (!isset($article['total_clicks'])) {
+                $article['total_clicks'] = 0;
+            }
+            if (!isset($article['ctr'])) {
+                $article['ctr'] = 0;
             }
         }
         unset($article); // Zrušíme referenci na poslední prvek
@@ -391,5 +403,91 @@ class StatisticsAdminController
     public function apiCategories()
     {
         $this->getCategoryStats();
+    }
+
+    // Statistiky click tracking
+    public function clicks()
+    {
+        // Získání parametrů filtrování
+        $days = isset($_GET['period']) ? (int)$_GET['period'] : 30;
+        $customPeriod = false;
+        $startDate = date('Y-m-d', strtotime('-30 days'));
+        $endDate = date('Y-m-d');
+
+        if (isset($_GET['period']) && $_GET['period'] === 'custom') {
+            $customPeriod = true;
+            $startDate = isset($_GET['start-date']) ? $_GET['start-date'] : $startDate;
+            $endDate = isset($_GET['end-date']) ? $_GET['end-date'] : $endDate;
+        }
+
+        // Základní statistiky
+        $totalClicks = $this->model->getTotalClicks();
+        $avgClicksPerArticle = $this->model->getAvgClicksPerArticle();
+        $topLink = $this->model->getTopLink();
+        $articlesWithClicks = $this->model->getArticlesWithClicks();
+
+        // Trend kliků v čase
+        $clicksTrendData = $this->model->getClicksTrend($days);
+        $clicksTrendLabels = $clicksTrendData['dates'];
+        $clicksTrendValues = $clicksTrendData['clicks'];
+
+        // Top články podle kliků
+        $topArticlesByClicks = $this->model->getTopArticlesByClicks(10);
+
+        // Top odkazy
+        $topLinks = $this->model->getTopLinks(10);
+
+        // Kliky podle kategorií
+        $clicksByCategory = $this->model->getClicksByCategory();
+
+        // Kliky podle hodin
+        $clicksByHour = $this->model->getClicksByHour();
+        // Připravíme data pro graf (všechny hodiny 0-23)
+        $hourlyData = [];
+        for ($i = 0; $i < 24; $i++) {
+            $hourlyData[$i] = 0;
+        }
+        foreach ($clicksByHour as $hourData) {
+            $hourlyData[$hourData['hour']] = (int)$hourData['clicks'];
+        }
+
+        // Kliky podle dnů v týdnu
+        $clicksByDayOfWeek = $this->model->getClicksByDayOfWeek();
+        // Připravíme data pro graf (všechny dny 0-6)
+        $dayOfWeekData = [];
+        $dayOfWeekLabels = ['Neděle', 'Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota'];
+        for ($i = 0; $i < 7; $i++) {
+            $dayOfWeekData[$i] = 0;
+        }
+        foreach ($clicksByDayOfWeek as $dayData) {
+            $dayOfWeekData[$dayData['day_of_week']] = (int)$dayData['clicks'];
+        }
+
+        // Předání dat do view
+        $data = [
+            'days' => $days,
+            'customPeriod' => $customPeriod,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'totalClicks' => $totalClicks,
+            'avgClicksPerArticle' => $avgClicksPerArticle,
+            'topLink' => $topLink,
+            'articlesWithClicks' => $articlesWithClicks,
+            'clicksTrendLabels' => $clicksTrendLabels,
+            'clicksTrendValues' => $clicksTrendValues,
+            'topArticlesByClicks' => $topArticlesByClicks,
+            'topLinks' => $topLinks,
+            'clicksByCategory' => $clicksByCategory,
+            'hourlyData' => $hourlyData,
+            'dayOfWeekData' => $dayOfWeekData,
+            'dayOfWeekLabels' => $dayOfWeekLabels
+        ];
+
+        extract($data);
+
+        $adminTitle = "Statistiky kliků | Admin Panel - Cyklistickey magazín";
+
+        $view = '../app/Views/Admin/statistics/clicks.php';
+        include '../app/Views/Admin/layout/base.php';
     }
 }

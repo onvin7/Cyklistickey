@@ -95,6 +95,7 @@ $routes = [
     'statistics/authors' => [StatisticsAdminController::class, 'authors'],
     'statistics/performance' => [StatisticsAdminController::class, 'performance'],
     'statistics/views' => [StatisticsAdminController::class, 'views'],
+    'statistics/clicks' => [StatisticsAdminController::class, 'clicks'],
     'statistics/top' => [StatisticsAdminController::class, 'top'],
     'statistics/view' => [StatisticsAdminController::class, 'view', 'id'],
     'statistics/article-details/(\d+)' => [StatisticsAdminController::class, 'getArticleDetails', 'articleId'],

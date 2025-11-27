@@ -49,6 +49,10 @@
                     <select class="form-select form-select-sm shadow-none border" id="sort" name="sort">
                         <option value="views_desc" <?= $sort == 'views_desc' ? 'selected' : '' ?>>Počet zobrazení (sestupně)</option>
                         <option value="views_asc" <?= $sort == 'views_asc' ? 'selected' : '' ?>>Počet zobrazení (vzestupně)</option>
+                        <option value="clicks_desc" <?= $sort == 'clicks_desc' ? 'selected' : '' ?>>Počet kliků (sestupně)</option>
+                        <option value="clicks_asc" <?= $sort == 'clicks_asc' ? 'selected' : '' ?>>Počet kliků (vzestupně)</option>
+                        <option value="ctr_desc" <?= $sort == 'ctr_desc' ? 'selected' : '' ?>>CTR (sestupně)</option>
+                        <option value="ctr_asc" <?= $sort == 'ctr_asc' ? 'selected' : '' ?>>CTR (vzestupně)</option>
                         <option value="date_desc" <?= $sort == 'date_desc' ? 'selected' : '' ?>>Datum publikace (nejnovější)</option>
                         <option value="date_asc" <?= $sort == 'date_asc' ? 'selected' : '' ?>>Datum publikace (nejstarší)</option>
                         <option value="title_asc" <?= $sort == 'title_asc' ? 'selected' : '' ?>>Název (A-Z)</option>
@@ -143,6 +147,8 @@
                             <th class="px-3 py-3 border-bottom">Kategorie</th>
                             <th class="px-3 py-3 border-bottom">Datum</th>
                             <th class="px-3 py-3 border-bottom text-center">Zobrazení</th>
+                            <th class="px-3 py-3 border-bottom text-center">Kliky</th>
+                            <th class="px-3 py-3 border-bottom text-center">CTR</th>
                             <th class="px-3 py-3 border-bottom text-center">Průměr/den</th>
                             <th class="px-3 py-3 border-bottom text-center">Trend</th>
                             <th class="px-3 py-3 border-bottom text-center">Akce</th>
@@ -159,6 +165,19 @@
                             <td class="px-3 py-3 border-bottom"><?= date('d.m.Y', strtotime($article['datum'])) ?></td>
                             <td class="px-3 py-3 border-bottom text-center fw-bold">
                                 <?= number_format($article['total_views'], 0, ',', ' ') ?>
+                            </td>
+                            <td class="px-3 py-3 border-bottom text-center fw-bold" style="color: #9b59b6;">
+                                <?= number_format($article['total_clicks'] ?? 0, 0, ',', ' ') ?>
+                            </td>
+                            <td class="px-3 py-3 border-bottom text-center">
+                                <?php 
+                                $ctr = $article['ctr'] ?? 0;
+                                if ($ctr > 0): 
+                                ?>
+                                    <span class="badge rounded-pill bg-info px-2 py-1"><?= number_format($ctr, 2) ?>%</span>
+                                <?php else: ?>
+                                    <span class="text-muted">-</span>
+                                <?php endif; ?>
                             </td>
                             <td class="px-3 py-3 border-bottom text-center">
                                 <?= number_format($article['avg_views_per_day'], 1, ',', ' ') ?>
@@ -291,7 +310,7 @@
                 },
                 search: ""
             },
-            order: [[4, 'desc']],
+            order: [[4, 'desc']], // Výchozí řazení podle Zobrazení (index 4)
             pageLength: 10, // Výchozí hodnota vždy 10
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Vše"]],
             dom: '<"d-flex mb-3"l>rt',

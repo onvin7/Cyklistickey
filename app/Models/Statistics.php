@@ -850,12 +850,14 @@ class Statistics
                   c.id, c.nazev, c.datum, c.perex, 
                   CONCAT(u.name, ' ', u.surname) AS autor,
                   k.nazev_kategorie AS kategorie,
-                  COALESCE(SUM(v.pocet), 0) AS total_views
+                  COALESCE(SUM(v.pocet), 0) AS total_views,
+                  COALESCE(SUM(lc.click_count), 0) AS total_clicks
                   FROM clanky c
                   LEFT JOIN users u ON c.user_id = u.id
                   LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
                   LEFT JOIN kategorie k ON ck.id_kategorie = k.id
                   LEFT JOIN views_clanku v ON c.id = v.id_clanku
+                  LEFT JOIN link_clicks lc ON c.id = lc.id_clanku
                   WHERE c.id = :articleId
                   GROUP BY c.id";
         $stmt = $this->db->prepare($query);
@@ -891,6 +893,11 @@ class Statistics
             'dates' => $dates,
             'views' => $views
         ];
+        
+        // Zajistíme, že total_clicks je vždy nastavené
+        if (!isset($article['total_clicks'])) {
+            $article['total_clicks'] = 0;
+        }
         
         return $article;
     }
@@ -1096,6 +1103,401 @@ class Statistics
             'avg_views' => $avgViewsPerDay,
             'year' => $year
         ];
+    }
+
+    // ========== CLICK TRACKING STATISTICS ==========
+
+    /**
+     * Získá celkový počet všech kliků
+     */
+    public function getTotalClicks()
+    {
+        $query = "SELECT SUM(click_count) AS total FROM link_clicks";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $result['total'] ? (int)$result['total'] : 0;
+    }
+
+    /**
+     * Získá průměrný počet kliků na článek
+     */
+    public function getAvgClicksPerArticle()
+    {
+        $query = "SELECT 
+                  COUNT(DISTINCT id_clanku) AS articles_with_clicks,
+                  SUM(click_count) AS total_clicks
+                  FROM link_clicks";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+        $articlesWithClicks = (int)($result['articles_with_clicks'] ?? 0);
+        $totalClicks = (int)($result['total_clicks'] ?? 0);
+        
+        return $articlesWithClicks > 0 ? $totalClicks / $articlesWithClicks : 0;
+    }
+
+    /**
+     * Získá trend kliků v čase (podobně jako getViewsTrend)
+     * Používá agregovaná data z link_clicks místo jednotlivých eventů
+     */
+    public function getClicksTrend($days = 30)
+    {
+        // Použijeme agregovaná data z link_clicks podle created_at nebo updated_at
+        // Pokud nemáme created_at, použijeme data z link_click_events, ale filtrujeme jen validní
+        $query = "SELECT DATE(clicked_at) AS date, COUNT(*) AS clicks
+                  FROM link_click_events
+                  WHERE clicked_at >= DATE_SUB(CURDATE(), INTERVAL :days DAY)
+                  AND clicked_at IS NOT NULL
+                  AND clicked_at <= NOW()
+                  GROUP BY DATE(clicked_at)
+                  ORDER BY date ASC";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':days', $days, \PDO::PARAM_INT);
+        $stmt->execute();
+        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        
+        // Vytvoříme pole pro všechny dny v období
+        $dates = [];
+        $clicks = [];
+        
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $date = date('Y-m-d', strtotime("-$i days"));
+            $dates[] = $date;
+            
+            // Najdeme kliky pro tento den
+            $clicksForDate = 0;
+            foreach ($results as $row) {
+                if ($row['date'] === $date) {
+                    $clicksForDate = (int)$row['clicks'];
+                    break;
+                }
+            }
+            $clicks[] = $clicksForDate;
+        }
+        
+        return [
+            'dates' => $dates,
+            'clicks' => $clicks
+        ];
+    }
+
+    /**
+     * Získá top články podle počtu kliků
+     */
+    public function getTopArticlesByClicks($limit = 10)
+    {
+        $query = "SELECT 
+                  c.id, c.nazev, c.datum,
+                  CONCAT(u.name, ' ', u.surname) AS autor,
+                  GROUP_CONCAT(DISTINCT k.nazev_kategorie SEPARATOR ', ') AS kategorie,
+                  COALESCE(SUM(lc.click_count), 0) AS total_clicks,
+                  COALESCE(SUM(v.pocet), 0) AS total_views
+                  FROM clanky c
+                  LEFT JOIN users u ON c.user_id = u.id
+                  LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
+                  LEFT JOIN kategorie k ON ck.id_kategorie = k.id
+                  LEFT JOIN link_clicks lc ON c.id = lc.id_clanku
+                  LEFT JOIN views_clanku v ON c.id = v.id_clanku
+                  WHERE c.viditelnost = 1
+                  GROUP BY c.id
+                  HAVING total_clicks > 0
+                  ORDER BY total_clicks DESC
+                  LIMIT :limit";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Získá top odkazy podle počtu kliků
+     */
+    public function getTopLinks($limit = 10)
+    {
+        $query = "SELECT 
+                  lc.id, lc.url, lc.link_text, lc.click_count,
+                  c.id AS article_id, c.nazev AS article_name, c.url AS article_url
+                  FROM link_clicks lc
+                  LEFT JOIN clanky c ON lc.id_clanku = c.id
+                  WHERE lc.click_count > 0
+                  AND lc.url IS NOT NULL
+                  AND lc.url != ''
+                  ORDER BY lc.click_count DESC
+                  LIMIT :limit";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Získá rozložení kliků podle kategorií
+     */
+    public function getClicksByCategory()
+    {
+        $query = "SELECT 
+                  k.id, k.nazev_kategorie AS name,
+                  COALESCE(SUM(lc.click_count), 0) AS clicks,
+                  COUNT(DISTINCT c.id) AS articles_count
+                  FROM kategorie k
+                  LEFT JOIN clanky_kategorie ck ON k.id = ck.id_kategorie
+                  LEFT JOIN clanky c ON ck.id_clanku = c.id
+                  LEFT JOIN link_clicks lc ON c.id = lc.id_clanku
+                  GROUP BY k.id
+                  ORDER BY clicks DESC";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Získá rozložení kliků podle autorů
+     */
+    public function getClicksByAuthor()
+    {
+        $query = "SELECT 
+                  u.id, CONCAT(u.name, ' ', u.surname) AS name,
+                  COALESCE(SUM(lc.click_count), 0) AS clicks,
+                  COUNT(DISTINCT c.id) AS articles_count
+                  FROM users u
+                  LEFT JOIN clanky c ON u.id = c.user_id
+                  LEFT JOIN link_clicks lc ON c.id = lc.id_clanku
+                  GROUP BY u.id
+                  HAVING clicks > 0
+                  ORDER BY clicks DESC";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Získá počet kliků pro konkrétní článek
+     */
+    public function getArticleClicks($articleId)
+    {
+        $query = "SELECT SUM(click_count) AS total_clicks
+                  FROM link_clicks
+                  WHERE id_clanku = :article_id";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':article_id', $articleId, \PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $result['total_clicks'] ? (int)$result['total_clicks'] : 0;
+    }
+
+    /**
+     * Získá distribuci kliků (kolik článků má kolik kliků)
+     */
+    public function getClicksDistribution()
+    {
+        $query = "SELECT 
+                  CASE 
+                    WHEN total_clicks = 0 THEN '0'
+                    WHEN total_clicks BETWEEN 1 AND 10 THEN '1-10'
+                    WHEN total_clicks BETWEEN 11 AND 50 THEN '11-50'
+                    WHEN total_clicks BETWEEN 51 AND 100 THEN '51-100'
+                    WHEN total_clicks BETWEEN 101 AND 500 THEN '101-500'
+                    ELSE '500+'
+                  END AS range_label,
+                  COUNT(*) AS article_count
+                  FROM (
+                      SELECT c.id, COALESCE(SUM(lc.click_count), 0) AS total_clicks
+                      FROM clanky c
+                      LEFT JOIN link_clicks lc ON c.id = lc.id_clanku
+                      GROUP BY c.id
+                  ) AS article_clicks
+                  GROUP BY range_label
+                  ORDER BY 
+                    CASE range_label
+                      WHEN '0' THEN 1
+                      WHEN '1-10' THEN 2
+                      WHEN '11-50' THEN 3
+                      WHEN '51-100' THEN 4
+                      WHEN '101-500' THEN 5
+                      WHEN '500+' THEN 6
+                    END";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Získá kliky podle dnů v týdnu
+     */
+    public function getClicksByDayOfWeek()
+    {
+        $query = "SELECT 
+                  DAYOFWEEK(clicked_at) - 1 AS day_of_week,
+                  CASE DAYOFWEEK(clicked_at)
+                    WHEN 1 THEN 'Neděle'
+                    WHEN 2 THEN 'Pondělí'
+                    WHEN 3 THEN 'Úterý'
+                    WHEN 4 THEN 'Středa'
+                    WHEN 5 THEN 'Čtvrtek'
+                    WHEN 6 THEN 'Pátek'
+                    WHEN 7 THEN 'Sobota'
+                  END AS day_name,
+                  COUNT(*) AS clicks
+                  FROM link_click_events
+                  WHERE clicked_at >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)
+                  AND clicked_at IS NOT NULL
+                  AND clicked_at <= NOW()
+                  GROUP BY DAYOFWEEK(clicked_at)
+                  ORDER BY day_of_week";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Získá kliky podle hodin
+     */
+    public function getClicksByHour()
+    {
+        $query = "SELECT 
+                  HOUR(clicked_at) AS hour,
+                  COUNT(*) AS clicks
+                  FROM link_click_events
+                  WHERE clicked_at >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)
+                  AND clicked_at IS NOT NULL
+                  AND clicked_at <= NOW()
+                  GROUP BY HOUR(clicked_at)
+                  ORDER BY hour";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Získá počet článků, které mají alespoň jeden klik
+     */
+    public function getArticlesWithClicks()
+    {
+        $query = "SELECT COUNT(DISTINCT id_clanku) AS count
+                  FROM link_clicks
+                  WHERE click_count > 0";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $result['count'] ? (int)$result['count'] : 0;
+    }
+
+    /**
+     * Získá nejklikanější odkaz
+     */
+    public function getTopLink()
+    {
+        $query = "SELECT 
+                  lc.id, lc.url, lc.link_text, lc.click_count,
+                  c.id AS article_id, c.nazev AS article_name, c.url AS article_url
+                  FROM link_clicks lc
+                  LEFT JOIN clanky c ON lc.id_clanku = c.id
+                  WHERE lc.click_count > 0
+                  AND lc.url IS NOT NULL
+                  AND lc.url != ''
+                  ORDER BY lc.click_count DESC
+                  LIMIT 1";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+        // Pokud není žádný odkaz, vrátíme null
+        if (!$result || empty($result['url'])) {
+            return null;
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Získá statistiky kliků pro články (pro použití v articles() metodě)
+     */
+    public function getArticleStatisticsWithClicks($dateRange = '30', $categoryId = 0, $authorId = 0, $sort = 'views_desc')
+    {
+        $query = "SELECT c.id, c.nazev, c.datum, 
+                  CONCAT(u.name, ' ', u.surname) AS autor,
+                  k.nazev_kategorie AS kategorie,
+                  COALESCE(SUM(v.pocet), 0) AS total_views,
+                  COALESCE(SUM(lc.click_count), 0) AS total_clicks,
+                  COALESCE(SUM(v.pocet) / DATEDIFF(CURDATE(), c.datum), 0) AS avg_views_per_day,
+                  CASE 
+                    WHEN SUM(v.pocet) > 0 THEN (SUM(lc.click_count) / SUM(v.pocet)) * 100
+                    ELSE 0
+                  END AS ctr
+                  FROM clanky c
+                  LEFT JOIN users u ON c.user_id = u.id
+                  LEFT JOIN clanky_kategorie ck ON c.id = ck.id_clanku
+                  LEFT JOIN kategorie k ON ck.id_kategorie = k.id
+                  LEFT JOIN views_clanku v ON c.id = v.id_clanku
+                  LEFT JOIN link_clicks lc ON c.id = lc.id_clanku";
+
+        // Filtr podle data
+        if ($dateRange != 'all') {
+            $query .= " WHERE c.datum >= DATE_SUB(CURDATE(), INTERVAL :dateRange DAY)";
+        }
+
+        // Filtr podle kategorie
+        if ($categoryId > 0) {
+            $query .= ($dateRange != 'all' ? " AND" : " WHERE") . " ck.id_kategorie = :categoryId";
+        }
+
+        // Filtr podle autora
+        if ($authorId > 0) {
+            $query .= (($dateRange != 'all' || $categoryId > 0) ? " AND" : " WHERE") . " c.user_id = :authorId";
+        }
+
+        $query .= " GROUP BY c.id";
+
+        // Řazení
+        switch ($sort) {
+            case 'clicks_desc':
+                $query .= " ORDER BY total_clicks DESC";
+                break;
+            case 'clicks_asc':
+                $query .= " ORDER BY total_clicks ASC";
+                break;
+            case 'ctr_desc':
+                $query .= " ORDER BY ctr DESC";
+                break;
+            case 'ctr_asc':
+                $query .= " ORDER BY ctr ASC";
+                break;
+            case 'views_desc':
+            default:
+                $query .= " ORDER BY total_views DESC";
+                break;
+            case 'views_asc':
+                $query .= " ORDER BY total_views ASC";
+                break;
+        }
+
+        $stmt = $this->db->prepare($query);
+        
+        if ($dateRange != 'all') {
+            $stmt->bindValue(':dateRange', $dateRange, \PDO::PARAM_INT);
+        }
+        if ($categoryId > 0) {
+            $stmt->bindValue(':categoryId', $categoryId, \PDO::PARAM_INT);
+        }
+        if ($authorId > 0) {
+            $stmt->bindValue(':authorId', $authorId, \PDO::PARAM_INT);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
 }
