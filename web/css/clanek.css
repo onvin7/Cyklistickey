@@ -523,10 +523,52 @@ body {
 }
 
 .container-zobrazit .text iframe {
-  width: 60% !important;
-  max-width: none !important;
-  margin-inline: 20% !important;
+  width: 80% !important;
+  max-width: 80% !important;
+  margin: 20px auto !important;
+  display: block !important;
   border: none !important;
+}
+
+/* Instagram embed - klasický Instagram design */
+.container-zobrazit .text .text-editor blockquote.instagram-media,
+.clanek .obsah blockquote.instagram-media,
+.container-zobrazit .text blockquote.instagram-media,
+.container-zobrazit .text .text-editor blockquote[data-instgrm-permalink],
+.clanek .obsah blockquote[data-instgrm-permalink],
+.container-zobrazit .text blockquote[data-instgrm-permalink] {
+  background: #fff !important;
+  border: 0 !important;
+  border-radius: 3px !important;
+  box-shadow: 0 0 1px 0 rgba(0,0,0,.5), 0 1px 10px 0 rgba(0,0,0,.15) !important;
+  margin: 20px auto !important;
+  max-width: 80% !important;
+  min-width: 326px !important;
+  padding: 0 !important;
+  width: calc(100% - 2px) !important;
+  display: block !important;
+}
+
+/* Instagram iframe (pokud se použije iframe místo blockquote) */
+.container-zobrazit .text .text-editor iframe[src*="instagram.com"],
+.clanek .obsah iframe[src*="instagram.com"],
+.container-zobrazit .text iframe[src*="instagram.com"] {
+  max-width: 80% !important;
+  width: auto !important;
+  min-width: 326px !important;
+  margin: 20px auto !important;
+  display: block !important;
+  border: none !important;
+  height: auto !important;
+  aspect-ratio: auto !important;
+}
+
+/* Twitter embed */
+.container-zobrazit .text blockquote.twitter-tweet {
+  width: 80% !important;
+  max-width: 80% !important;
+  margin: 20px auto !important;
+  display: block !important;
 }
 
 .twitter-tweet {
@@ -594,6 +636,106 @@ body {
   object-fit: contain;
   max-height: 450px;
   margin-block: 20px;
+}
+
+/* Galerie obrázků - 2 obrázky vedle sebe */
+.container-zobrazit .text .text-editor .images-gallery-2,
+.clanek .obsah .images-gallery-2 {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  margin-block: 20px;
+  width: 100%;
+}
+
+.container-zobrazit .text .text-editor .images-gallery-2 img,
+.clanek .obsah .images-gallery-2 img {
+  width: calc(50% - 7.5px) !important;
+  margin-inline: 0 !important;
+  max-height: 450px;
+  height: auto;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+/* Galerie obrázků - 3 obrázky: 2 vedle sebe, 1 pod nimi */
+.container-zobrazit .text .text-editor .images-gallery-3,
+.clanek .obsah .images-gallery-3 {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-block: 20px;
+  width: 100%;
+}
+
+.container-zobrazit .text .text-editor .images-gallery-3 img,
+.clanek .obsah .images-gallery-3 img {
+  width: calc(50% - 7.5px) !important;
+  margin-inline: 0 !important;
+  max-height: 450px;
+  height: auto;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+/* 3. obrázek (sám na řádku) - vycentrovat pouze na desktopu */
+@media screen and (min-width: 769px) {
+  .container-zobrazit .text .text-editor .images-gallery-3 img:nth-child(3),
+  .clanek .obsah .images-gallery-3 img:nth-child(3) {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/* Galerie obrázků - 4 obrázky: 2 vedle sebe, 2 pod nimi */
+.container-zobrazit .text .text-editor .images-gallery-4,
+.clanek .obsah .images-gallery-4 {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-block: 20px;
+  width: 100%;
+}
+
+.container-zobrazit .text .text-editor .images-gallery-4 img,
+.clanek .obsah .images-gallery-4 img {
+  width: calc(50% - 7.5px) !important;
+  margin-inline: 0 !important;
+  max-height: 450px;
+  height: auto;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+/* Responsive chování - na mobilu pod sebou */
+@media screen and (max-width: 768px) {
+  .container-zobrazit .text .text-editor .images-gallery-2,
+  .clanek .obsah .images-gallery-2,
+  .container-zobrazit .text .text-editor .images-gallery-3,
+  .clanek .obsah .images-gallery-3,
+  .container-zobrazit .text .text-editor .images-gallery-4,
+  .clanek .obsah .images-gallery-4 {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 15px !important;
+  }
+  
+  .container-zobrazit .text .text-editor .images-gallery-2 img,
+  .clanek .obsah .images-gallery-2 img,
+  .container-zobrazit .text .text-editor .images-gallery-3 img,
+  .clanek .obsah .images-gallery-3 img,
+  .container-zobrazit .text .text-editor .images-gallery-4 img,
+  .clanek .obsah .images-gallery-4 img {
+    width: 80% !important;
+    max-width: 80% !important;
+    margin: 0 auto 15px auto !important;
+    max-height: 450px !important;
+    height: auto !important;
+    object-fit: contain !important;
+  }
+  
 }
 
 .container-zobrazit .foto-header {
@@ -667,10 +809,16 @@ body {
   }
 
   .container-zobrazit .text iframe {
-    width: 90% !important;
-    max-width: none !important;
-    margin-inline: 5% !important;
+    width: 80% !important;
+    max-width: 80% !important;
+    margin: 20px auto !important;
     border: none !important;
+  }
+  
+  .container-zobrazit .text blockquote.twitter-tweet {
+    width: 80% !important;
+    max-width: 80% !important;
+    margin: 20px auto !important;
   }
 }
 

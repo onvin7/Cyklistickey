@@ -1,0 +1,154 @@
+/* TinyMCE Editor Content Styles - pouze pro zobrazení v editoru */
+
+/* Samostatné obrázky - 80% šířky, vycentrované */
+.mce-content-body img {
+    width: 80%;
+    max-width: 80%;
+    height: auto;
+    max-height: 450px;
+    margin: 20px auto;
+    display: block;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+/* Iframe - obecné (80% šířky, vycentrované) */
+.mce-content-body iframe {
+    width: 80%;
+    max-width: 80%;
+    margin: 20px auto;
+    display: block;
+    border: none;
+    min-height: 400px;
+}
+
+/* Instagram embed - klasický Instagram design */
+.mce-content-body blockquote.instagram-media {
+    background: #fff;
+    border: 0;
+    border-radius: 3px;
+    box-shadow: 0 0 1px 0 rgba(0,0,0,.5), 0 1px 10px 0 rgba(0,0,0,.15);
+    margin: 20px auto;
+    max-width: 80%;
+    min-width: 326px;
+    padding: 0;
+    width: calc(100% - 2px);
+    display: block;
+}
+
+/* Instagram iframe (pokud se použije iframe místo blockquote) */
+.mce-content-body iframe[src*="instagram.com"] {
+    max-width: 80%;
+    width: auto;
+    min-width: 326px;
+    margin: 20px auto;
+    display: block;
+    border: none;
+    height: auto;
+    aspect-ratio: auto;
+}
+
+/* Twitter embed */
+.mce-content-body blockquote.twitter-tweet {
+    width: 80%;
+    max-width: 80%;
+    margin: 20px auto;
+    display: block;
+}
+
+/* Galerie obrázků - základní nastavení pro všechny galerie */
+.mce-content-body .images-gallery-2,
+.mce-content-body .images-gallery-3,
+.mce-content-body .images-gallery-4 {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    margin: 20px auto;
+    gap: 15px;
+}
+
+/* Galerie - 2 obrázky */
+.mce-content-body .images-gallery-2 {
+    gap: 15px;
+}
+
+.mce-content-body .images-gallery-2 img {
+    width: calc(50% - 7.5px);
+    margin: 0;
+    max-height: 450px;
+    height: auto;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+/* Galerie - 3 obrázky: 2 vedle sebe, 1 pod nimi */
+.mce-content-body .images-gallery-3 {
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.mce-content-body .images-gallery-3 img {
+    width: calc(50% - 7.5px);
+    margin: 0;
+    max-height: 450px;
+    height: auto;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+/* 3. obrázek (sám na řádku) - vycentrovat pouze na desktopu */
+@media screen and (min-width: 769px) {
+    .mce-content-body .images-gallery-3 img:nth-child(3) {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* Galerie - 4 obrázky: 2 vedle sebe, 2 pod nimi */
+.mce-content-body .images-gallery-4 {
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.mce-content-body .images-gallery-4 img {
+    width: calc(50% - 7.5px);
+    margin: 0;
+    max-height: 450px;
+    height: auto;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+/* Responsive chování - na mobilu pod sebou */
+@media screen and (max-width: 768px) {
+    .mce-content-body .images-gallery-2,
+    .mce-content-body .images-gallery-3,
+    .mce-content-body .images-gallery-4 {
+        flex-direction: column;
+        width: 80%;
+        gap: 15px;
+    }
+    
+    .mce-content-body .images-gallery-2 img,
+    .mce-content-body .images-gallery-3 img,
+    .mce-content-body .images-gallery-4 img {
+        width: 80%;
+        max-width: 80%;
+        margin: 0 auto 15px auto;
+        max-height: 450px;
+        height: auto;
+        object-fit: contain;
+    }
+    
+    /* Iframe na mobilu */
+    .mce-content-body iframe {
+        width: 80%;
+        max-width: 80%;
+    }
+    
+    .mce-content-body blockquote.twitter-tweet {
+        width: 80%;
+        max-width: 80%;
+    }
+}
+

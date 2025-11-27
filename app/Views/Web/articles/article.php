@@ -70,6 +70,52 @@ use App\Helpers\TextHelper;
                         img.setAttribute('src', newSrc);
                     }
                 });
+                
+                // Načíst Instagram embed script, pokud je v obsahu Instagram embed
+                const instagramEmbeds = document.querySelectorAll('.instagram-media, [data-instgrm-permalink], blockquote[data-instgrm-permalink], blockquote.instagram-media');
+                if (instagramEmbeds.length > 0) {
+                    // Zkontrolovat, jestli už není script načtený
+                    const existingScript = document.querySelector('script[src*="instagram.com/embed.js"]');
+                    if (!existingScript) {
+                        const script = document.createElement('script');
+                        script.src = 'https://www.instagram.com/embed.js';
+                        script.async = true;
+                        document.head.appendChild(script);
+                        
+                        // Počkat na načtení scriptu a pak inicializovat embed
+                        script.onload = function() {
+                            // Počkat ještě chvíli, aby Instagram script měl čas se inicializovat
+                            setTimeout(function() {
+                                if (window.instgrm && window.instgrm.Embeds) {
+                                    window.instgrm.Embeds.process();
+                                }
+                            }, 500);
+                        };
+                    } else {
+                        // Pokud už script existuje, zkusit znovu inicializovat po chvíli
+                        setTimeout(function() {
+                            if (window.instgrm && window.instgrm.Embeds) {
+                                window.instgrm.Embeds.process();
+                            }
+                        }, 500);
+                    }
+                }
+                
+                // Načíst Twitter widgets script, pokud je v obsahu Twitter embed
+                if (document.querySelector('.twitter-tweet')) {
+                    if (!document.querySelector('script[src*="platform.twitter.com/widgets.js"]')) {
+                        const script = document.createElement('script');
+                        script.src = 'https://platform.twitter.com/widgets.js';
+                        script.async = true;
+                        script.charset = 'utf-8';
+                        document.head.appendChild(script);
+                    } else {
+                        // Pokud už script existuje, zkusit znovu inicializovat
+                        if (window.twttr && window.twttr.widgets) {
+                            window.twttr.widgets.load();
+                        }
+                    }
+                }
             });
         </script>
     </div>

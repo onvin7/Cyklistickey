@@ -19,12 +19,16 @@ function initTinyMCE() {
     tinymce.init({
         selector: '#editor',
         plugins: 'image link lists code',
-        toolbar: 'undo redo | styles | bold italic underline | alignleft aligncenter alignright | bullist numlist | image link | code | customspellcheck removespellcheck',
+        menubar: false, // Skrýt menu bar (první řádek)
+        toolbar: 'undo redo | styles | bold italic underline | alignleft aligncenter alignright | bullist numlist | image imagesgallery | link | code | customspellcheck removespellcheck',
         height: 500,
         automatic_uploads: true,
         file_picker_types: 'image',
         images_upload_url: '/admin/upload-image',
         document_base_url: window.location.origin, // Explicitně nastavíme base URL
+        
+        // Omezení formátů - pouze Paragraph, H2, H3
+        block_formats: 'Paragraph=p;Heading 2=h2;Heading 3=h3',
         
         // Lokalizace pro češtinu
         language: 'cs',
@@ -40,6 +44,101 @@ function initTinyMCE() {
             
             // Vytvoření vlastní kontroly pravopisu
             const spellChecker = new SpellChecker();
+            
+            // Přidání tlačítka pro galerii obrázků (2-4 obrázky vedle sebe)
+            editor.ui.registry.addButton('imagesgallery', {
+                text: '🖼️ Galerie',
+                tooltip: 'Vložit více obrázků vedle sebe (2-4 obrázky)',
+                onAction: function() {
+                    editor.windowManager.open({
+                        title: 'Vložit galerii obrázků',
+                        body: {
+                            type: 'panel',
+                            items: [
+                                {
+                                    type: 'selectbox',
+                                    name: 'count',
+                                    label: 'Počet obrázků',
+                                    items: [
+                                        {text: '2 obrázky', value: '2'},
+                                        {text: '3 obrázky', value: '3'},
+                                        {text: '4 obrázky', value: '4'}
+                                    ]
+                                },
+                                {
+                                    type: 'htmlpanel',
+                                    html: '<p style="margin: 10px 0;">Zadejte URL obrázků:</p>'
+                                },
+                                {
+                                    type: 'input',
+                                    name: 'image1',
+                                    label: 'Obrázek 1 (URL)',
+                                    placeholder: '/uploads/articles/obrazek1.jpg'
+                                },
+                                {
+                                    type: 'input',
+                                    name: 'image2',
+                                    label: 'Obrázek 2 (URL)',
+                                    placeholder: '/uploads/articles/obrazek2.jpg'
+                                },
+                                {
+                                    type: 'input',
+                                    name: 'image3',
+                                    label: 'Obrázek 3 (URL)',
+                                    placeholder: '/uploads/articles/obrazek3.jpg'
+                                },
+                                {
+                                    type: 'input',
+                                    name: 'image4',
+                                    label: 'Obrázek 4 (URL)',
+                                    placeholder: '/uploads/articles/obrazek4.jpg'
+                                }
+                            ]
+                        },
+                        buttons: [
+                            {
+                                type: 'cancel',
+                                text: 'Zrušit'
+                            },
+                            {
+                                type: 'submit',
+                                text: 'Vložit',
+                                primary: true
+                            }
+                        ],
+                        onSubmit: function(api) {
+                            const data = api.getData();
+                            const count = parseInt(data.count);
+                            const images = [];
+                            
+                            // Shromáždění všech zadaných obrázků
+                            if (data.image1) images.push(data.image1);
+                            if (data.image2) images.push(data.image2);
+                            if (count >= 3 && data.image3) images.push(data.image3);
+                            if (count >= 4 && data.image4) images.push(data.image4);
+                            
+                            if (images.length < count) {
+                                editor.windowManager.alert('Prosím vyplňte všechny obrázky pro vybraný počet.');
+                                return;
+                            }
+                            
+                            // Vytvoření HTML struktury
+                            const className = 'images-gallery-' + count;
+                            let html = '<div class="' + className + '">';
+                            
+                            images.forEach(function(imgUrl) {
+                                html += '<img src="' + imgUrl + '" alt="" style="width: 100%; height: auto;">';
+                            });
+                            
+                            html += '</div>';
+                            
+                            // Vložení do editoru
+                            editor.insertContent(html);
+                            api.close();
+                        }
+                    });
+                }
+            });
             
                             // Přidání tlačítka pro kontrolu pravopisu
                 editor.ui.registry.addButton('customspellcheck', {
