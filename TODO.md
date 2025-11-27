@@ -1,5 +1,8 @@
 # TODO - Seznam úkolů a poznámek
 
+## ❗️ Meta úkol (přeskočit, jít cvičit)
+- [ ] Pokud tohle čteš, nech práci chvíli být a jdi si dát gymnastiku
+
 ---
 
 ## 🚀 ČÁST 1 - SPUŠTĚNÍ WEBU
@@ -22,6 +25,9 @@
   - Zkontrolovat integritu dat
   - Otestovat funkčnost po migraci
   - Ověřit, že žádná data nechybí
+- [ ] **Připravit dílčí migrační skripty po částech**
+  - Vymyslet a nastavit způsob, jak migrovat jen vybrané entity (kategorie, uživatelé, články, vazby) samostatně
+  - Pro každou část mít vlastní soubor/skript, který lze spustit odděleně
 - **Soubor:** `web/migrate_db.php` (existuje, ale potřebuje dokončit/testovat)
 
 ### 2. Přesměrování starých URL (301) - Opravit staré odkazy/kolínky
@@ -303,6 +309,7 @@
 - [ ] Spustit produkční přejmenování - `python rename_audio_fuzzy.py` (nebo s `--limit` pro dávkové zpracování)
 - [ ] Ověřit, že všechny audio soubory mají správný název `{id_clanku}.mp3`
 - [ ] Zpracovat přeskočené soubory (ty, které nenašly shodu) - buď manuálně nebo upravit matching
+- [ ] Vyřešit audio data v DB (import/uložení zpracovaných audio souborů do databáze)
 
 ### 8. Sekce redakce a uživatelé
 - [x] **Vypnout sekci redakce** - Skrýt uživatele, kteří nejsou potřeba vidět - ✅ HOTOVO
@@ -358,6 +365,11 @@
   - Správa sociálních sítí v admin panelu (`/admin/social-sites`)
   - CRUD operace: UPDATE/INSERT/DELETE podle odeslaných dat
   - Font Awesome 6.5.1 integrace pro ikony
+
+### 11. Páteční pětka (kategorie)
+- [ ] Připravit kategorie/sekci pro "Páteční pětku" (název, URL, pořadí)
+- [ ] Domluvit strukturu obsahu a jak se bude vkládat (články vs. speciální typ)
+- [ ] Ujistit se, že existuje místo ve frontendu pro zobrazení a případně filtraci
 
 ---
 
