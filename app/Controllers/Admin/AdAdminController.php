@@ -55,7 +55,7 @@ class AdAdminController
 
         // Kontrola, zda jsou všechny potřebné údaje přítomny
         if (
-            !isset($_POST['nazev']) || !isset($_POST['odkaz']) ||
+            !isset($_POST['nazev']) ||
             !isset($_POST['start_date']) || !isset($_POST['start_time']) ||
             !isset($_POST['end_date']) || !isset($_POST['end_time'])
         ) {
@@ -64,15 +64,30 @@ class AdAdminController
             exit();
         }
 
-        // Kontrola nahrání obrázku
-        if (!isset($_FILES['obrazek']) || $_FILES['obrazek']['error'] !== UPLOAD_ERR_OK) {
-            $_SESSION['errors'] = ["Musíte nahrát obrázek reklamy."];
+        $nazev = trim($_POST['nazev']);
+        $odkaz = trim($_POST['odkaz'] ?? '');
+        $kod = trim($_POST['kod'] ?? '');
+        $typ = $_POST['typ'] ?? 'image';
+
+        // Validace: buď kód nebo obrázek+odkaz
+        if ($typ === 'code' && empty($kod)) {
+            $_SESSION['errors'] = ["U vlastního kódu musí být pole kód vyplněno."];
             header("Location: /admin/ads/create");
             exit();
         }
 
-        $nazev = trim($_POST['nazev']);
-        $odkaz = trim($_POST['odkaz']);
+        if ($typ === 'image') {
+            if (!isset($_FILES['obrazek']) || $_FILES['obrazek']['error'] !== UPLOAD_ERR_OK) {
+                $_SESSION['errors'] = ["U obrázkové reklamy musíte nahrát obrázek."];
+                header("Location: /admin/ads/create");
+                exit();
+            }
+            if (empty($odkaz) || !filter_var($odkaz, FILTER_VALIDATE_URL)) {
+                $_SESSION['errors'] = ["U obrázkové reklamy musí být platná URL adresa."];
+                header("Location: /admin/ads/create");
+                exit();
+            }
+        }
 
         // Kombinujeme datum a čas do formátu pro databázi
         $zacatek_datum = $_POST['start_date'];
@@ -96,21 +111,24 @@ class AdAdminController
             $errors[] = "Název reklamy je povinný.";
         }
 
-        if (empty($odkaz) || !filter_var($odkaz, FILTER_VALIDATE_URL)) {
-            $errors[] = "Odkaz musí být platná URL adresa.";
-        }
-
         $now = new DateTime();
         $startDate = new DateTime($zacatek);
         $endDate = new DateTime($konec);
 
-        // Ověříme, že konec je po začátku
+        // Automatická oprava: Pokud je konec před začátkem (např. start 23:30, konec 00:30 stejný den),
+        // posuneme datum konce o jeden den dopředu.
+        if ($endDate <= $startDate && $_POST['start_date'] === $_POST['end_date']) {
+            $endDate->modify('+1 day');
+            $konec = $endDate->format('Y-m-d H:i:s');
+        }
+
+        // Ověříme znovu, že konec je po začátku
         if ($endDate <= $startDate) {
             $errors[] = "Konec reklamy musí být po začátku.";
         }
 
-        if ($frekvence < 1) {
-            $errors[] = "Frekvence musí být alespoň 1.";
+        if ($frekvence < 1 || $frekvence > 10) {
+            $errors[] = "Váha musí být v rozmezí 1–10.";
         }
 
         // Pokud jsou chyby, vrátíme uživatele zpět
@@ -120,12 +138,15 @@ class AdAdminController
             exit();
         }
 
-        // Nahrání obrázku
-        $obrazek = $this->uploadImage($_FILES['obrazek']);
-        if (!$obrazek) {
-            $_SESSION['errors'] = ["Obrázek se nepodařilo nahrát. Povolené: JPEG/PNG/GIF/WebP, rozměr 1024×180 px."];
-            header("Location: /admin/ads/create");
-            exit();
+        // Nahrání obrázku u image typu
+        $obrazek = null;
+        if ($typ === 'image') {
+            $obrazek = $this->uploadImage($_FILES['obrazek']);
+            if (!$obrazek) {
+                $_SESSION['errors'] = ["Obrázek se nepodařilo nahrát. Povolené: JPEG/PNG/GIF/WebP, rozměr 1024×180 px."];
+                header("Location: /admin/ads/create");
+                exit();
+            }
         }
 
         // Pokud je nastavena jako výchozí, zrušíme ostatní výchozí
@@ -137,7 +158,8 @@ class AdAdminController
         $adData = [
             'nazev' => $nazev,
             'obrazek' => $obrazek,
-            'odkaz' => $odkaz,
+            'odkaz' => $typ === 'image' ? $odkaz : null,
+            'kod' => $typ === 'code' ? $kod : null,
             'zacatek' => $zacatek,
             'konec' => $konec,
             'aktivni' => $aktivni,
@@ -195,7 +217,7 @@ class AdAdminController
 
         // Kontrola, zda jsou všechny potřebné údaje přítomny
         if (
-            !isset($_POST['nazev']) || !isset($_POST['odkaz']) ||
+            !isset($_POST['nazev']) ||
             !isset($_POST['start_date']) || !isset($_POST['start_time']) ||
             !isset($_POST['end_date']) || !isset($_POST['end_time'])
         ) {
@@ -205,7 +227,24 @@ class AdAdminController
         }
 
         $nazev = trim($_POST['nazev']);
-        $odkaz = trim($_POST['odkaz']);
+        $odkaz = trim($_POST['odkaz'] ?? '');
+        $kod = trim($_POST['kod'] ?? '');
+        $typ = $_POST['typ'] ?? 'image';
+
+        // Validace: buď kód nebo obrázek+odkaz
+        if ($typ === 'code' && empty($kod)) {
+            $_SESSION['errors'] = ["U vlastního kódu musí být pole kód vyplněno."];
+            header("Location: /admin/ads/edit/" . $id);
+            exit();
+        }
+
+        if ($typ === 'image') {
+            if (empty($odkaz) || !filter_var($odkaz, FILTER_VALIDATE_URL)) {
+                $_SESSION['errors'] = ["U obrázkové reklamy musí být platná URL adresa."];
+                header("Location: /admin/ads/edit/" . $id);
+                exit();
+            }
+        }
 
         // Kombinujeme datum a čas do formátu pro databázi
         $zacatek_datum = $_POST['start_date'];
@@ -227,20 +266,23 @@ class AdAdminController
             $errors[] = "Název reklamy je povinný.";
         }
 
-        if (empty($odkaz) || !filter_var($odkaz, FILTER_VALIDATE_URL)) {
-            $errors[] = "Odkaz musí být platná URL adresa.";
-        }
-
         $startDate = new DateTime($zacatek);
         $endDate = new DateTime($konec);
 
-        // Ověříme, že konec je po začátku
+        // Automatická oprava: Pokud je konec před začátkem (např. start 23:30, konec 00:30 stejný den),
+        // posuneme datum konce o jeden den dopředu.
+        if ($endDate <= $startDate && $_POST['start_date'] === $_POST['end_date']) {
+            $endDate->modify('+1 day');
+            $konec = $endDate->format('Y-m-d H:i:s');
+        }
+
+        // Ověříme znovu, že konec je po začátku
         if ($endDate <= $startDate) {
             $errors[] = "Konec reklamy musí být po začátku.";
         }
 
-        if ($frekvence < 1) {
-            $errors[] = "Frekvence musí být alespoň 1.";
+        if ($frekvence < 1 || $frekvence > 10) {
+            $errors[] = "Váha musí být v rozmezí 1–10.";
         }
 
         // Pokud jsou chyby, vrátíme uživatele zpět
@@ -250,9 +292,9 @@ class AdAdminController
             exit();
         }
 
-        // Nahrání nového obrázku, pokud byl nahrán
+        // Nahrání nového obrázku, pokud byl nahrán a typ je image
         $obrazek = $ad['obrazek']; // Použijeme stávající
-        if (isset($_FILES['obrazek']) && $_FILES['obrazek']['error'] === UPLOAD_ERR_OK) {
+        if ($typ === 'image' && isset($_FILES['obrazek']) && $_FILES['obrazek']['error'] === UPLOAD_ERR_OK) {
             $newImage = $this->uploadImage($_FILES['obrazek']);
             if (!$newImage) {
                 $_SESSION['errors'] = ["Obrázek se nepodařilo nahrát. Povolené: JPEG/PNG/GIF/WebP, rozměr 1024×180 px."];
@@ -266,6 +308,13 @@ class AdAdminController
             }
 
             $obrazek = $newImage;
+        } elseif ($typ === 'code') {
+            // Pokud měníme na kód, smažeme starý obrázek
+            $oldImagePath = __DIR__ . '/../../../web/uploads/ads/' . $ad['obrazek'];
+            if (!empty($ad['obrazek']) && file_exists($oldImagePath)) {
+                @unlink($oldImagePath);
+            }
+            $obrazek = null;
         }
 
         // Pokud je nastavena jako výchozí, zrušíme ostatní výchozí
@@ -277,7 +326,8 @@ class AdAdminController
         $adData = [
             'nazev' => $nazev,
             'obrazek' => $obrazek,
-            'odkaz' => $odkaz,
+            'odkaz' => $typ === 'image' ? $odkaz : null,
+            'kod' => $typ === 'code' ? $kod : null,
             'zacatek' => $zacatek,
             'konec' => $konec,
             'aktivni' => $aktivni,

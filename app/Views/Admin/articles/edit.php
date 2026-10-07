@@ -76,25 +76,27 @@
                 <div class="mb-4">
                     <label for="audio_file" class="form-label">Zvuková stopa</label>
                     <?php 
-                    // Relativní cesta od kořene webu
-                    $audioPath = "/uploads/audio/" . $article['id'] . ".mp3";
-                    
-                    // Absolutní cesta k souboru
-                    $documentRoot = realpath(__DIR__ . "/../../../../web");
-                    $fullAudioPath = $documentRoot . "/uploads/audio/" . $article['id'] . ".mp3";
-                    
-                    // Kontrola, zda soubor existuje
-                    $audioExists = file_exists($fullAudioPath) && is_file($fullAudioPath);
-                    
-                    // Debug informace pro administrátory
-                    if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-                    <div class="small text-muted mb-2">
-                        <strong>Debug info:</strong> Kontroluje se existence souboru: <?= $fullAudioPath ?>
-                        (<?= $audioExists ? 'Soubor nalezen' : 'Soubor nenalezen' ?>)
-                    </div>
-                    <?php endif; 
-                    
-                    if ($audioExists): 
+                    $audioPath = null;
+                    $audioRaw = trim((string)($article['audio'] ?? ''));
+
+                    if ($audioRaw !== '') {
+                        if (preg_match('#^https?://#i', $audioRaw)) {
+                            $audioPath = $audioRaw;
+                        } elseif (strpos($audioRaw, '/uploads/audio/') === 0) {
+                            $audioPath = $audioRaw;
+                        } else {
+                            $audioPath = '/uploads/audio/' . rawurlencode(basename($audioRaw));
+                        }
+                    } else {
+                        // Zpětná kompatibilita pro starší články (ID.mp3)
+                        $legacyAudioPath = realpath(__DIR__ . "/../../../../web") . "/uploads/audio/" . $article['id'] . ".mp3";
+                        if (file_exists($legacyAudioPath) && is_file($legacyAudioPath)) {
+                            $audioPath = "/uploads/audio/" . $article['id'] . ".mp3";
+                        }
+                    }
+
+                    $audioExists = $audioPath !== null;
+                    if ($audioExists):
                     ?>
                     <div class="audio-container p-3 bg-light border rounded mb-2">
                         <div class="d-flex justify-content-between align-items-center mb-2">

@@ -235,13 +235,27 @@
     position: relative;
     margin-bottom: 50px;
     margin-top: 0;
+    padding: 30px 0 10px;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
 }
 
 .events-hero-content {
     max-width: 800px;
-    padding: 0 20px;
+    padding: 0 16px;
     animation: fadeIn 1s ease-out;
-    margin-top: 5vh;
+    margin-top: 0;
+}
+
+.events-brand-logo-wrap {
+    margin-bottom: 18px;
+}
+
+.events-brand-logo {
+    width: min(260px, 88%);
+    height: auto;
+    filter: drop-shadow(0 0 18px rgba(0, 130, 255, 0.35));
 }
 
 @keyframes fadeIn {
@@ -250,7 +264,7 @@
 }
 
 .hero-subtitle {
-    color: #ccc;
+    color: #cfd2e6;
     font-size: 24px;
     font-weight: 300;
     margin-bottom: 20px;
@@ -259,7 +273,7 @@
 }
 
 .hero-text {
-    color: #999;
+    color: #aeb3ca;
     font-size: 22px;
     line-height: 1.6;
     margin-bottom: 30px;
@@ -270,7 +284,7 @@
 }
 
 .hero-subtitle .highlight {
-    color: #f1008d;
+    color: #22b5ff;
     font-weight: 600;
 }
 
@@ -280,10 +294,10 @@
     gap: 15px;
     padding: 18px 45px;
     background: transparent;
-    color: #f1008d;
+    color: #33baff;
     text-decoration: none;
-    border: 2px solid #f1008d;
-    border-radius: 50px;
+    border: 2px solid #33baff;
+    border-radius: 999px;
     font-weight: 500;
     font-size: 18px;
     text-transform: uppercase;
@@ -292,10 +306,10 @@
 }
 
 .btn-hero:hover {
-    background: #f1008d;
+    background: #33baff;
     color: white;
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(241, 0, 141, 0.3);
+    transform: none;
+    box-shadow: 0 0 18px rgba(51, 186, 255, 0.35);
 }
 
 .btn-hero i {
@@ -344,18 +358,27 @@
     /* Hero Responsive */
     .events-hero {
         min-height: auto;
-        padding-top: 30px;
+        padding: 20px 0 4px;
         margin-bottom: 30px;
     }
 
     .events-hero-content {
-        margin-top: 2vh;
+        margin-top: 0;
         padding: 0 10px;
+    }
+
+    .events-brand-logo-wrap {
+        margin-bottom: 12px;
+    }
+
+    .events-brand-logo {
+        width: min(220px, 88%);
     }
 
     .hero-subtitle {
         font-size: 18px;
         margin-bottom: 15px;
+        letter-spacing: 2px;
     }
 
     .hero-text {
@@ -372,6 +395,20 @@
 }
 
 @media (max-width: 480px) {
+    .events-brand-logo {
+        width: min(190px, 84%);
+    }
+
+    .hero-subtitle {
+        font-size: 16px;
+        letter-spacing: 1.5px;
+    }
+
+    .hero-text {
+        font-size: 16px;
+        line-height: 1.5;
+    }
+
     .year-header h2 {
         font-size: 28px;
     }

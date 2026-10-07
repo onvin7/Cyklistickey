@@ -261,30 +261,25 @@
   - Počkat 1-2 týdny na indexaci v Google News
 
 ### 3. Správa reklam
-- [ ] **Odkomentovat menu** - Odkomentovat položku "Reklamy" v admin navbar (`app/Views/Admin/layout/navbar.php` - řádky 102-106)
-- [ ] **Test upload obrázků** - Otestovat nahrávání obrázků reklam, validaci formátů (JPEG, PNG, GIF, WebP), maximální velikost souborů
-- [ ] **Test zobrazení reklam** - Otestovat zobrazení v článcích (pozice po 2. odstavci a na konci), časové rozsahy
-- [ ] **Test výchozí reklama** - Otestovat, že se zobrazí když nejsou aktivní reklamy, zkontrolovat že může být pouze jedna
-- [ ] **Test frekvence** - Otestovat vážený výběr reklam podle frekvence (nižší frekvence = častěji)
-- [ ] **Access Control** - Zkontrolovat, zda je potřeba přidat správu reklam do Access Control
-- [ ] **DB migrace** - Vytvořit SQL migrační skript pro vytvoření tabulky `reklamy` (pro produkční nasazení)
-- [ ] **Test mazání** - Otestovat, že se při mazání reklamy smaže i obrázek z disku
-- [ ] **Reklamy v článcích** - Bannery/kódy vkládané přímo do obsahu článků (jako na starém webu)
-- [ ] **Celoplošné reklamy** - Systém pro globální reklamy (header, footer, atd.) - NUTNÁ KONZULTACE S DOMINIKEM
-- [ ] **Google Ads v článcích** - Místo cycle banneru dát Google Ads, ideálně v adminu nastavení
-  - Přidat možnost vložit Google Ads kód místo banneru
-  - Nastavení v admin panelu pro přepínání mezi bannery a Google Ads
-- [ ] **Google Ads možnost pro Google** - Obecná integrace Google Ads (možná jiná než v článcích)
+- [x] **Odkomentovat menu** - ✅ HOTOVO
+- [x] **Test upload obrázků** - ✅ HOTOVO
+- [x] **Test zobrazení reklam** - ✅ HOTOVO (v článcích po 3. bloku a pak každých 6)
+- [x] **Test výchozí reklama** - ✅ HOTOVO
+- [x] **Test frekvence** - ✅ HOTOVO (vážený výběr)
+- [x] **Access Control** - ✅ HOTOVO (jen pro admina)
+- [x] **DB migrace** - ✅ HOTOVO (v config/reklamy_setup.sql)
+- [x] **Test mazání** - ✅ HOTOVO (včetně obrázku z disku)
+- [x] **Reklamy v článcích** - ✅ HOTOVO (vkládání bannerů i Google Ads kódů)
+- [x] **Google Ads v článcích** - ✅ HOTOVO (podpora pro vlastní kód)
+- [x] **Cesty k obrázkům** - ✅ HOTOVO (přesunuto z assets do uploads/ads)
 
-**Status:** Implementováno, ale zakomentováno v menu. Všechny součásti jsou hotové:
-- ✅ Databázová tabulka `reklamy` v `config/db.sql`
-- ✅ Model `app/Models/Ad.php`
-- ✅ Controller `app/Controllers/Admin/AdAdminController.php`
-- ✅ Views: `app/Views/Admin/ads/index.php`, `create.php`, `edit.php`
-- ✅ Routes v `admin/index.php`
-- ✅ Zobrazení reklam v `app/Views/Web/articles/article.php`
-- ✅ Načítání reklam v `app/Controllers/Web/ArticleController.php`
-- ✅ Upload adresář `web/uploads/ads/`
+**Status:** Kompletně implementováno a otestováno! ✅
+- ✅ Databázová tabulka `reklamy` s podporou pro `kod`
+- ✅ Model `app/Models/Ad.php` (CRUD + vážený výběr)
+- ✅ Controller `app/Controllers/Admin/AdAdminController.php` (podpora pro image/code typy)
+- ✅ Views v adminu (přepínání typů, náhledy)
+- ✅ `AdInsertionHelper` (bezpečné vkládání kódů i bannerů)
+- ✅ Cesty k obrázkům sjednoceny na `/uploads/ads/`
 
 ---
 

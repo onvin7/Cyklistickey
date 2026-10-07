@@ -6,6 +6,22 @@
  * - Zmenší profilové fotky uživatelů
  */
 
+$internalRun = defined('MIGRATION_INTERNAL_RUN') && MIGRATION_INTERNAL_RUN;
+
+if (!$internalRun && php_sapi_name() !== 'cli') {
+    $credentialsFile = __DIR__ . '/../config/db_credentials.php';
+    if (file_exists($credentialsFile)) {
+        require_once $credentialsFile;
+    }
+
+    $token = (string)($_GET['token'] ?? '');
+    if (!defined('MIGRATION_TOKEN') || $token === '' || !hash_equals((string)MIGRATION_TOKEN, $token)) {
+        http_response_code(403);
+        echo 'Forbidden';
+        exit;
+    }
+}
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -13,7 +29,7 @@ set_time_limit(0);
 ini_set('memory_limit', '1024M');
 
 // Pro webový výstup - vypnout buffering pro průběžný výstup
-if (php_sapi_name() !== 'cli') {
+if (!$internalRun && php_sapi_name() !== 'cli') {
     if (ob_get_level()) {
         ob_end_clean();
     }
@@ -26,8 +42,9 @@ if (php_sapi_name() !== 'cli') {
 
 // Funkce pro výpis zpráv
 function zprava($text) {
+    global $internalRun;
     echo $text . (php_sapi_name() === 'cli' ? "\n" : "<br>\n");
-    if (php_sapi_name() !== 'cli') {
+    if (!$internalRun && php_sapi_name() !== 'cli') {
         flush();
         if (ob_get_level() > 0) {
             ob_flush();
@@ -39,7 +56,7 @@ function zprava($text) {
 // KONFIGURACE CEST
 // ============================================================================
 
-$base_path = $_SERVER['DOCUMENT_ROOT'] ?? __DIR__ . '/..';
+$base_path = dirname(__DIR__);
 
 // Nové cesty (kde jsou fotky po ručním přesunu)
 $paths = [
@@ -52,6 +69,7 @@ $paths = [
 // Parametry pro zpracování
 $type = isset($_GET['type']) ? $_GET['type'] : 'all'; // all, articles, thumbnails, users
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 50; // Počet fotek na jedno spuštění
+$offset = isset($_GET['offset']) ? max(0, (int)$_GET['offset']) : 0;
 
 // ============================================================================
 // FUNKCE PRO ZPRACOVÁNÍ OBRÁZKŮ
@@ -358,14 +376,15 @@ if ($type === 'all' || $type === 'articles') {
         zprava("⚠️ Složka neexistuje: " . $paths['articles']);
     } else {
         $files = glob($paths['articles'] . '*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+        sort($files);
         $total = count($files);
         zprava("Našlo se $total souborů.");
         
+        $batchFiles = $limit > 0 ? array_slice($files, $offset, $limit) : array_slice($files, $offset);
         $count = 0;
-        foreach ($files as $file) {
-            if ($limit > 0 && $count >= $limit) {
-                break;
-            }
+        $seen = 0;
+        foreach ($batchFiles as $file) {
+            $seen++;
             
             $filename = basename($file);
             if (resizeArticleImage($file)) {
@@ -381,6 +400,16 @@ if ($type === 'all' || $type === 'articles') {
         }
         
         zprava("✓ Zpracováno $count fotek v obsahu článků.");
+        $nextOffset = $offset + $seen;
+        $done = ($seen === 0) || ($nextOffset >= $total);
+        zprava("MIGRATE_IMAGES_TYPE=articles");
+        zprava("MIGRATE_IMAGES_TOTAL=$total");
+        zprava("MIGRATE_IMAGES_OFFSET=$offset");
+        zprava("MIGRATE_IMAGES_SEEN=$seen");
+        zprava("MIGRATE_IMAGES_NEXT_OFFSET=$nextOffset");
+        zprava("MIGRATE_IMAGES_DONE=" . ($done ? '1' : '0'));
+        zprava("PROGRESS_CURRENT=$nextOffset");
+        zprava("PROGRESS_TOTAL=$total");
     }
 }
 
@@ -399,14 +428,15 @@ if ($type === 'all' || $type === 'thumbnails') {
         }
         
         $files = glob($paths['thumbnails_velke'] . '*.{jpg,jpeg,png}', GLOB_BRACE);
+        sort($files);
         $total = count($files);
         zprava("Našlo se $total souborů pro zpracování.");
         
+        $batchFiles = $limit > 0 ? array_slice($files, $offset, $limit) : array_slice($files, $offset);
         $count = 0;
-        foreach ($files as $file) {
-            if ($limit > 0 && $count >= $limit) {
-                break;
-            }
+        $seen = 0;
+        foreach ($batchFiles as $file) {
+            $seen++;
             
             $filename = basename($file);
             
@@ -431,6 +461,16 @@ if ($type === 'all' || $type === 'thumbnails') {
         }
         
         zprava("✓ Zpracováno $count náhledů článků.");
+        $nextOffset = $offset + $seen;
+        $done = ($seen === 0) || ($nextOffset >= $total);
+        zprava("MIGRATE_IMAGES_TYPE=thumbnails");
+        zprava("MIGRATE_IMAGES_TOTAL=$total");
+        zprava("MIGRATE_IMAGES_OFFSET=$offset");
+        zprava("MIGRATE_IMAGES_SEEN=$seen");
+        zprava("MIGRATE_IMAGES_NEXT_OFFSET=$nextOffset");
+        zprava("MIGRATE_IMAGES_DONE=" . ($done ? '1' : '0'));
+        zprava("PROGRESS_CURRENT=$nextOffset");
+        zprava("PROGRESS_TOTAL=$total");
     }
 }
 
@@ -442,14 +482,15 @@ if ($type === 'all' || $type === 'users') {
         zprava("⚠️ Složka neexistuje: " . $paths['users']);
     } else {
         $files = glob($paths['users'] . '*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+        sort($files);
         $total = count($files);
         zprava("Našlo se $total souborů.");
         
+        $batchFiles = $limit > 0 ? array_slice($files, $offset, $limit) : array_slice($files, $offset);
         $count = 0;
-        foreach ($files as $file) {
-            if ($limit > 0 && $count >= $limit) {
-                break;
-            }
+        $seen = 0;
+        foreach ($batchFiles as $file) {
+            $seen++;
             
             $filename = basename($file);
             if (resizeUserPhoto($file)) {
@@ -465,6 +506,16 @@ if ($type === 'all' || $type === 'users') {
         }
         
         zprava("✓ Zpracováno $count profilových fotek.");
+        $nextOffset = $offset + $seen;
+        $done = ($seen === 0) || ($nextOffset >= $total);
+        zprava("MIGRATE_IMAGES_TYPE=users");
+        zprava("MIGRATE_IMAGES_TOTAL=$total");
+        zprava("MIGRATE_IMAGES_OFFSET=$offset");
+        zprava("MIGRATE_IMAGES_SEEN=$seen");
+        zprava("MIGRATE_IMAGES_NEXT_OFFSET=$nextOffset");
+        zprava("MIGRATE_IMAGES_DONE=" . ($done ? '1' : '0'));
+        zprava("PROGRESS_CURRENT=$nextOffset");
+        zprava("PROGRESS_TOTAL=$total");
     }
 }
 
@@ -479,8 +530,8 @@ if ($errors > 0) {
 }
 
 zprava("\n💡 Pro pokračování použij:");
-zprava("   ?type=articles&limit=$limit");
-zprava("   ?type=thumbnails&limit=$limit");
-zprava("   ?type=users&limit=$limit");
-zprava("   ?type=all&limit=$limit");
+zprava("   ?type=articles&limit=$limit&offset=" . ($offset + $limit));
+zprava("   ?type=thumbnails&limit=$limit&offset=" . ($offset + $limit));
+zprava("   ?type=users&limit=$limit&offset=" . ($offset + $limit));
+zprava("   ?type=all&limit=$limit&offset=" . ($offset + $limit));
 

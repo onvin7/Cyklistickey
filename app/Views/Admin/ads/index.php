@@ -33,13 +33,13 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Náhled</th>
+                        <th>Typ / Náhled</th>
                         <th>Název</th>
-                        <th>Odkaz</th>
+                        <th>Cíl / Kód</th>
                         <th>Začátek</th>
                         <th>Konec</th>
                         <th>Stav</th>
-                        <th>Frekvence</th>
+                        <th>Váha</th>
                         <th>Akce</th>
                     </tr>
                 </thead>
@@ -53,12 +53,17 @@
                         $isCurrent = $start <= $now && $end >= $now;
                         $isUpcoming = $start > $now;
                         $isPast = $end < $now;
+                        $isCode = !empty($ad['kod']);
                     ?>
                         <tr>
                             <td>
-                                <img src="/uploads/ads/<?= htmlspecialchars($ad['obrazek']) ?>" 
-                                     alt="<?= htmlspecialchars($ad['nazev']) ?>" 
-                                     style="max-width: 100px; max-height: 60px; object-fit: contain;">
+                                <?php if ($isCode): ?>
+                                    <span class="badge bg-dark"><i class="fa-solid fa-code"></i> Kód</span>
+                                <?php else: ?>
+                                    <img src="/uploads/ads/<?= htmlspecialchars($ad['obrazek']) ?>" 
+                                         alt="<?= htmlspecialchars($ad['nazev']) ?>" 
+                                         style="max-width: 100px; max-height: 60px; object-fit: contain; border: 1px solid #eee;">
+                                <?php endif; ?>
                             </td>
                             <td>
                                 <strong><?= htmlspecialchars($ad['nazev']) ?></strong>
@@ -67,9 +72,15 @@
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <a href="<?= htmlspecialchars($ad['odkaz']) ?>" target="_blank" class="text-truncate d-inline-block" style="max-width: 200px;">
-                                    <?= htmlspecialchars($ad['odkaz']) ?>
-                                </a>
+                                <?php if ($isCode): ?>
+                                    <code class="text-truncate d-inline-block" style="max-width: 200px; font-size: 0.8rem;">
+                                        <?= htmlspecialchars(mb_substr($ad['kod'], 0, 50)) ?>...
+                                    </code>
+                                <?php else: ?>
+                                    <a href="<?= htmlspecialchars($ad['odkaz']) ?>" target="_blank" class="text-truncate d-inline-block" style="max-width: 200px;">
+                                        <?= htmlspecialchars($ad['odkaz']) ?>
+                                    </a>
+                                <?php endif; ?>
                             </td>
                             <td><?= $start->format('d.m.Y H:i') ?></td>
                             <td><?= $end->format('d.m.Y H:i') ?></td>

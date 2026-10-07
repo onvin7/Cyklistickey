@@ -6,229 +6,112 @@ class AdInsertionHelper
 {
     public static function countContentBlocks(string $html): int
     {
-        $blockTags = [
-            'p' => true,
-            'figure' => true,
-            'img' => true,
-            'blockquote' => true,
-            'iframe' => true,
-            'h2' => true,
-            'h3' => true,
-            'ul' => true,
-            'ol' => true,
-            'div' => true,
-        ];
+        if (trim($html) === '') return 0;
 
-        $wrapped = '<div id="ad-wrap">' . $html . '</div>';
-        $doc = new \DOMDocument('1.0', 'UTF-8');
-        $previousSetting = libxml_use_internal_errors(true);
-        $doc->loadHTML('<?xml encoding="utf-8" ?>' . $wrapped, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        libxml_clear_errors();
-        libxml_use_internal_errors($previousSetting);
-
-        $wrapper = $doc->getElementById('ad-wrap');
-        if (!$wrapper) {
-            return 0;
-        }
-
-        $blockCount = 0;
-        foreach (iterator_to_array($wrapper->childNodes) as $node) {
-            if ($node->nodeType !== XML_ELEMENT_NODE) {
-                continue;
-            }
-
-            $tag = strtolower($node->nodeName);
-            if (!isset($blockTags[$tag])) {
-                continue;
-            }
-
-            if ($tag === 'div') {
-                $class = '';
-                if ($node->attributes) {
-                    $classAttr = $node->attributes->getNamedItem('class');
-                    if ($classAttr) {
-                        $class = (string) $classAttr->nodeValue;
-                    }
-                }
-                if ($class === '') {
-                    continue;
-                }
-            }
-
-            $blockCount++;
-        }
-
-        return $blockCount;
+        $pattern = '/(<\/p>|<\/figure>|<\/blockquote>|<\/iframe>|<\/h2>|<\/h3>|<\/ul>|<\/ol>|<div[^>]*class="[^"]*(video-container|youtube-|fb-|strava-)[^"]*"[^>]*>.*?<\/div>)/is';
+        
+        preg_match_all($pattern, $html, $matches);
+        return count($matches[0]);
     }
 
     public static function getInsertAfterBlocksForLength(int $blockCount, int $maxAds = 2): array
     {
-        if ($blockCount <= 0) {
+        if ($blockCount <= 0 || $maxAds <= 0) {
             return [];
         }
 
-        $adsCount = 1;
-        if ($maxAds >= 2 && $blockCount >= 10) {
-            $adsCount = 2;
-        }
-
+        // Standardní nastavení: první reklama po 3. bloku, další po každých 6 blocích
+        $firstPos = 3; 
+        
         $insertAfter = [];
-        if ($adsCount === 1) {
-            if ($blockCount === 1) {
-                $insertAfter[] = 1;
-            } else {
-                $pos = (int) round($blockCount * 0.35);
-                $pos = max(2, min($blockCount, $pos));
+        
+        // Pokud je článek moc krátký na 3. blok, ale má aspoň 1 blok, vložíme to na konec 1. bloku
+        if ($blockCount < $firstPos && $blockCount >= 1) {
+            $insertAfter[] = $blockCount;
+        } else {
+            // Standardní cyklus
+            for ($i = 0; $i < $maxAds; $i++) {
+                $pos = $firstPos + ($i * 6);
+                if ($pos > $blockCount) {
+                    break;
+                }
                 $insertAfter[] = $pos;
             }
-            return $insertAfter;
         }
 
-        $pos1 = (int) round($blockCount * 0.28);
-        $pos1 = max(2, min($blockCount - 3, $pos1));
-
-        $pos2 = (int) round($blockCount * 0.62);
-        $pos2 = max($pos1 + 3, min($blockCount, $pos2));
-
-        $insertAfter[] = $pos1;
-        $insertAfter[] = $pos2;
+        $insertAfter = array_values(array_unique(array_map('intval', $insertAfter)));
+        sort($insertAfter);
         return $insertAfter;
     }
 
     public static function insertAdsIntoHtml(string $html, array $ads, array $afterBlocks): string
     {
+        if (empty($ads) || empty($afterBlocks)) return $html;
+
         $ads = array_values(array_filter($ads, function ($ad) {
-            return is_array($ad) && !empty($ad['obrazek']);
+            return is_array($ad) && (!empty($ad['obrazek']) || !empty($ad['kod']));
         }));
 
-        if (trim($html) === '' || empty($ads) || empty($afterBlocks)) {
-            return $html;
+        if (empty($ads)) return $html;
+
+        // Regex pro nalezení konců bloků (odstavce, obrázky, nadpisy, vnořená média)
+        $pattern = '/(<\/p>|<\/figure>|<\/blockquote>|<\/iframe>|<\/h2>|<\/h3>|<\/ul>|<\/ol>|<div[^>]*class="[^"]*(video-container|youtube-|fb-|strava-)[^"]*"[^>]*>.*?<\/div>)/is';
+        
+        $parts = preg_split($pattern, $html, -1, PREG_SPLIT_DELIM_CAPTURE);
+        if ($parts === false || count($parts) <= 1) {
+            // Pokud regex selhal, zkusíme aspoň vložit na konec
+            return $html . self::renderAdHtml($ads[0]);
         }
 
-        $wrapped = '<div id="ad-wrap">' . $html . '</div>';
-
-        $doc = new \DOMDocument('1.0', 'UTF-8');
-        $previousSetting = libxml_use_internal_errors(true);
-        $doc->loadHTML('<?xml encoding="utf-8" ?>' . $wrapped, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        libxml_clear_errors();
-        libxml_use_internal_errors($previousSetting);
-
-        $wrapper = $doc->getElementById('ad-wrap');
-        if (!$wrapper) {
-            return $html;
-        }
-
-        $blockTags = [
-            'p' => true,
-            'figure' => true,
-            'img' => true,
-            'blockquote' => true,
-            'iframe' => true,
-            'h2' => true,
-            'h3' => true,
-            'ul' => true,
-            'ol' => true,
-            'div' => true,
-        ];
-
-        $targets = [];
-        foreach ($afterBlocks as $after) {
-            $after = (int) $after;
-            if ($after >= 1) {
-                $targets[$after] = true;
-            }
-        }
-        $targets = array_keys($targets);
-        sort($targets);
-
-        if (empty($targets)) {
-            return $html;
-        }
-
-        $insertions = array_slice($targets, 0, max(1, count($ads)));
-
+        $newHtml = '';
+        $blockCount = 0;
         $adIndex = 0;
-        $currentBlock = 0;
-        $insertLookup = array_fill_keys($insertions, true);
-
-        foreach (iterator_to_array($wrapper->childNodes) as $node) {
-            if ($node->nodeType !== XML_ELEMENT_NODE) {
-                continue;
-            }
-
-            $tag = strtolower($node->nodeName);
-            if (!isset($blockTags[$tag])) {
-                continue;
-            }
-
-            if ($tag === 'div') {
-                $class = '';
-                if ($node->attributes) {
-                    $classAttr = $node->attributes->getNamedItem('class');
-                    if ($classAttr) {
-                        $class = (string) $classAttr->nodeValue;
-                    }
-                }
-                if ($class === '') {
-                    continue;
-                }
-            }
-
-            $currentBlock++;
-            if (!isset($insertLookup[$currentBlock])) {
-                continue;
-            }
-
-            $ad = $ads[$adIndex] ?? $ads[0];
-            $adIndex++;
-
-            $adNode = self::buildAdNode($doc, $ad);
-            if ($adNode) {
-                if ($node->nextSibling) {
-                    $wrapper->insertBefore($adNode, $node->nextSibling);
-                } else {
-                    $wrapper->appendChild($adNode);
+        
+        for ($i = 0; $i < count($parts); $i++) {
+            $newHtml .= $parts[$i];
+            
+            // Každý lichý index v $parts je zachycený tag (konec bloku)
+            if ($i % 2 === 1) {
+                $blockCount++;
+                
+                if ($adIndex < count($afterBlocks) && $blockCount === $afterBlocks[$adIndex]) {
+                    $adToUse = $ads[$adIndex] ?? $ads[0];
+                    $newHtml .= self::renderAdHtml($adToUse);
+                    $adIndex++;
                 }
             }
         }
-
-        $output = '';
-        foreach ($wrapper->childNodes as $child) {
-            $output .= $doc->saveHTML($child);
-        }
-        return $output;
+        
+        return $newHtml;
     }
 
-    private static function buildAdNode(\DOMDocument $doc, array $ad): ?\DOMElement
+    /**
+     * Vyrenderuje HTML kód reklamy (banner nebo script)
+     */
+    private static function renderAdHtml(array $ad): string
     {
-        $image = (string) ($ad['obrazek'] ?? '');
-        if ($image === '') {
-            return null;
-        }
+        $kod = trim((string) ($ad['kod'] ?? ''));
+        $id = (string)($ad['id'] ?? '');
+        
+        $output = '<div class="article-ad" data-ad-id="' . $id . '">';
 
-        $href = (string) ($ad['odkaz'] ?? '');
-        $title = (string) ($ad['nazev'] ?? 'Reklama');
-
-        $container = $doc->createElement('div');
-        $container->setAttribute('class', 'article-ad');
-
-        $img = $doc->createElement('img');
-        $img->setAttribute('src', '/uploads/ads/' . ltrim($image, '/'));
-        $img->setAttribute('alt', $title);
-        $img->setAttribute('loading', 'lazy');
-        $img->setAttribute('decoding', 'async');
-
-        if ($href !== '') {
-            $a = $doc->createElement('a');
-            $a->setAttribute('href', $href);
-            $a->setAttribute('target', '_blank');
-            $a->setAttribute('rel', 'noopener noreferrer sponsored');
-            $a->appendChild($img);
-            $container->appendChild($a);
+        if ($kod !== '') {
+            $output .= $kod;
         } else {
-            $container->appendChild($img);
+            $image = (string) ($ad['obrazek'] ?? '');
+            $href = trim((string) ($ad['odkaz'] ?? ''));
+            $title = (string) ($ad['nazev'] ?? 'Reklama');
+            
+            $imgTag = '<img src="/uploads/ads/' . ltrim($image, '/') . '" alt="' . htmlspecialchars($title) . '" loading="lazy">';
+            
+            if ($href !== '') {
+                $output .= '<a href="' . htmlspecialchars($href) . '" target="_blank" rel="noopener noreferrer sponsored">' . $imgTag . '</a>';
+            } else {
+                $output .= $imgTag;
+            }
         }
 
-        return $container;
+        $output .= '</div>';
+        return $output;
     }
 }

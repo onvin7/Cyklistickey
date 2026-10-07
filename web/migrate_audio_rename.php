@@ -5,14 +5,47 @@
  * Skript je najde a přejmenuje na {id_clanku}.mp3
  */
 
+$internalRun = defined('MIGRATION_INTERNAL_RUN') && MIGRATION_INTERNAL_RUN;
+
+$credentialsFile = __DIR__ . '/../config/db_credentials.php';
+if (file_exists($credentialsFile)) {
+    require_once $credentialsFile;
+}
+
+if (!$internalRun && php_sapi_name() !== 'cli') {
+    $token = (string)($_GET['token'] ?? '');
+    if (!defined('MIGRATION_TOKEN') || $token === '' || !hash_equals((string)MIGRATION_TOKEN, $token)) {
+        http_response_code(403);
+        echo 'Forbidden';
+        exit;
+    }
+}
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 set_time_limit(0);
 ini_set('memory_limit', '1024M');
 
+if (php_sapi_name() === 'cli' && !$internalRun && isset($argv) && is_array($argv)) {
+    foreach (array_slice($argv, 1) as $arg) {
+        if ($arg === '--help' || $arg === '-h') {
+            zprava("Použití: php migrate_audio_rename.php [--limit=0]");
+            exit(0);
+        }
+        if (strpos($arg, '--') === 0) {
+            $pair = explode('=', substr($arg, 2), 2);
+            $k = (string)($pair[0] ?? '');
+            $v = (string)($pair[1] ?? '1');
+            if ($k !== '') {
+                $_GET[$k] = $v;
+            }
+        }
+    }
+}
+
 // Pro webový výstup - vypnout buffering pro průběžný výstup
-if (php_sapi_name() !== 'cli') {
+if (!$internalRun && php_sapi_name() !== 'cli') {
     if (ob_get_level()) {
         ob_end_clean();
     }
@@ -25,8 +58,9 @@ if (php_sapi_name() !== 'cli') {
 
 // Funkce pro výpis zpráv
 function zprava($text) {
+    global $internalRun;
     echo $text . (php_sapi_name() === 'cli' ? "\n" : "<br>\n");
-    if (php_sapi_name() !== 'cli') {
+    if (!$internalRun && php_sapi_name() !== 'cli') {
         flush();
         if (ob_get_level() > 0) {
             ob_flush();
@@ -40,10 +74,10 @@ function zprava($text) {
 
 // Připojení k databázi (použít stejnou konfiguraci jako migrate_db.php)
 $new_db_config = [
-    'host' => 'md413.wedos.net',
-    'username' => 'w340619_blog',
-    'password' => 'kaYak714?',
-    'database' => 'd340619_blog'
+    'host' => defined('DB_HOST') ? DB_HOST : '',
+    'username' => defined('DB_USER') ? DB_USER : '',
+    'password' => defined('DB_PASS') ? DB_PASS : '',
+    'database' => defined('DB_NAME') ? DB_NAME : ''
 ];
 
 try {
@@ -63,7 +97,7 @@ try {
 }
 
 // Cesta k audio souborům
-$audio_path = $_SERVER['DOCUMENT_ROOT'] . '/web/uploads/audio/';
+$audio_path = __DIR__ . '/uploads/audio/';
 
 // Parametry
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 0; // 0 = všechny
@@ -108,10 +142,10 @@ zprava("🔍 Zjišťuji mapování souborů na ID článků...");
 try {
     // Zkusit připojit ke staré DB pro mapování
     $old_db_config = [
-        'host' => 'md396.wedos.net',
-        'username' => 'w340619_clanky',
-        'password' => 'bqsUuxcr',
-        'database' => 'd340619_clanky'
+        'host' => defined('OLD_DB_HOST') ? OLD_DB_HOST : '',
+        'username' => defined('OLD_DB_USER') ? OLD_DB_USER : '',
+        'password' => defined('OLD_DB_PASS') ? OLD_DB_PASS : '',
+        'database' => defined('OLD_DB_NAME') ? OLD_DB_NAME : ''
     ];
     
     $pdo_old = new PDO(
@@ -285,24 +319,36 @@ foreach ($audio_files as $index => $file) {
             // Aktualizovat DB
             $db_updated = false;
             try {
-                $stmt_update = $pdo->prepare("UPDATE clanky SET audio_file = :audio_file WHERE id = :id");
+                $audioUrl = '/uploads/audio/' . $id_clanku . '.mp3';
+                $stmt_update = $pdo->prepare("UPDATE clanky SET audio = :audio WHERE id = :id");
                 $stmt_update->execute([
                     ':id' => $id_clanku,
-                    ':audio_file' => $new_filename
+                    ':audio' => $audioUrl
                 ]);
                 $db_updated = true;
-                zprava("   💾 DB aktualizována (audio_file = $new_filename)");
+                zprava("   💾 DB aktualizována (audio = $audioUrl)");
             } catch (PDOException $e) {
                 try {
-                    $stmt_update = $pdo->prepare("UPDATE clanky SET audio = :audio WHERE id = :id");
+                    $stmt_update = $pdo->prepare("UPDATE clanky SET audio_file = :audio_file WHERE id = :id");
                     $stmt_update->execute([
                         ':id' => $id_clanku,
-                        ':audio' => $new_filename
+                        ':audio_file' => $new_filename
                     ]);
                     $db_updated = true;
-                    zprava("   💾 DB aktualizována (audio = $new_filename)");
+                    zprava("   💾 DB aktualizována (audio_file = $new_filename)");
                 } catch (PDOException $e2) {
                     zprava("   ⚠️ Pole audio/audio_file neexistuje v DB (soubor přejmenován, DB bez aktualizace)");
+                }
+            }
+
+            if ($db_updated) {
+                try {
+                    $stmt_update2 = $pdo->prepare("UPDATE clanky SET audio_file = :audio_file WHERE id = :id");
+                    $stmt_update2->execute([
+                        ':id' => $id_clanku,
+                        ':audio_file' => $new_filename
+                    ]);
+                } catch (PDOException $e) {
                 }
             }
             

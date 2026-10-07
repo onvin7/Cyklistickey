@@ -65,6 +65,18 @@ class HomeController
     {
         $css = ['kontakt'];
         $script = ['kontakt'];
+
+        $rootPath = dirname(dirname(dirname(__DIR__)));
+        $plesounPng = $rootPath . '/web/assets/graphics/team/Copy of Cyklistickey.png';
+        $plesounWebp = $rootPath . '/web/assets/graphics/team/Copy of Cyklistickey.webp';
+        if (!file_exists($plesounWebp) && file_exists($plesounPng) && is_writable(dirname($plesounWebp)) && function_exists('imagecreatefrompng') && function_exists('imagewebp')) {
+            $image = @imagecreatefrompng($plesounPng);
+            if ($image) {
+                @imagepalettetotruecolor($image);
+                @imagewebp($image, $plesounWebp, 80);
+                imagedestroy($image);
+            }
+        }
         
         // SEO nastavení
         $keywords = ["kontakt", "redakce", "cyklistika", "dotazy", "spolupráce"];

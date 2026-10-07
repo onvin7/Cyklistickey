@@ -98,21 +98,50 @@ body {
   margin-bottom: 5vh;
 }
 
-.container-zobrazit .text .text-editor .article-ad {
-  width: 100%;
-  margin: 28px 0;
+.article-ad {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 48px auto;
+    width: 100%;
+    max-width: 100%; /* Zajistí, že nepřeteče kontejner článku */
+    clear: both;
+    overflow: visible; /* Změna z hidden na visible pro jistotu u stínů */
 }
 
-.container-zobrazit .text .text-editor .article-ad a {
-  display: block;
-  text-decoration: none;
+.article-ad img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.container-zobrazit .text .text-editor .article-ad img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 12px;
+/* Oprava pro vložené kódy (Google Ads atd.), které vkládají iframes */
+.article-ad iframe, 
+.article-ad ins, 
+.article-ad div {
+    max-width: 100% !important;
+    margin: 0 auto !important;
+}
+
+.article-ad a {
+    display: block;
+    text-decoration: none;
+    max-width: 100%;
+}
+
+.article-ad a:hover img {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+/* Responzivita pro reklamy */
+@media (max-width: 768px) {
+    .article-ad {
+        margin: 32px auto;
+        padding: 0 10px; /* Malý padding na stranách, aby se nelepilo k hranám */
+    }
 }
 
 .clanek p {

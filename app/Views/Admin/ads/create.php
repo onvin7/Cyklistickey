@@ -29,19 +29,41 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="obrazek" class="form-label">Obrázek reklamy <span class="text-danger">*</span></label>
-                    <input type="file" name="obrazek" id="obrazek" class="form-control" accept="image/*" required>
-                    <div class="form-text">Podporované formáty: JPEG, PNG, GIF, WebP. Požadovaný rozměr: 1024×180 px.</div>
-                    <div id="imagePreview" class="mt-2" style="display: none;">
-                        <img id="previewImg" src="" alt="Náhled" style="max-width: 300px; max-height: 200px; object-fit: contain;">
+                    <label class="form-label d-block">Typ reklamy <span class="text-danger">*</span></label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="typ" id="typ_image" value="image" checked>
+                        <label class="form-check-label" for="typ_image">Obrázek s odkazem</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="typ" id="typ_code" value="code">
+                        <label class="form-check-label" for="typ_code">Vlastní kód (Google Ads / Script)</label>
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <label for="odkaz" class="form-label">Odkaz (URL) <span class="text-danger">*</span></label>
-                    <input type="url" name="odkaz" id="odkaz" class="form-control" required 
-                           placeholder="https://www.example.com">
-                    <div class="form-text">URL adresa, na kterou má reklama odkazovat</div>
+                <div id="image_fields">
+                    <div class="mb-4">
+                        <label for="obrazek" class="form-label">Obrázek reklamy <span class="text-danger">*</span></label>
+                        <input type="file" name="obrazek" id="obrazek" class="form-control" accept="image/*">
+                        <div class="form-text">Podporované formáty: JPEG, PNG, GIF, WebP. Požadovaný rozměr: 1024×180 px.</div>
+                        <div id="imagePreview" class="mt-2" style="display: none;">
+                            <img id="previewImg" src="" alt="Náhled" style="max-width: 300px; max-height: 200px; object-fit: contain;">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="odkaz" class="form-label">Odkaz (URL) <span class="text-danger">*</span></label>
+                        <input type="url" name="odkaz" id="odkaz" class="form-control" 
+                               placeholder="https://www.example.com">
+                        <div class="form-text">URL adresa, na kterou má reklama odkazovat</div>
+                    </div>
+                </div>
+
+                <div id="code_fields" style="display: none;">
+                    <div class="mb-4">
+                        <label for="kod" class="form-label">Vlastní kód / Script <span class="text-danger">*</span></label>
+                        <textarea name="kod" id="kod" class="form-control" rows="5" placeholder="Sem vložte kód reklamy (např. od Google Ads)"></textarea>
+                        <div class="form-text">Vložený kód bude vykreslen přímo do stránky.</div>
+                    </div>
                 </div>
 
                 <div class="mb-4">
@@ -76,10 +98,10 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="frekvence" class="form-label">Frekvence zobrazování</label>
+                    <label for="frekvence" class="form-label">Váha reklamy (1–10)</label>
                     <input type="number" name="frekvence" id="frekvence" class="form-control" 
-                           value="1" min="1" required>
-                    <div class="form-text">Jak často se má reklama zobrazovat (1 = vždy, vyšší hodnoty = méně často)</div>
+                           value="1" min="1" max="10" required>
+                    <div class="form-text">Relativní váha ve výběru (vyšší = častěji). 1–10.</div>
                 </div>
 
                 <div class="mb-4">
@@ -114,6 +136,35 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Přepínání typů reklamy
+    const typImage = document.getElementById('typ_image');
+    const typCode = document.getElementById('typ_code');
+    const imageFields = document.getElementById('image_fields');
+    const codeFields = document.getElementById('code_fields');
+    const obrazekInput = document.getElementById('obrazek');
+    const odkazInput = document.getElementById('odkaz');
+    const kodInput = document.getElementById('kod');
+
+    function toggleFields() {
+        if (typImage.checked) {
+            imageFields.style.display = 'block';
+            codeFields.style.display = 'none';
+            obrazekInput.required = true;
+            odkazInput.required = true;
+            kodInput.required = false;
+        } else {
+            imageFields.style.display = 'none';
+            codeFields.style.display = 'block';
+            obrazekInput.required = false;
+            odkazInput.required = false;
+            kodInput.required = true;
+        }
+    }
+
+    typImage.addEventListener('change', toggleFields);
+    typCode.addEventListener('change', toggleFields);
+    toggleFields(); // Inicializace
+
     // Náhled obrázku
     const imageInput = document.getElementById('obrazek');
     const imagePreview = document.getElementById('imagePreview');

@@ -25,10 +25,9 @@ class Ad
             FROM reklamy r
             LEFT JOIN users u ON r.user_id = u.id
             WHERE r.aktivni = 1 
-            AND r.vychozi = 0
             AND r.zacatek <= NOW() 
             AND r.konec >= NOW()
-            ORDER BY r.vychozi DESC, r.frekvence ASC, r.vytvoreno DESC
+            ORDER BY r.frekvence DESC, r.vytvoreno DESC
         ");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -45,24 +44,6 @@ class Ad
             FROM reklamy r
             LEFT JOIN users u ON r.user_id = u.id
             ORDER BY r.vytvoreno DESC
-        ");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Získá aktuální reklamy
-     * 
-     * @return array
-     */
-    public function getCurrentAds()
-    {
-        $stmt = $this->db->query("
-            SELECT r.*, u.email as user_email
-            FROM reklamy r
-            LEFT JOIN users u ON r.user_id = u.id
-            WHERE r.zacatek <= NOW() AND r.konec >= NOW() 
-            AND r.aktivni = 1
-            ORDER BY r.vychozi DESC, r.frekvence ASC, r.vytvoreno DESC
         ");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -148,15 +129,16 @@ class Ad
     {
         $stmt = $this->db->prepare("
             INSERT INTO reklamy (
-                nazev, obrazek, odkaz, zacatek, konec, 
+                nazev, obrazek, odkaz, kod, zacatek, konec, 
                 aktivni, vychozi, frekvence, user_id, vytvoreno
             ) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
         ");
         $stmt->execute([
             $data['nazev'],
-            $data['obrazek'],
-            $data['odkaz'],
+            $data['obrazek'] ?? null,
+            $data['odkaz'] ?? null,
+            $data['kod'] ?? null,
             $data['zacatek'],
             $data['konec'],
             $data['aktivni'] ?? 1,
@@ -190,6 +172,10 @@ class Ad
         if (isset($data['odkaz'])) {
             $fields[] = "odkaz = ?";
             $values[] = $data['odkaz'];
+        }
+        if (isset($data['kod'])) {
+            $fields[] = "kod = ?";
+            $values[] = $data['kod'];
         }
         if (isset($data['zacatek'])) {
             $fields[] = "zacatek = ?";
@@ -301,14 +287,12 @@ class Ad
         $totalWeight = 0;
 
         foreach ($ads as $ad) {
-            $freq = (int) ($ad['frekvence'] ?? 1);
-            if ($freq < 1) {
-                $freq = 1;
-            }
-
-            $weight = (int) round(1000 / $freq);
+            $weight = (int) ($ad['frekvence'] ?? 1);
             if ($weight < 1) {
                 $weight = 1;
+            }
+            if ($weight > 10) {
+                $weight = 10;
             }
 
             $weights[] = $weight;

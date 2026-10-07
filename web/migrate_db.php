@@ -4,6 +4,22 @@
  * Stará DB zůstane nezměněná, data se pouze zkopírují
  */
 
+$internalRun = defined('MIGRATION_INTERNAL_RUN') && MIGRATION_INTERNAL_RUN;
+
+if (!$internalRun && php_sapi_name() !== 'cli') {
+    $credentialsFile = __DIR__ . '/../config/db_credentials.php';
+    if (file_exists($credentialsFile)) {
+        require_once $credentialsFile;
+    }
+
+    $token = (string)($_GET['token'] ?? '');
+    if (!defined('MIGRATION_TOKEN') || $token === '' || !hash_equals((string)MIGRATION_TOKEN, $token)) {
+        http_response_code(403);
+        echo 'Forbidden';
+        exit;
+    }
+}
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -11,7 +27,7 @@ set_time_limit(0);
 ini_set('memory_limit', '1024M');
 
 // Pro webový výstup - vypnout buffering pro průběžný výstup
-if (php_sapi_name() !== 'cli') {
+if (!$internalRun && php_sapi_name() !== 'cli') {
     if (ob_get_level()) {
         ob_end_clean();
     }
@@ -25,8 +41,9 @@ if (php_sapi_name() !== 'cli') {
 
 // Funkce pro výpis zpráv
 function zprava($text) {
+    global $internalRun;
     echo $text . (php_sapi_name() === 'cli' ? "\n" : "<br>\n");
-    if (php_sapi_name() !== 'cli') {
+    if (!$internalRun && php_sapi_name() !== 'cli') {
         flush();
         if (ob_get_level() > 0) {
             ob_flush();
@@ -44,28 +61,64 @@ if (file_exists($credentialsFile)) {
     require_once $credentialsFile;
 }
 
+if (php_sapi_name() === 'cli' && !$internalRun && isset($argv) && is_array($argv)) {
+    foreach (array_slice($argv, 1) as $arg) {
+        if ($arg === '--help' || $arg === '-h') {
+            zprava("Použití: php migrate_db.php --step=1..10|all [--min_id=] [--max_id=] [--start_id=] [--limit=]");
+            exit(0);
+        }
+        if (strpos($arg, '--') === 0) {
+            $pair = explode('=', substr($arg, 2), 2);
+            $k = (string)($pair[0] ?? '');
+            $v = (string)($pair[1] ?? '1');
+            if ($k !== '') {
+                $_GET[$k] = $v;
+            }
+        }
+    }
+}
+
+$uploadsBase = __DIR__ . '/uploads';
+
 // Konfigurace STARÉ databáze (zdroj dat)
 $old_db_config = [
-    'host' => defined('OLD_DB_HOST') ? OLD_DB_HOST : 'md396.wedos.net',
-    'username' => defined('OLD_DB_USER') ? OLD_DB_USER : 'w340619_clanky',
-    'password' => defined('OLD_DB_PASS') ? OLD_DB_PASS : 'bqsUuxcr',
-    'database' => defined('OLD_DB_NAME') ? OLD_DB_NAME : 'd340619_clanky'
+    'host' => defined('OLD_DB_HOST') ? OLD_DB_HOST : '',
+    'username' => defined('OLD_DB_USER') ? OLD_DB_USER : '',
+    'password' => defined('OLD_DB_PASS') ? OLD_DB_PASS : '',
+    'database' => defined('OLD_DB_NAME') ? OLD_DB_NAME : ''
 ];
 
 // Konfigurace NOVÉ databáze (cíl migrace)
 $new_db_config = [
-    'host' => defined('DB_HOST') ? DB_HOST : 'md413.wedos.net',
-    'username' => defined('DB_USER') ? DB_USER : 'w340619_blog',
-    'password' => defined('DB_PASS') ? DB_PASS : 'kaYak714?',
-    'database' => defined('DB_NAME') ? DB_NAME : 'd340619_blog'
+    'host' => defined('DB_HOST') ? DB_HOST : '',
+    'username' => defined('DB_USER') ? DB_USER : '',
+    'password' => defined('DB_PASS') ? DB_PASS : '',
+    'database' => defined('DB_NAME') ? DB_NAME : ''
 ];
 
-// Cesty k HTML souborům s obsahem článků (zkusí více možností)
-$old_html_paths = [
-    '/data/web/virtuals/340619/virtual/www/subdom/magazin/assets/html/clanek_', // Absolutní cesta v rámci povolené cesty
-    'https://www.magazin.cyklistickey.cz/assets/html/clanek_', // HTTP URL
-    'https://www.magazin.cyklistickey.cz/assets/html/clanek_' // HTTP URL s .php příponou (zkusíme obě)
-];
+// Cesty k HTML souborům s obsahem článků (zkusí více možností, v tomto pořadí).
+// Starý web má soubory typu: .../subdom/magazin/assets/html/clanek_{ID}.php
+//
+// Volitelně v config/db_credentials.php nastav:
+//   define('OLD_HTML_BASE_PATH', 'C:\\cesta\\ke\\Cyklistickey-final\\subdom\\magazin\\assets\\html');
+// (bez koncového lomítka; skript přidává prefix "clanek_" + ID + přípona)
+// Na produkci Wedos často funguje jen absolutní cesta níže + HTTP z magazinu.
+$old_html_paths = [];
+
+if (defined('OLD_HTML_BASE_PATH') && is_string(OLD_HTML_BASE_PATH) && OLD_HTML_BASE_PATH !== '') {
+    $base = rtrim(str_replace(['/', '\\'], DIRECTORY_SEPARATOR, OLD_HTML_BASE_PATH), DIRECTORY_SEPARATOR);
+    $old_html_paths[] = $base . DIRECTORY_SEPARATOR . 'clanek_';
+}
+
+// Produkční absolutní cesta (stejná struktura jako lokální repo Cyklistickey-final/subdom/magazin/...)
+$old_html_paths[] = '/data/web/virtuals/340619/virtual/www/subdom/magazin/assets/html/clanek_';
+
+$oldMagazinBase = defined('OLD_MAGAZIN_PUBLIC_URL') && is_string(OLD_MAGAZIN_PUBLIC_URL) && OLD_MAGAZIN_PUBLIC_URL !== ''
+    ? rtrim(OLD_MAGAZIN_PUBLIC_URL, '/')
+    : 'https://www.magazin.cyklistickey.cz';
+$old_html_paths[] = $oldMagazinBase . '/assets/html/clanek_';
+
+$old_html_paths = array_values(array_unique($old_html_paths));
 
 // Který krok se má spustit (1-10, nebo 'all' pro všechny)
 $step = isset($_GET['step']) ? $_GET['step'] : 'all';
@@ -79,6 +132,20 @@ $start_id = isset($_GET['start_id']) ? (int)$_GET['start_id'] : 0;
 if ($start_id > 0) {
     $min_id = $start_id; // Přepsat min_id, pokud je zadán start_id
 }
+
+// Směr migrace pro články: asc (default) / desc (od nejnovějších)
+$direction = isset($_GET['direction']) ? (string)$_GET['direction'] : 'asc';
+$direction = strtolower(trim($direction));
+if ($direction !== 'desc') {
+    $direction = 'asc';
+}
+
+// Cursor pro sestupnou migraci (id <= cursor). Když není, vezme se max(id) ve staré DB.
+$cursor_id = isset($_GET['cursor_id']) ? (int)$_GET['cursor_id'] : 0;
+
+// Reset cílových tabulek (jen pro články a navázaná data).
+// Použij jen při "wipe + import" scénáři: ?step=3&reset=1&direction=desc
+$reset = isset($_GET['reset']) ? (int)$_GET['reset'] : 0;
 
 // Limit počtu článků na jedno spuštění (pro vyhnutí se timeoutu)
 $batch_limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 50;
@@ -257,45 +324,93 @@ if ($step == 'all' || $step == '3') {
     zprava("\n=== KROK 3: Migrace článků ===");
     
     try {
-        // Načtení článků ze staré DB - od zadaného ID směrem nahoru (821, 822, 823...)
-        $sql = "
-            SELECT id, nazev, datum, viditelnost, nahled_foto, user_id, url 
-            FROM clanky 
-        ";
-        
-        // Přidat filtrování podle ID, pokud je zadáno
-        $params = [];
-        if ($min_id > 0 || $max_id > 0) {
-            $conditions = [];
-            if ($min_id > 0) {
-                $conditions[] = "id >= :min_id";
-                $params[':min_id'] = $min_id;
-            }
-            if ($max_id > 0) {
-                $conditions[] = "id <= :max_id";
-                $params[':max_id'] = $max_id;
-            }
-            if (!empty($conditions)) {
-                $sql .= " WHERE " . implode(" AND ", $conditions);
+        // Stará DB často nemá sloupec obsah (byl jen v HTML souborech) — jinak celý SELECT spadne.
+        $hasObsahColumn = false;
+        try {
+            $colStmt = $pdo_old->query("SHOW COLUMNS FROM clanky LIKE 'obsah'");
+            $hasObsahColumn = $colStmt && $colStmt->rowCount() > 0;
+        } catch (Exception $e) {
+            $hasObsahColumn = false;
+        }
+        if (!$hasObsahColumn) {
+            zprava("ℹ️ Tabulka clanky ve staré DB nemá sloupec obsah — obsah se bere z HTML / nahradí se po načtení.");
+        }
+
+        $obsahSelectPart = $hasObsahColumn ? ', obsah AS obsah_db' : ', CAST(NULL AS CHAR) AS obsah_db';
+
+        // Volitelný reset cílových tabulek (wipe + import).
+        // Reset proběhne jen na začátku sestupné migrace (cursor_id=0), aby se neopakoval při pokračování.
+        if ($reset === 1 && $direction === 'desc' && $cursor_id <= 0) {
+            zprava("🧹 RESET: mažu články a navázaná data v nové DB...");
+            try {
+                $pdo_new->exec("SET FOREIGN_KEY_CHECKS=0");
+                // Pořadí: nejdřív závislé tabulky, pak clanky
+                foreach (['link_clicks', 'views_clanku', 'propagace', 'clanky_kategorie', 'clanky'] as $t) {
+                    try {
+                        $pdo_new->exec("TRUNCATE TABLE `$t`");
+                        zprava("  ✓ TRUNCATE $t");
+                    } catch (Exception $e) {
+                        // Tabulka nemusí existovat v každém schématu
+                        zprava("  ⚠️ TRUNCATE $t přeskočeno: " . $e->getMessage());
+                    }
+                }
+                $pdo_new->exec("SET FOREIGN_KEY_CHECKS=1");
+                zprava("✅ RESET hotový.");
+            } catch (Exception $e) {
+                zprava("❌ RESET selhal: " . $e->getMessage());
             }
         }
-        
-        // ORDER BY id ASC - od menšího k většímu (821, 822, 823...)
-        $sql .= " ORDER BY id ASC";
-        
+
+        // Načtení batch článků ze staré DB.
+        // - asc: od nejmenších k největším (původní režim, s min_id/start_id)
+        // - desc: od největších k nejmenším (nový režim s cursor_id)
+        $params = [];
+        $conditions = [];
+        if ($min_id > 0) {
+            $conditions[] = "id >= :min_id";
+            $params[':min_id'] = $min_id;
+        }
+        if ($max_id > 0) {
+            $conditions[] = "id <= :max_id";
+            $params[':max_id'] = $max_id;
+        }
+
+        if ($direction === 'desc') {
+            if ($cursor_id <= 0) {
+                // start from the newest article in old DB (within optional filters)
+                $sqlMax = "SELECT MAX(id) FROM clanky";
+                if (!empty($conditions)) {
+                    $sqlMax .= " WHERE " . implode(" AND ", $conditions);
+                }
+                $stmtMax = $pdo_old->prepare($sqlMax);
+                $stmtMax->execute($params);
+                $cursor_id = (int)$stmtMax->fetchColumn();
+            }
+            if ($cursor_id > 0) {
+                $conditions[] = "id <= :cursor_id";
+                $params[':cursor_id'] = $cursor_id;
+            }
+        }
+
+        $whereSql = !empty($conditions) ? (" WHERE " . implode(" AND ", $conditions)) : "";
+        $orderSql = ($direction === 'desc') ? " ORDER BY id DESC" : " ORDER BY id ASC";
+        $limitSql = ($batch_limit > 0) ? (" LIMIT " . (int)$batch_limit) : "";
+
+        $sql = "
+            SELECT id, nazev, datum, viditelnost, nahled_foto, user_id, url
+            $obsahSelectPart
+            FROM clanky
+            $whereSql
+            $orderSql
+            $limitSql
+        ";
+
         $stmt_old = $pdo_old->prepare($sql);
         $stmt_old->execute($params);
         $clanky = $stmt_old->fetchAll(PDO::FETCH_ASSOC);
-        
+
         $total_clanky = count($clanky);
-        zprava("Načteno " . $total_clanky . " článků ze staré DB.");
-        
-        // Omezit počet článků na batch_limit, pokud je zadán
-        if ($batch_limit > 0 && $total_clanky > $batch_limit) {
-            $clanky = array_slice($clanky, 0, $batch_limit);
-            zprava("⚠️ Zpracováno bude jen prvních " . $batch_limit . " článků (kvůli limitu).");
-            zprava("💡 Pro pokračování použij: ?step=3&min_id=" . ($clanky[count($clanky)-1]['id'] - 1) . "&limit=" . $batch_limit);
-        }
+        zprava("Načteno " . $total_clanky . " článků ze staré DB (direction=$direction, cursor_id=$cursor_id, limit=$batch_limit).");
         
         $stmt_check_user = $pdo_new->prepare("SELECT id FROM users WHERE id = :user_id");
         $stmt_check_existing = $pdo_new->prepare("SELECT id FROM clanky WHERE id = :id");
@@ -317,6 +432,7 @@ if ($step == 'all' || $step == '3') {
         
         $inserted = 0;
         $updated = 0;
+        $unchanged = 0;
         $missing_html = 0;
         $invalid_user = 0;
         
@@ -333,12 +449,13 @@ if ($step == 'all' || $step == '3') {
                 }
                 
                 // Načtení HTML obsahu
-                $obsah = '';
+                $obsahFromDb = (string)($clanek['obsah_db'] ?? '');
+                $obsah = $obsahFromDb;
                 $found = false;
                 $tried_paths = [];
                 
                 // Zkusit všechny možné cesty a přípony
-                $extensions = ['.html', '.php'];
+                $extensions = ['.php', '.html'];
                 
                 foreach ($old_html_paths as $base_path) {
                     foreach ($extensions as $ext) {
@@ -357,7 +474,7 @@ if ($step == 'all' || $step == '3') {
                             $obsah = @file_get_contents($html_file, false, $context);
                             if ($obsah !== false && strlen($obsah) > 0) {
                                 $found = true;
-                                if (($inserted + $updated) < 3) {
+                                if (($inserted + $updated + $unchanged) < 3) {
                                     zprava("  ✓ Načteno z: $html_file");
                                 }
                                 break 2; // Break z obou smyček
@@ -369,7 +486,7 @@ if ($step == 'all' || $step == '3') {
                                     $obsah = @file_get_contents($html_file);
                                     if ($obsah !== false && strlen($obsah) > 0) {
                                         $found = true;
-                                        if (($inserted + $updated) < 3) {
+                                        if (($inserted + $updated + $unchanged) < 3) {
                                             zprava("  ✓ Načteno z: $html_file");
                                         }
                                         break 2; // Break z obou smyček
@@ -383,112 +500,80 @@ if ($step == 'all' || $step == '3') {
                     }
                 }
                 
-                // Debug pro prvních 3 chybějících
-                if (!$found && $missing_html < 3) {
-                    zprava("  ⚠️ Zkoušel jsem tyto cesty:");
-                    foreach (array_slice($tried_paths, 0, 4) as $path) {
-                        zprava("    - $path");
-                    }
-                }
-                
                 if (!$found) {
-                    $missing_html++;
-                    // Zobrazit varování jen pro prvních 10 chybějících souborů
-                    if ($missing_html <= 10) {
-                        zprava("  ⚠️ HTML soubor pro článek ID {$clanek['id']} nenalezen");
-                    }
-                } else {
-                    // Debug: zobrazit délku načteného obsahu pro prvních 5 úspěšných
-                    if (($inserted + $updated) < 5) {
-                        zprava("  ✓ Článek ID {$clanek['id']}: načteno " . strlen($obsah) . " znaků obsahu");
+                    if (trim($obsahFromDb) === '') {
+                        $missing_html++;
+                        if ($missing_html <= 5) {
+                            zprava("  ⚠️ HTML soubor pro článek ID {$clanek['id']} nenalezen");
+                        }
+                    } else {
+                        if (($inserted + $updated + $unchanged) < 3) {
+                            zprava("  ℹ️ HTML soubor pro článek ID {$clanek['id']} nenalezen, používám obsah ze staré DB.");
+                        }
                     }
                 }
+
+                // Normalize old article-image paths to new uploads path.
+                $obsah = str_replace(
+                    [
+                        'https://www.magazin.cyklistickey.cz/assets/img/upload/clanek_obsah/',
+                        'http://www.magazin.cyklistickey.cz/assets/img/upload/clanek_obsah/',
+                        '/assets/img/upload/clanek_obsah/',
+                        'assets/img/upload/clanek_obsah/',
+                    ],
+                    '/uploads/articles/',
+                    (string)$obsah
+                );
+                $obsah = str_replace('/web/uploads/articles/', '/uploads/articles/', $obsah);
                 
-                // Zkontrolovat, zda článek už existuje (PŘED vložením)
+                // Zkontrolovat, zda článek už existuje a načíst ho pro porovnání
+                $stmt_check_existing = $pdo_new->prepare("SELECT id, nazev, datum, viditelnost, nahled_foto, obsah, user_id, url FROM clanky WHERE id = :id");
                 $stmt_check_existing->execute([':id' => $clanek['id']]);
-                $exists = $stmt_check_existing->fetch();
+                $existing_article = $stmt_check_existing->fetch(PDO::FETCH_ASSOC);
                 
-                // Nahled_foto se zpracuje v kroku 8, tady nechat prázdné
+                // Připravit data ze staré DB
+                $nahled_foto_clean = !empty($clanek['nahled_foto']) ? basename($clanek['nahled_foto']) : null;
+                
                 $data = [
                     ':id' => $clanek['id'],
                     ':nazev' => $clanek['nazev'],
                     ':datum' => $clanek['datum'],
                     ':viditelnost' => $clanek['viditelnost'],
-                    ':nahled_foto' => null, // Zpracuje se v kroku 8
+                    ':nahled_foto' => $nahled_foto_clean,
                     ':obsah' => $obsah,
                     ':user_id' => $user_id,
                     ':url' => $clanek['url']
                 ];
-                
-                if ($exists) {
-                    // Článek existuje - použít UPDATE
-                    $stmt_update->execute($data);
-                } else {
-                    // Nový článek - použít INSERT
-                    $stmt_insert->execute($data);
-                }
-                
-                // Ověřit, že se obsah skutečně uložil (jen pro prvních 10 pro debug)
-                if (($inserted + $updated) < 10) {
-                    $stmt_verify = $pdo_new->prepare("SELECT LENGTH(obsah) as obsah_length FROM clanky WHERE id = :id");
-                    $stmt_verify->execute([':id' => $clanek['id']]);
-                    $verify = $stmt_verify->fetch();
-                    if ($verify) {
-                        if (strlen($obsah) > 0 && $verify['obsah_length'] == 0) {
-                            zprava("  ❌ CHYBA: Článek ID {$clanek['id']} - načteno " . strlen($obsah) . " znaků, ale v DB je " . $verify['obsah_length'] . " znaků!");
-                        } elseif (strlen($obsah) > 0 && $verify['obsah_length'] > 0) {
-                            zprava("  ✓ Článek ID {$clanek['id']}: obsah uložen (" . $verify['obsah_length'] . " znaků v DB)");
-                        } elseif (strlen($obsah) == 0) {
-                            zprava("  ⚠️ Článek ID {$clanek['id']}: HTML soubor nebyl načten (obsah prázdný)");
+
+                if ($existing_article) {
+                    // Porovnání - zda se článek v novém webu liší od starého
+                    $changed = false;
+                    if ($existing_article['nazev'] !== $clanek['nazev']) $changed = true;
+                    if ($existing_article['datum'] !== $clanek['datum']) $changed = true;
+                    if ($existing_article['viditelnost'] != $clanek['viditelnost']) $changed = true;
+                    if ($existing_article['nahled_foto'] !== $nahled_foto_clean) $changed = true;
+                    // Pro obsah použijeme trim pro odstranění whitespace na koncích
+                    if (trim($existing_article['obsah']) !== trim($obsah)) $changed = true;
+                    if ($existing_article['user_id'] != $user_id) $changed = true;
+                    if ($existing_article['url'] !== $clanek['url']) $changed = true;
+
+                    if ($changed) {
+                        $stmt_update->execute($data);
+                        $updated++;
+                        if ($updated < 5) {
+                            zprava("  🔄 Článek ID {$clanek['id']} byl změněn - přepisuji");
                         }
+                    } else {
+                        $unchanged++;
                     }
-                }
-                
-                // Zkontrolovat, zda článek už existuje (před vložením)
-                $stmt_check_existing->execute([':id' => $clanek['id']]);
-                $exists = $stmt_check_existing->fetch();
-                
-                if ($exists) {
-                    // Článek už existuje - aktualizace
-                    $updated++;
                 } else {
-                    // Nový článek - vložení
+                    $stmt_insert->execute($data);
                     $inserted++;
                 }
                 
                 // Progress každých 50 článků
-                if (($inserted + $updated) % 50 == 0) {
-                    zprava("  Zpracováno " . ($inserted + $updated) . " článků...");
-                    // Obnovit připojení každých 50 článků, aby se předešlo "MySQL server has gone away"
-                    try {
-                        $pdo_new->query("SELECT 1");
-                    } catch (PDOException $e) {
-                        if (strpos($e->getMessage(), 'MySQL server has gone away') !== false || 
-                            strpos($e->getMessage(), '2006') !== false) {
-                            zprava("  ⚠️ Obnovování připojení k databázi...");
-                            $pdo_new = connectDB($new_db_config, 'NOVÁ DB');
-                            $pdo_new->exec("SET FOREIGN_KEY_CHECKS=0");
-                            
-                            // Znovu připravit statementy
-                            $stmt_check_user = $pdo_new->prepare("SELECT id FROM users WHERE id = :user_id");
-                            $stmt_check_existing = $pdo_new->prepare("SELECT id FROM clanky WHERE id = :id");
-                            $stmt_insert = $pdo_new->prepare("
-                                INSERT INTO clanky (id, nazev, datum, viditelnost, nahled_foto, obsah, user_id, url) 
-                                VALUES (:id, :nazev, :datum, :viditelnost, :nahled_foto, :obsah, :user_id, :url)
-                            ");
-                            $stmt_update = $pdo_new->prepare("
-                                UPDATE clanky SET 
-                                    nazev = :nazev,
-                                    datum = :datum,
-                                    viditelnost = :viditelnost,
-                                    nahled_foto = :nahled_foto,
-                                    obsah = :obsah,
-                                    user_id = :user_id,
-                                    url = :url
-                                WHERE id = :id
-                            ");
-                        }
-                    }
+                if (($inserted + $updated + $unchanged) % 50 == 0) {
+                    zprava("  Zpracováno " . ($inserted + $updated + $unchanged) . " článků...");
                 }
                 
              } catch (PDOException $e) {
@@ -611,36 +696,46 @@ if ($step == 'all' || $step == '3') {
              }
         }
         
-        zprava("✓ Články: $inserted nových, $updated aktualizovaných.");
+        zprava("✓ Články: $inserted nových, $updated aktualizovaných, $unchanged beze změny.");
         
-        // Zobrazit informaci o pokračování, pokud byly zpracovány jen některé články
+        // Zobrazit informaci o pokračování, pokud běží batch režim
         if (count($clanky) > 0) {
             $last_id = end($clanky)['id'];
             $first_id = reset($clanky)['id'];
             
-            if ($batch_limit > 0 && $total_clanky > $batch_limit) {
-                // Pokud zpracováváme od začátku (ASC), next_start_id je poslední zpracované ID + 1
-                $next_start_id = $last_id + 1;
+            if ($batch_limit > 0 && count($clanky) === $batch_limit) {
                 zprava("");
-                zprava("📌 Zpracovány články ID: $first_id - $last_id (z celkem $total_clanky)");
+                zprava("📌 Zpracovány články ID: $first_id - $last_id");
                 zprava("📌 Pro pokračování v migraci použij:");
-                if ($max_id > 0) {
-                    zprava("   ?step=3&start_id=$next_start_id&max_id=$max_id&limit=$batch_limit");
+                if ($direction === 'desc') {
+                    $next_cursor = (int)$last_id - 1;
+                    if ($next_cursor < 0) $next_cursor = 0;
+                    $q = "?step=3&direction=desc&cursor_id=$next_cursor&limit=$batch_limit";
+                    if ($min_id > 0) $q .= "&min_id=$min_id";
+                    if ($max_id > 0) $q .= "&max_id=$max_id";
+                    if ($reset === 1) $q .= "&reset=0";
+                    zprava("   $q");
+                    zprava("MIGRATE_DB_STEP=3");
+                    zprava("MIGRATE_DB_NEXT_CURSOR_ID=$next_cursor");
+                    zprava("MIGRATE_DB_DONE=0");
                 } else {
-                    zprava("   ?step=3&start_id=$next_start_id&limit=$batch_limit");
+                    // ASC: pokračování přes start_id (původní)
+                    $next_start_id = (int)$last_id + 1;
+                    $q = "?step=3&direction=asc&start_id=$next_start_id&limit=$batch_limit";
+                    if ($max_id > 0) $q .= "&max_id=$max_id";
+                    zprava("   $q");
+                    zprava("MIGRATE_DB_STEP=3");
+                    zprava("MIGRATE_DB_NEXT_START_ID=$next_start_id");
+                    zprava("MIGRATE_DB_DONE=0");
                 }
             } else {
                 zprava("");
                 zprava("📌 Zpracovány články ID: $first_id - $last_id");
                 if ($total_clanky > 0 && $total_clanky == count($clanky)) {
                     zprava("✅ Všechny články v rozsahu byly zpracovány!");
-                    // Pokud byl zadán start_id, zobrazit další možný start_id
-                    if ($start_id > 0) {
-                        $next_start_id = $last_id + 1;
-                        zprava("💡 Pro pokračování od ID $next_start_id použij:");
-                        zprava("   ?step=3&start_id=$next_start_id&limit=$batch_limit");
-                    }
                 }
+                zprava("MIGRATE_DB_STEP=3");
+                zprava("MIGRATE_DB_DONE=1");
             }
         }
         if ($missing_html > 0) {
@@ -648,6 +743,123 @@ if ($step == 'all' || $step == '3') {
         }
         if ($invalid_user > 0) {
             zprava("⚠️ $invalid_user článků s neexistujícím user_id (nastaveno na 0).");
+        }
+
+        // Safety pass: ensure newest articles are present in target DB.
+        // This protects against edge cases where batching/interruptions skip the tail.
+        try {
+            $tailLimit = 10;
+            $tailObsahPart = $hasObsahColumn ? ', obsah AS obsah_db' : ', CAST(NULL AS CHAR) AS obsah_db';
+            $tailSql = "
+                SELECT id, nazev, datum, viditelnost, nahled_foto, user_id, url
+                $tailObsahPart
+                FROM clanky
+            ";
+            $tailParams = [];
+            $tailConditions = [];
+            if ($min_id > 0) {
+                $tailConditions[] = "id >= :tail_min_id";
+                $tailParams[':tail_min_id'] = $min_id;
+            }
+            if ($max_id > 0) {
+                $tailConditions[] = "id <= :tail_max_id";
+                $tailParams[':tail_max_id'] = $max_id;
+            }
+            if (!empty($tailConditions)) {
+                $tailSql .= " WHERE " . implode(" AND ", $tailConditions);
+            }
+            $tailSql .= " ORDER BY id DESC LIMIT " . (int)$tailLimit;
+
+            $stmt_tail = $pdo_old->prepare($tailSql);
+            $stmt_tail->execute($tailParams);
+            $tailRows = $stmt_tail->fetchAll(PDO::FETCH_ASSOC);
+
+            $rescuedTail = 0;
+            foreach ($tailRows as $tailArticle) {
+                $stmt_check_existing->execute([':id' => $tailArticle['id']]);
+                if ($stmt_check_existing->fetch()) {
+                    continue;
+                }
+
+                $tailUserId = (int)$tailArticle['user_id'];
+                if ($tailUserId > 0) {
+                    $stmt_check_user->execute([':user_id' => $tailUserId]);
+                    if (!$stmt_check_user->fetch()) {
+                        $tailUserId = 0;
+                    }
+                }
+
+                $tailObsahFromDb = (string)($tailArticle['obsah_db'] ?? '');
+                $tailObsah = $tailObsahFromDb;
+                $tailFound = false;
+                $extensions = ['.php', '.html'];
+                foreach ($old_html_paths as $base_path) {
+                    foreach ($extensions as $ext) {
+                        $html_file = $base_path . $tailArticle['id'] . $ext;
+                        if (strpos($html_file, 'http') === 0) {
+                            $context = stream_context_create([
+                                'http' => [
+                                    'timeout' => 5,
+                                    'user_agent' => 'Mozilla/5.0',
+                                    'ignore_errors' => true
+                                ]
+                            ]);
+                            $tailObsah = @file_get_contents($html_file, false, $context);
+                            if ($tailObsah !== false && strlen($tailObsah) > 0) {
+                                $tailFound = true;
+                                break 2;
+                            }
+                        } else {
+                            try {
+                                if (@file_exists($html_file)) {
+                                    $tailObsah = @file_get_contents($html_file);
+                                    if ($tailObsah !== false && strlen($tailObsah) > 0) {
+                                        $tailFound = true;
+                                        break 2;
+                                    }
+                                }
+                            } catch (Exception $e) {
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+                $tailNahledFotoClean = !empty($tailArticle['nahled_foto']) ? basename($tailArticle['nahled_foto']) : null;
+                $tailObsah = str_replace(
+                    [
+                        'https://www.magazin.cyklistickey.cz/assets/img/upload/clanek_obsah/',
+                        'http://www.magazin.cyklistickey.cz/assets/img/upload/clanek_obsah/',
+                        '/assets/img/upload/clanek_obsah/',
+                        'assets/img/upload/clanek_obsah/',
+                    ],
+                    '/uploads/articles/',
+                    (string)$tailObsah
+                );
+                $tailObsah = str_replace('/web/uploads/articles/', '/uploads/articles/', $tailObsah);
+                $stmt_insert->execute([
+                    ':id' => $tailArticle['id'],
+                    ':nazev' => $tailArticle['nazev'],
+                    ':datum' => $tailArticle['datum'],
+                    ':viditelnost' => $tailArticle['viditelnost'],
+                    ':nahled_foto' => $tailNahledFotoClean,
+                    ':obsah' => $tailObsah,
+                    ':user_id' => $tailUserId,
+                    ':url' => $tailArticle['url']
+                ]);
+
+                $inserted++;
+                $rescuedTail++;
+                if (!$tailFound && trim($tailObsahFromDb) === '') {
+                    $missing_html++;
+                }
+            }
+
+            if ($rescuedTail > 0) {
+                zprava("🛟 Tail safety sync doplnil $rescuedTail nejnovějších článků, které chyběly v nové DB.");
+            }
+        } catch (Exception $e) {
+            zprava("⚠️ Tail safety sync selhal: " . $e->getMessage());
         }
         
     } catch (Exception $e) {
@@ -1060,6 +1272,9 @@ if ($step == 'all' || $step == '8') {
                 } else {
                     zprava("   ?step=8&start_id=$next_start_id&limit=$batch_limit");
                 }
+                zprava("MIGRATE_DB_STEP=8");
+                zprava("MIGRATE_DB_NEXT_START_ID=$next_start_id");
+                zprava("MIGRATE_DB_DONE=0");
             } else {
                 zprava("");
                 zprava("📌 Zpracovány obrázky článků ID: $first_id - $last_id");
@@ -1071,6 +1286,8 @@ if ($step == 'all' || $step == '8') {
                         zprava("   ?step=8&start_id=$next_start_id&limit=$batch_limit");
                     }
                 }
+                zprava("MIGRATE_DB_STEP=8");
+                zprava("MIGRATE_DB_DONE=1");
             }
         }
         
@@ -1136,7 +1353,7 @@ if ($step == 'all' || $step == '9') {
             '/data/web/virtuals/340619/virtual/www/subdom/magazin/assets/img/upload/profil_foto/', // Absolutní cesta
             'https://www.magazin.cyklistickey.cz/assets/img/upload/profil_foto/' // HTTP URL
         ];
-        $new_photo_path = $_SERVER['DOCUMENT_ROOT'] . '/web/uploads/users/thumbnails/';
+        $new_photo_path = $uploadsBase . '/users/thumbnails/';
         
         zprava("📁 Nová cesta: $new_photo_path");
         
@@ -1265,6 +1482,9 @@ if ($step == 'all' || $step == '9') {
                 } else {
                     zprava("   ?step=9&start_id=$next_start_id&limit=$batch_limit");
                 }
+                zprava("MIGRATE_DB_STEP=9");
+                zprava("MIGRATE_DB_NEXT_START_ID=$next_start_id");
+                zprava("MIGRATE_DB_DONE=0");
             } else {
                 zprava("");
                 zprava("📌 Zpracovány obrázky uživatelů ID: $first_id - $last_id");
@@ -1276,6 +1496,8 @@ if ($step == 'all' || $step == '9') {
                         zprava("   ?step=9&start_id=$next_start_id&limit=$batch_limit");
                     }
                 }
+                zprava("MIGRATE_DB_STEP=9");
+                zprava("MIGRATE_DB_DONE=1");
             }
         }
         
@@ -1372,7 +1594,7 @@ if ($step == 'all' || $step == '10') {
             '/data/web/virtuals/340619/virtual/www/subdom/magazin/assets/audio/', // Absolutní cesta
             'https://www.magazin.cyklistickey.cz/assets/audio/' // HTTP URL
         ];
-        $new_audio_path = $_SERVER['DOCUMENT_ROOT'] . '/web/uploads/audio/';
+        $new_audio_path = $uploadsBase . '/audio/';
         
         zprava("📁 Nová cesta: $new_audio_path");
         
@@ -1469,22 +1691,34 @@ if ($step == 'all' || $step == '10') {
                     // Aktualizovat DB
                     $db_updated = false;
                     try {
-                        $stmt_update = $pdo_new->prepare("UPDATE clanky SET audio_file = :audio_file WHERE id = :id");
+                        $audioUrl = '/uploads/audio/' . $new_filename;
+                        $stmt_update = $pdo_new->prepare("UPDATE clanky SET audio = :audio WHERE id = :id");
                         $stmt_update->execute([
                             ':id' => $id_clanku,
-                            ':audio_file' => $new_filename
+                            ':audio' => $audioUrl
                         ]);
                         $db_updated = true;
                     } catch (PDOException $e) {
                         try {
-                            $stmt_update = $pdo_new->prepare("UPDATE clanky SET audio = :audio WHERE id = :id");
+                            $stmt_update = $pdo_new->prepare("UPDATE clanky SET audio_file = :audio_file WHERE id = :id");
                             $stmt_update->execute([
                                 ':id' => $id_clanku,
-                                ':audio' => $new_filename
+                                ':audio_file' => $new_filename
                             ]);
                             $db_updated = true;
                         } catch (PDOException $e2) {
                             // Pole neexistuje - OK
+                        }
+                    }
+
+                    if ($db_updated) {
+                        try {
+                            $stmt_update2 = $pdo_new->prepare("UPDATE clanky SET audio_file = :audio_file WHERE id = :id");
+                            $stmt_update2->execute([
+                                ':id' => $id_clanku,
+                                ':audio_file' => $new_filename
+                            ]);
+                        } catch (PDOException $e) {
                         }
                     }
                     
@@ -1512,16 +1746,25 @@ if ($step == 'all' || $step == '10') {
             zprava("");
             zprava("⚠️ POZOR: Žádný soubor nebyl zkopírován!");
             zprava("   Možné příčiny:");
-            zprava("   - Soubory neexistují ve staré cestě: $old_audio_path");
+            zprava("   - Soubory neexistují ve staré cestě: " . implode(', ', $old_audio_paths));
             zprava("   - Články neexistují v nové DB");
             zprava("   - Špatná cesta k souborům");
             if ($total_audio <= 5) {
                 zprava("");
                 zprava("   Prvních " . min(5, $total_audio) . " záznamů:");
                 foreach (array_slice($audio_records, 0, 5) as $audio) {
-                    $test_file = $old_audio_path . $audio['nazev_souboru'];
-                    $exists = file_exists($test_file) ? "✓ existuje" : "✗ neexistuje";
-                    zprava("     - ID článku: {$audio['id_clanku']}, soubor: {$audio['nazev_souboru']} ($exists)");
+                    $exists = "✗ neexistuje";
+                    foreach ($old_audio_paths as $p) {
+                        if (strpos($p, 'http') === 0) {
+                            continue;
+                        }
+                        $test_file = $p . $audio['nazev_souboru'];
+                        if (file_exists($test_file)) {
+                            $exists = "✓ existuje";
+                            break;
+                        }
+                    }
+                    zprava("     - ID článku: {$audio['id_clanku']}, soubor: {$audio['nazev_souboru']} (" . $exists . ")");
                 }
             }
         }
@@ -1541,6 +1784,9 @@ if ($step == 'all' || $step == '10') {
                 } else {
                     zprava("   ?step=10&start_id=$next_start_id&limit=$batch_limit");
                 }
+                zprava("MIGRATE_DB_STEP=10");
+                zprava("MIGRATE_DB_NEXT_START_ID=$next_start_id");
+                zprava("MIGRATE_DB_DONE=0");
             } else {
                 zprava("");
                 zprava("📌 Zpracovány audio soubory pro články ID: $first_id - $last_id");
@@ -1552,6 +1798,8 @@ if ($step == 'all' || $step == '10') {
                         zprava("   ?step=10&start_id=$next_start_id&limit=$batch_limit");
                     }
                 }
+                zprava("MIGRATE_DB_STEP=10");
+                zprava("MIGRATE_DB_DONE=1");
             }
         }
         
@@ -1568,4 +1816,3 @@ zprava("\nPro zpracování článků od určitého ID použijte: ?step=3&start_i
 zprava("   (zpracuje články 821, 822, 823... směrem nahoru)");
 zprava("Pro filtrování článků v rozsahu: ?step=3&start_id=821&max_id=1062&limit=50");
 ?>
-

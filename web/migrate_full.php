@@ -14,6 +14,22 @@
  * - Nestahuje obrázky ani audio soubory (předpokládá se ruční upload přes FTP)
  */
 
+$internalRun = defined('MIGRATION_INTERNAL_RUN') && MIGRATION_INTERNAL_RUN;
+
+$credentialsFile = __DIR__ . '/../config/db_credentials.php';
+if (file_exists($credentialsFile)) {
+    require_once $credentialsFile;
+}
+
+if (!$internalRun && php_sapi_name() !== 'cli') {
+    $token = (string)($_GET['token'] ?? '');
+    if (!defined('MIGRATION_TOKEN') || $token === '' || !hash_equals((string)MIGRATION_TOKEN, $token)) {
+        http_response_code(403);
+        echo 'Forbidden';
+        exit;
+    }
+}
+
 // Nastavení pro běh bez limitů
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -22,7 +38,7 @@ set_time_limit(0);           // Neomezený čas běhu
 ini_set('memory_limit', '2048M'); // Hodně paměti pro jistotu
 
 // Pro webový výstup - vypnout buffering
-if (php_sapi_name() !== 'cli') {
+if (!$internalRun && php_sapi_name() !== 'cli') {
     if (ob_get_level()) ob_end_clean();
     header('Content-Type: text/html; charset=utf-8');
     if (function_exists('apache_setenv')) @apache_setenv('no-gzip', 1);
@@ -30,6 +46,7 @@ if (php_sapi_name() !== 'cli') {
 }
 
 function zprava($text, $type = 'info') {
+    global $internalRun;
     $color = '#333';
     if ($type === 'success') $color = 'green';
     if ($type === 'error') $color = 'red';
@@ -37,7 +54,7 @@ function zprava($text, $type = 'info') {
     
     echo "<div style='color: {$color}; margin-bottom: 2px; font-family: monospace;'>" . $text . "</div>";
     
-    if (php_sapi_name() !== 'cli') {
+    if (!$internalRun && php_sapi_name() !== 'cli') {
         flush();
         if (ob_get_level() > 0) ob_flush();
     }
@@ -46,17 +63,17 @@ function zprava($text, $type = 'info') {
 // === KONFIGURACE ===
 
 $old_db_config = [
-    'host' => 'md396.wedos.net',
-    'username' => 'w340619_clanky',
-    'password' => 'bqsUuxcr',
-    'database' => 'd340619_clanky'
+    'host' => defined('OLD_DB_HOST') ? OLD_DB_HOST : '',
+    'username' => defined('OLD_DB_USER') ? OLD_DB_USER : '',
+    'password' => defined('OLD_DB_PASS') ? OLD_DB_PASS : '',
+    'database' => defined('OLD_DB_NAME') ? OLD_DB_NAME : ''
 ];
 
 $new_db_config = [
-    'host' => 'md413.wedos.net',
-    'username' => 'w340619_blog',
-    'password' => 'kaYak714?',
-    'database' => 'd340619_blog'
+    'host' => defined('DB_HOST') ? DB_HOST : '',
+    'username' => defined('DB_USER') ? DB_USER : '',
+    'password' => defined('DB_PASS') ? DB_PASS : '',
+    'database' => defined('DB_NAME') ? DB_NAME : ''
 ];
 
 // Cesty pro stahování HTML obsahu
@@ -158,7 +175,7 @@ foreach ($clanky as $clanek) {
     // 3. Stahování HTML obsahu
     $obsah = '';
     foreach ($old_html_paths as $base) {
-        foreach ['.html', '.php'] as $ext) {
+        foreach (['.html', '.php'] as $ext) {
             $url = $base . $clanek['id'] . $ext;
             if (strpos($url, 'http') === 0) {
                 // Stahování přes HTTP

@@ -4,9 +4,10 @@
 
     <div class="foto-header">
 
-        <img class='parallax-image' width='100%' src='/assets/graphics/vsichni.jpg' alt='foto-záhlaví' fetchpriority='high' decoding='async'>
-
-        <?php ?>
+        <picture>
+            <source srcset="/assets/graphics/vsichni.webp" type="image/webp">
+            <img class='parallax-image' width='100%' src='/assets/graphics/vsichni.jpg' alt='foto-záhlaví' fetchpriority='high' decoding='async'>
+        </picture>
 
     </div>
 
@@ -14,9 +15,10 @@
 
     <div class="foto-header-mobile">
 
-        <img width='100%' src='/assets/graphics/vsichni.jpg' alt='foto-záhlaví' fetchpriority='high' decoding='async'>
-
-        <?php ?>
+        <picture>
+            <source srcset="/assets/graphics/vsichni.webp" type="image/webp">
+            <img width='100%' src='/assets/graphics/vsichni.jpg' alt='foto-záhlaví' fetchpriority='high' decoding='async'>
+        </picture>
 
     </div>
 
@@ -44,7 +46,7 @@
 
             <div class="team-image">
 
-                <img id="kategorie" src="/assets/graphics/ceo.png" alt="CEO tým Cyklistickey" loading="lazy" decoding="async">
+                <img id="kategorie" src="/assets/graphics/ceo.webp" alt="CEO tým Cyklistickey" loading="lazy" decoding="async">
 
             </div>
 
@@ -52,21 +54,21 @@
 
                 <h2>Dominik</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (5).png" alt="Dominik - člen týmu" loading="lazy" decoding="async">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (5).webp" alt="Dominik - člen týmu" loading="lazy" decoding="async">
 
             </div>
 
             <div class="team-image">
 
-                <h2>Kuba</h2>
+                <h2>Jakub</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (13).png" alt="Kuba - člen týmu" loading="lazy" decoding="async">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (13).webp" alt="Jakub - člen týmu" loading="lazy" decoding="async">
 
             </div>
 
             <div class="team-image">
 
-                <img id="kategorie" src="/assets/graphics/itguys.png" alt="IT tým" loading="lazy" decoding="async">
+                <img id="kategorie" src="/assets/graphics/itguys.webp" alt="IT tým" loading="lazy" decoding="async">
 
             </div>
 
@@ -74,21 +76,19 @@
 
                 <h2>Ondra</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (17).png" alt="Ondra - člen týmu" loading="lazy" decoding="async">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (17).webp" alt="Ondra - člen týmu" loading="lazy" decoding="async">
 
             </div>
 
             <div class="team-image">
-
-                <img id="kategorie" src="/assets/graphics/kamera.png" alt="Kamera tým" loading="lazy" decoding="async">
-
+                <img id="kategorie" src="/assets/graphics/kamera.webp" alt="Kamera tým" loading="lazy" decoding="async">
             </div>
 
             <div class="team-image">
 
                 <h2>Filip</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (11).png" alt="Filip - člen týmu" loading="lazy" decoding="async">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (11).webp" alt="Filip - člen týmu" loading="lazy" decoding="async">
 
             </div>
 
@@ -96,19 +96,24 @@
 
                 <h2>Jonáš</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (12).png" alt="Jonáš - člen týmu" loading="lazy" decoding="async">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (12).webp" alt="Jonáš - člen týmu" loading="lazy" decoding="async">
 
             </div>
 
             <div class="team-image">
 
-                <img id="kategorie" src="/assets/graphics/cycli.png" alt="Cycli tým" loading="lazy" decoding="async">
+                <img id="kategorie" src="/assets/graphics/cycli.webp" alt="Cycli tým" loading="lazy" decoding="async">
 
             </div>
 
-            <div class="team-image missing-photo">
+            <div class="team-image">
 
                 <h2>PLEŠOUN</h2>
+
+                <picture>
+                    <source srcset="/assets/graphics/team/Copy of Cyklistickey.webp" type="image/webp">
+                    <img src="/assets/graphics/team/Copy of Cyklistickey.png" alt="Plešoun - člen týmu" loading="lazy" decoding="async">
+                </picture>
 
             </div>
 
@@ -116,7 +121,7 @@
 
                 <h2>Dominik</h2>
 
-                <img src="/assets/graphics/team/Copy of Cyklistickey (5).png" alt="Dominik - člen týmu" loading="lazy" decoding="async">
+                <img src="/assets/graphics/team/Copy of Cyklistickey (5).webp" alt="Dominik - člen týmu" loading="lazy" decoding="async">
 
             </div>
 
@@ -125,7 +130,6 @@
                 <h2>KUBA</h2>
 
             </div>
-
         </div>
 
     </div>
@@ -142,15 +146,15 @@
 
     </div>
 
-    <div class="galerie">
+    <div class="galerie cycli-gallery">
 
         <div class="obrazky">
 
-            <img src="/assets/graphics/cycli.png" alt="Cycli - obchod" loading="lazy" decoding="async">
+            <img src="/assets/graphics/cycli.webp" alt="Cycli - obchod" loading="lazy" decoding="async">
 
-            <img src="/assets/graphics/cycli-1.png" alt="Cycli - prodej kol" loading="lazy" decoding="async">
+            <img src="/assets/graphics/cycli-1.webp" alt="Cycli - prodej kol" loading="lazy" decoding="async">
 
-            <img src="/assets/graphics/cycli-2.png" alt="Cycli - detail" loading="lazy" decoding="async">
+            <img src="/assets/graphics/cycli-2.webp" alt="Cycli - detail" loading="lazy" decoding="async">
 
         </div>
 
@@ -166,7 +170,7 @@
 
     <div class="idnes">
 
-        <img src="/assets/graphics/idnes.png" alt="Článek na iDnes" loading="lazy" decoding="async">
+        <img src="/assets/graphics/idnes.webp" alt="Článek na iDnes" loading="lazy" decoding="async">
 
     </div>
 
@@ -180,13 +184,13 @@
 
     <div class="partneri">
 
-        <img src="/assets/graphics/forbikes.png" alt="Partner FOR BIKES" loading="lazy" decoding="async">
+        <img src="/assets/graphics/forbikes.webp" alt="Partner FOR BIKES" loading="lazy" decoding="async">
 
         <img src="/assets/graphics/letape.svg" alt="Partner L’Étape Czech Republic" loading="lazy" decoding="async">
 
-        <img src="/assets/graphics/bikefest.png" alt="Partner Prague Bike Fest" loading="lazy" decoding="async">
+        <img src="/assets/graphics/bikefest.webp" alt="Partner Prague Bike Fest" loading="lazy" decoding="async">
 
-        <img src="/assets/graphics/kpz.png" alt="Partner KOLO PRO ŽIVOT" loading="lazy" decoding="async">
+        <img src="/assets/graphics/kpz.webp" alt="Partner KOLO PRO ŽIVOT" loading="lazy" decoding="async">
 
     </div>
 

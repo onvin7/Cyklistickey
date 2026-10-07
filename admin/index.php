@@ -58,6 +58,7 @@ use App\Controllers\Admin\AdAdminController;
 use App\Controllers\Admin\FlashNewsJSONAdminController;
 use App\Controllers\Admin\LinkClicksAdminController;
 use App\Controllers\Admin\LogsAdminController;
+use App\Controllers\Admin\MigrationAdminController;
 use App\Controllers\LoginController;
 
 // ✅ **Inicializace připojení k databázi**
@@ -157,6 +158,14 @@ $routes = [
     'link-clicks' => [LinkClicksAdminController::class, 'index'],
     'logs/view/([a-zA-Z0-9_-]+\.log)' => [LogsAdminController::class, 'view', 'logFileName'],
     'logs' => [LogsAdminController::class, 'index'],
+
+    'migration' => [MigrationAdminController::class, 'index'],
+    'migration/run' => [MigrationAdminController::class, 'run'],
+    'migration/autopilot' => [MigrationAdminController::class, 'autopilot'],
+    'migration/autopilot/start' => [MigrationAdminController::class, 'autopilotStart'],
+    'migration/autopilot/stop' => [MigrationAdminController::class, 'autopilotStop'],
+    'migration/autopilot/tick' => [MigrationAdminController::class, 'autopilotTick'],
+    'migration/autopilot/articles-batch-start' => [MigrationAdminController::class, 'autopilotArticlesBatchStart'],
 ];
 
 // ✅ **Načtení přístupných rout ze session**

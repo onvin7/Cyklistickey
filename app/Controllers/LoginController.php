@@ -155,7 +155,6 @@ class LoginController
         $logEntry .= "  Password: SET (length: " . strlen($password) . ")\n";
         @file_put_contents($loginLogFile, $logEntry, FILE_APPEND);
 
-        error_log("Looking up user with email: " . $email);
         $user = $this->model->getByEmail($email);
 
         if (!$user) {
@@ -165,17 +164,12 @@ class LoginController
             exit();
         }
 
-        error_log("User found - ID: " . $user['id'] . ", Role: " . $user['role']);
-        error_log("Verifying password...");
-
         if (!password_verify($password, $user['heslo'])) {
             @LogHelper::login("Login failed - Wrong password - Email: " . $email . ", User ID: " . $user['id'] . " - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
             $_SESSION['login_error'] = 'Nesprávné heslo. Zkuste to prosím znovu nebo použijte odkaz pro obnovu hesla.';
             header('Location: /login');
             exit();  
         }
-
-        error_log("Password verified successfully");
 
         // Kontrola role - pouze uživatelé s rolí > 0 mají přístup do administrace
         if ($user['role'] <= 0) {
@@ -185,12 +179,10 @@ class LoginController
             exit();
         }
 
-        error_log("Setting session variables...");
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['profil_foto'] = $user['profil_foto'];
-        error_log("Session variables set - User ID: " . $_SESSION['user_id'] . ", Role: " . $_SESSION['role']);
         
         // DEBUG LOGY ZAKOMENTOVÁNY - pro debug odkomentovat
         // $possibleLogPaths = [
@@ -207,8 +199,6 @@ class LoginController
         // Logování úspěšného přihlášení
         @LogHelper::login("Login successful - Email: " . $email . ", User ID: " . $user['id'] . ", Role: " . $user['role'] . ", Name: " . ($user['jmeno'] ?? 'N/A') . " " . ($user['prijmeni'] ?? 'N/A') . " - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
 
-        error_log("Redirecting to /admin...");
-        
         // Zajistit, že session je uložena a cookie je nastavena
         $sessionId = session_id();
         $sessionName = session_name();
@@ -428,38 +418,28 @@ class LoginController
         $user = $this->model->getByEmail($email);
 
         if (!$user) {
-            error_log("ERROR: Uživatel s emailem " . $email . " neexistuje");
             $_SESSION['reset_error'] = 'Účet s tímto e-mailem neexistuje. Zkontrolujte prosím zadanou e-mailovou adresu.';
             header('Location: /reset-password');
             exit();
         }
 
-        error_log("DEBUG: Uživatel nalezen, ID: " . $user['id']);
-
         // Vygenerujeme token a čas expirace
         $token = bin2hex(random_bytes(32));
         $expiresAt = date('Y-m-d H:i:s', strtotime('+1 hour'));
-
-        error_log("DEBUG: Vygenerován token: " . $token . ", expirace: " . $expiresAt);
 
         // Nejprve zkontrolujeme, zda token byl úspěšně uložen do databáze
         $tokenSaved = $this->model->storeResetToken($user['id'], $email, $token, $expiresAt);
         
         if (!$tokenSaved) {
-            error_log("ERROR: Chyba při ukládání tokenu do databáze");
             $_SESSION['reset_error'] = 'Chyba při generování resetovacího odkazu. Zkuste to prosím znovu.';
             header('Location: /reset-password');
             exit();
         }
         
-        // Pro účely ladění vypíšeme informace do error_log
-        error_log("DEBUG: Token úspěšně uložen do DB: " . $token . " pro uživatele ID: " . $user['id'] . ", email: " . $email);
-        
         // Nyní, když víme, že token byl uložen, vytvoříme odkaz
         $resetLink = "http://" . $_SERVER['HTTP_HOST'] . "/reset-password?token=" . urlencode($token);
         
         @LogHelper::login("Password reset requested - Email: " . $email . ", User ID: " . $user['id']);
-        error_log("DEBUG: Vytvořen reset link: " . $resetLink);
 
         // Místo echo HTML stránky, uložíme odkaz do session a přesměrujeme
         if (session_status() === PHP_SESSION_NONE) {
@@ -568,7 +548,6 @@ class LoginController
         }
 
         if ($newPassword !== $confirmPassword) {
-            error_log("ERROR: Hesla se neshodují při resetu hesla. Token: " . $token);
             $_SESSION['reset_error'] = 'Hesla se neshodují. Zkontrolujte, že jste zadali stejné heslo v obou polích.';
             header('Location: /reset-password?token=' . urlencode($token));
             exit;
@@ -579,7 +558,6 @@ class LoginController
         
         if (!$resetData) {
             @LogHelper::login("Password reset failed - Invalid or expired token");
-            error_log("ERROR: Token pro reset hesla nebyl nalezen v databázi nebo expiroval: " . $token);
             $_SESSION['reset_error'] = 'Token je neplatný nebo expirovaný. Požádejte prosím o nový odkaz.';
             header('Location: /reset-password');
             exit;
@@ -588,7 +566,6 @@ class LoginController
         // Kontrola, zda e-mail existuje v DB
         $user = $this->model->getByEmail($resetData['email']);
         if (!$user) {
-            error_log("ERROR: Uživatel s emailem " . $resetData['email'] . " nebyl nalezen.");
             $_SESSION['reset_error'] = 'Účet s tímto e-mailem neexistuje.';
             header('Location: /reset-password');
             exit;
@@ -602,13 +579,11 @@ class LoginController
             // Smazání použitého tokenu
             $this->model->deleteResetToken($token);
             @LogHelper::login("Password reset completed - User ID: " . $user['id'] . ", Email: " . $resetData['email']);
-            error_log("SUCCESS: Heslo bylo úspěšně změněno pro uživatele ID: " . $user['id']);
             $_SESSION['login_success'] = 'Heslo bylo úspěšně změněno! Nyní se můžete přihlásit s novým heslem.';
             header('Location: /login');
             exit;
         } else {
             @LogHelper::login("Password reset failed - Update error for User ID: " . $user['id']);
-            error_log("ERROR: Chyba při změně hesla pro uživatele ID: " . $user['id']);
             $_SESSION['reset_error'] = 'Chyba při změně hesla. Zkuste to prosím znovu.';
             header('Location: /reset-password?token=' . urlencode($token));
             exit;

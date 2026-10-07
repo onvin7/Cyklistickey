@@ -43,7 +43,7 @@
     <?php else: ?>
         <div class="container-clanky" style="padding-top: 0; margin-top: 0;">
             <?php foreach ($results as $article): ?>
-                <a href="/clanek/<?= htmlspecialchars($article['url']) ?>">
+                <a href="/article/<?= htmlspecialchars($article['url']) ?>">
                     <div class="card">
                         <img loading="lazy" src="/uploads/thumbnails/male/<?= !empty($article['nahled_foto']) ? htmlspecialchars($article['nahled_foto']) : 'noimage.png' ?>" alt="<?= htmlspecialchars($article['nazev']) ?>">
                         <div class="card-body">

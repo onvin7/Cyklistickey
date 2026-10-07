@@ -3,8 +3,9 @@
 CREATE TABLE IF NOT EXISTS `reklamy` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nazev` varchar(255) NOT NULL,
-  `obrazek` varchar(255) NOT NULL,
-  `odkaz` varchar(500) NOT NULL,
+  `obrazek` varchar(255) DEFAULT NULL,
+  `odkaz` varchar(500) DEFAULT NULL,
+  `kod` text DEFAULT NULL,
   `zacatek` datetime NOT NULL,
   `konec` datetime NOT NULL,
   `aktivni` tinyint(1) NOT NULL DEFAULT 1,

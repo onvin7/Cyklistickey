@@ -24,12 +24,12 @@ PRIORITNÍ PLÁN ÚKOLŮ (aktuální pořadí)
 - [ ] Volitelně odstranit staré race soubory po migraci
 
 5) Ads management (reklamy)
-- [ ] Doplnit chybějící komponenty (model, controller, views, upload validace, frekvence, fallback)
-- [ ] Odkomentovat položku “Reklamy” v admin navbaru po dokončení
-- [ ] Ošetřit mazání (soubor + DB), access control
-- [ ] **Reklamy v článcích:** Implementovat vkládání bannerů/kódů do textu článků (jako na starém webu)
-- [ ] **Celoplošné reklamy:** Připravit systém pro globální reklamy (header, sidebar, footer, popup) - konzultovat s Dominikem
-- [ ] Přidat přepínač pro Google Ads kód (v adminu, zobrazení v článcích)
+- [x] Doplnit chybějící komponenty (model, controller, views, upload validace, frekvence, fallback) - ✅ HOTOVO
+- [x] Odkomentovat položku “Reklamy” v admin navbaru po dokončení - ✅ HOTOVO
+- [x] Ošetřit mazání (soubor + DB), access control - ✅ HOTOVO
+- [x] **Reklamy v článcích:** Implementovat vkládání bannerů/kódů do textu článků - ✅ HOTOVO
+- [x] Přidat přepínač pro Google Ads kód (v adminu, zobrazení v článcích) - ✅ HOTOVO
+- [x] Sjednotit cesty do /uploads/ads/ - ✅ HOTOVO
 
 6) Migrace databáze – dokončení a validace
 - [ ] Spustit kroky 1–10 v web/migrate_db.php postupně s limity

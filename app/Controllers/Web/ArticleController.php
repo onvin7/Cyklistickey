@@ -154,56 +154,51 @@ class ArticleController
             $structuredData[] = SEOHelper::generateImageSchema($ogImage, $title, $description);
         }
         
-        // Načtení audio z databáze, pokud existuje
-        if (!empty($article['audio'])) {
-            $audioUrl = $article['audio'];
-        } else {
-            // Zpětná kompatibilita: kontrola existence souboru na disku
-            $audioFilePath = __DIR__ . '/../../../web/uploads/audio/' . $article['id'] . '.mp3';
-            $fileExists = @file_exists($audioFilePath);
-            
-            if ($fileExists) {
-                $audioUrl = '/uploads/audio/' . $article['id'] . '.mp3';
-            } else {
-                $audioUrl = null;
-            }
-        }
+        $audioUrl = $this->resolveArticleAudioUrl($article['audio'] ?? null, (int) $article['id']);
         
         // Cesta k empty_clanek.php pro případ, že nejsou nalezeny žádné články
         $emptyArticlePath = '../app/Views/Web/templates/empty_clanek.php';
 
-        // Přidání trackingu k odkazům v obsahu článku
-        if (isset($article['obsah'])) {
-            $article['obsah'] = LinkTrackingHelper::addTrackingToLinks($article['obsah'], $article['id']);
-        }
-
         $articleContentHtml = '';
         if (isset($article['obsah'])) {
+            // 1. Nejdříve zpracujeme embedy (videa, soc. sítě)
             $articleContentHtml = TextHelper::processEmbeds($article['obsah']);
 
-            $blockCount = AdInsertionHelper::countContentBlocks($articleContentHtml);
-            $insertAfterBlocks = AdInsertionHelper::getInsertAfterBlocksForLength($blockCount, 2);
-
-            $adsToInsert = [];
-            if (!empty($insertAfterBlocks)) {
-                $firstAd = $this->adModel->getWeightedRandomActiveAd();
-                if (is_array($firstAd) && !empty($firstAd['obrazek'])) {
-                    $adsToInsert[] = $firstAd;
-                }
-
-                if (count($insertAfterBlocks) >= 2) {
+            // 2. Vložíme reklamy
+            if (!empty($articleContentHtml)) {
+                $blockCount = AdInsertionHelper::countContentBlocks($articleContentHtml);
+                $insertAfterBlocks = AdInsertionHelper::getInsertAfterBlocksForLength($blockCount, 4);
+                
+                if (!empty($insertAfterBlocks)) {
+                    $adsToInsert = [];
                     $exclude = [];
-                    if (!empty($firstAd['id'])) {
-                        $exclude[] = (int) $firstAd['id'];
+                    for ($i = 0; $i < count($insertAfterBlocks); $i++) {
+                        $ad = $this->adModel->getWeightedRandomActiveAd($exclude);
+                        
+                        // Fallback na výchozí reklamu, pokud náhodný výběr selhal
+                        if (!is_array($ad) || (empty($ad['obrazek']) && empty($ad['kod']))) {
+                            $ad = $this->adModel->getDefaultAd();
+                        }
+
+                        if (is_array($ad) && (!empty($ad['obrazek']) || !empty($ad['kod']))) {
+                            $adsToInsert[] = $ad;
+                            if (!empty($ad['id'])) {
+                                $exclude[] = (int) $ad['id'];
+                            }
+                            if (!empty($ad['vychozi'])) {
+                                break;
+                            }
+                        }
                     }
-                    $secondAd = $this->adModel->getWeightedRandomActiveAd($exclude);
-                    if (is_array($secondAd) && !empty($secondAd['obrazek'])) {
-                        $adsToInsert[] = $secondAd;
+
+                    if (!empty($adsToInsert)) {
+                        $articleContentHtml = AdInsertionHelper::insertAdsIntoHtml($articleContentHtml, $adsToInsert, $insertAfterBlocks);
                     }
                 }
-
-                $articleContentHtml = AdInsertionHelper::insertAdsIntoHtml($articleContentHtml, $adsToInsert, $insertAfterBlocks);
             }
+
+            // 3. Nakonec přidáme tracking k odkazům (včetně těch v reklamách, pokud jsou interní)
+            $articleContentHtml = LinkTrackingHelper::addTrackingToLinks($articleContentHtml, $article['id']);
         }
 
         $css = ["main-page", "clanek", "autor_clanku", "lightbox", "gallery-fix"];
@@ -211,5 +206,23 @@ class ArticleController
 
         $view = '../app/Views/Web/articles/article.php';
         require '../app/Views/Web/layouts/base.php';
+    }
+
+    private function resolveArticleAudioUrl($audioValue, int $articleId): ?string
+    {
+        $audioRaw = trim((string) $audioValue);
+        if ($audioRaw !== '') {
+            if (preg_match('#^https?://#i', $audioRaw)) {
+                return $audioRaw;
+            }
+            if (strpos($audioRaw, '/uploads/audio/') === 0) {
+                return $audioRaw;
+            }
+            return '/uploads/audio/' . rawurlencode(basename($audioRaw));
+        }
+
+        // Zpětná kompatibilita pro staré ID.mp3 soubory.
+        $audioFilePath = __DIR__ . '/../../../web/uploads/audio/' . $articleId . '.mp3';
+        return @file_exists($audioFilePath) ? '/uploads/audio/' . $articleId . '.mp3' : null;
     }
 }

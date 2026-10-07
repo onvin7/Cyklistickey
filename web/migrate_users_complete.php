@@ -7,6 +7,22 @@
  * - Zmenší profilové fotky
  */
 
+$internalRun = defined('MIGRATION_INTERNAL_RUN') && MIGRATION_INTERNAL_RUN;
+
+$credentialsFile = __DIR__ . '/../config/db_credentials.php';
+if (file_exists($credentialsFile)) {
+    require_once $credentialsFile;
+}
+
+if (!$internalRun && php_sapi_name() !== 'cli') {
+    $token = (string)($_GET['token'] ?? '');
+    if (!defined('MIGRATION_TOKEN') || $token === '' || !hash_equals((string)MIGRATION_TOKEN, $token)) {
+        http_response_code(403);
+        echo 'Forbidden';
+        exit;
+    }
+}
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -14,7 +30,7 @@ set_time_limit(0);
 ini_set('memory_limit', '1024M');
 
 // Pro webový výstup - vypnout buffering pro průběžný výstup
-if (php_sapi_name() !== 'cli') {
+if (!$internalRun && php_sapi_name() !== 'cli') {
     if (ob_get_level()) {
         ob_end_clean();
     }
@@ -26,8 +42,9 @@ if (php_sapi_name() !== 'cli') {
 }
 
 function zprava($text) {
+    global $internalRun;
     echo $text . (php_sapi_name() === 'cli' ? "\n" : "<br>\n");
-    if (php_sapi_name() !== 'cli') {
+    if (!$internalRun && php_sapi_name() !== 'cli') {
         flush();
         if (ob_get_level() > 0) {
             ob_flush();
@@ -37,17 +54,17 @@ function zprava($text) {
 
 // Konfigurace databází
 $old_db_config = [
-    'host' => 'md396.wedos.net',
-    'username' => 'w340619_clanky',
-    'password' => 'bqsUuxcr',
-    'database' => 'd340619_clanky'
+    'host' => defined('OLD_DB_HOST') ? OLD_DB_HOST : '',
+    'username' => defined('OLD_DB_USER') ? OLD_DB_USER : '',
+    'password' => defined('OLD_DB_PASS') ? OLD_DB_PASS : '',
+    'database' => defined('OLD_DB_NAME') ? OLD_DB_NAME : ''
 ];
 
 $new_db_config = [
-    'host' => 'md413.wedos.net',
-    'username' => 'w340619_blog',
-    'password' => 'kaYak714?',
-    'database' => 'd340619_blog'
+    'host' => defined('DB_HOST') ? DB_HOST : '',
+    'username' => defined('DB_USER') ? DB_USER : '',
+    'password' => defined('DB_PASS') ? DB_PASS : '',
+    'database' => defined('DB_NAME') ? DB_NAME : ''
 ];
 
 function connectDB($config, $label) {

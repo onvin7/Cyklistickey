@@ -131,13 +131,13 @@ class ArticleAdminController
                 return;
             }
             
-            // ID získáme až po vytvoření článku, proto zatím uložíme do dočasného souboru
-            $tempAudioName = uniqid() . '.mp3';
-            $tempAudioPath = $audioDir . $tempAudioName;
+            // Zachováme původní název nahraného souboru
+            $uploadedAudioName = basename($_FILES['audio_file']['name']);
+            $targetAudioPath = $audioDir . $uploadedAudioName;
             
-            if (move_uploaded_file($_FILES['audio_file']['tmp_name'], $tempAudioPath)) {
-                @LogHelper::admin('Article audio uploaded', 'File: ' . $tempAudioPath . ', Size: ' . $_FILES['audio_file']['size'] . ' bytes');
-                $audioFile = $tempAudioName;
+            if (move_uploaded_file($_FILES['audio_file']['tmp_name'], $targetAudioPath)) {
+                @LogHelper::admin('Article audio uploaded', 'File: ' . $targetAudioPath . ', Size: ' . $_FILES['audio_file']['size'] . ' bytes');
+                $audioFile = $uploadedAudioName;
             } else {
                 // echo "<div class='alert alert-danger'>❌ Chyba při nahrávání zvukového souboru!</div>";
                 return;
@@ -180,13 +180,10 @@ class ArticleAdminController
                 $this->articleModel->addCategories($articleId, [1]);
             }
             
-            // Pokud byl nahrán zvukový soubor, přejmenujeme ho podle ID článku a uložíme do DB
+            // Pokud byl nahrán zvukový soubor, uložíme jeho název do DB
             if ($audioFile) {
-                $finalAudioPath = $audioDir . $articleId . '.mp3';
-                rename($audioDir . $audioFile, $finalAudioPath);
-                
                 // Uložit cestu k audio souboru do databáze
-                $audioDbPath = '/uploads/audio/' . $articleId . '.mp3';
+                $audioDbPath = '/uploads/audio/' . $audioFile;
                 $this->articleModel->saveArticleAudio($articleId, $audioDbPath);
             }
             
@@ -201,9 +198,9 @@ class ArticleAdminController
 
     public function edit($id)
     {
-        $article = $this->articleModel->getById($id); // Načtení článku podle ID
+        $article = $this->articleModel->getByIdAdmin($id); // Načtení článku podle ID
         if (!$article) {
-            // echo "Článek nenalezen.";
+             echo "Článek nenalezen.";
             return;
         }
 
@@ -299,13 +296,14 @@ class ArticleAdminController
                 return;
             }
             
-            $audioPath = $audioDir . $id . '.mp3';
+            $uploadedAudioName = basename($_FILES['audio_file']['name']);
+            $audioPath = $audioDir . $uploadedAudioName;
             
             if (move_uploaded_file($_FILES['audio_file']['tmp_name'], $audioPath)) {
                 @LogHelper::admin('Article audio uploaded (update)', 'Article ID: ' . $id . ', File: ' . basename($audioPath) . ', Size: ' . $_FILES['audio_file']['size'] . ' bytes');
                 
                 // Uložit cestu k audio souboru do databáze
-                $audioDbPath = '/uploads/audio/' . $id . '.mp3';
+                $audioDbPath = '/uploads/audio/' . $uploadedAudioName;
                 $this->articleModel->saveArticleAudio($id, $audioDbPath);
             } else {
                 // echo "<div class='alert alert-danger'>❌ Chyba při nahrávání zvukového souboru!</div>";
@@ -314,7 +312,7 @@ class ArticleAdminController
         }
 
         // Nejprve získáme původní data článku
-        $originalArticle = $this->articleModel->getById($id);
+        $originalArticle = $this->articleModel->getByIdAdmin($id);
         
         // Použijeme původní datum, pokud není explicitně zadáno nové
         $datum = isset($postData['datum_publikace']) && !empty($postData['datum_publikace']) 
@@ -393,7 +391,7 @@ class ArticleAdminController
         }
 
         // ✅ **Kontrola existence článku v databázi**
-        if (!$this->articleModel->getById($id)) {
+        if (!$this->articleModel->getByIdAdmin($id)) {
             die("❌ Chyba: Článek nenalezen.");
         }
 
@@ -473,15 +471,7 @@ class ArticleAdminController
             }
         }
 
-        // Načtení audio z databáze, pokud existuje
-        if (!empty($article['audio'])) {
-            $audioUrl = $article['audio'];
-        } else {
-            // Zpětná kompatibilita: kontrola existence souboru na disku
-            $audioFilePath = __DIR__ . '/../../../web/uploads/audio/' . $article['id'] . '.mp3';
-            $fileExists = @file_exists($audioFilePath);
-            $audioUrl = $fileExists ? '/uploads/audio/' . $article['id'] . '.mp3' : null;
-        }
+        $audioUrl = $this->resolveArticleAudioUrl($article['audio'] ?? null, (int) $article['id']);
 
         // Přidání trackingu k odkazům
         if (isset($article['obsah'])) {
@@ -701,5 +691,22 @@ class ArticleAdminController
             },
             $html
         );
+    }
+
+    private function resolveArticleAudioUrl($audioValue, int $articleId): ?string
+    {
+        $audioRaw = trim((string) $audioValue);
+        if ($audioRaw !== '') {
+            if (preg_match('#^https?://#i', $audioRaw)) {
+                return $audioRaw;
+            }
+            if (strpos($audioRaw, '/uploads/audio/') === 0) {
+                return $audioRaw;
+            }
+            return '/uploads/audio/' . rawurlencode(basename($audioRaw));
+        }
+
+        $audioFilePath = __DIR__ . '/../../../web/uploads/audio/' . $articleId . '.mp3';
+        return @file_exists($audioFilePath) ? '/uploads/audio/' . $articleId . '.mp3' : null;
     }
 }

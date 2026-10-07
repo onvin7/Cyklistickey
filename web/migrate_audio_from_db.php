@@ -7,14 +7,47 @@
  * - Přejmenuje ho na {id_clanku}.mp3
  */
 
+$internalRun = defined('MIGRATION_INTERNAL_RUN') && MIGRATION_INTERNAL_RUN;
+
+$credentialsFile = __DIR__ . '/../config/db_credentials.php';
+if (file_exists($credentialsFile)) {
+    require_once $credentialsFile;
+}
+
+if (!$internalRun && php_sapi_name() !== 'cli') {
+    $token = (string)($_GET['token'] ?? '');
+    if (!defined('MIGRATION_TOKEN') || $token === '' || !hash_equals((string)MIGRATION_TOKEN, $token)) {
+        http_response_code(403);
+        echo 'Forbidden';
+        exit;
+    }
+}
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 set_time_limit(0);
 ini_set('memory_limit', '1024M');
 
+if (php_sapi_name() === 'cli' && !$internalRun && isset($argv) && is_array($argv)) {
+    foreach (array_slice($argv, 1) as $arg) {
+        if ($arg === '--help' || $arg === '-h') {
+            zprava("Použití: php migrate_audio_from_db.php [--limit=0] [--start_id=0]");
+            exit(0);
+        }
+        if (strpos($arg, '--') === 0) {
+            $pair = explode('=', substr($arg, 2), 2);
+            $k = (string)($pair[0] ?? '');
+            $v = (string)($pair[1] ?? '1');
+            if ($k !== '') {
+                $_GET[$k] = $v;
+            }
+        }
+    }
+}
+
 // Pro webový výstup - vypnout buffering pro průběžný výstup
-if (php_sapi_name() !== 'cli') {
+if (!$internalRun && php_sapi_name() !== 'cli') {
     if (ob_get_level()) {
         ob_end_clean();
     }
@@ -42,6 +75,7 @@ function log_zprava($text) {
 
 // Funkce pro výpis zpráv
 function zprava($text, $log_file = null) {
+    global $internalRun;
     global $log_file;
     if ($log_file === null) {
         $log_file = $GLOBALS['log_file'] ?? null;
@@ -49,7 +83,7 @@ function zprava($text, $log_file = null) {
     
     // Výpis na obrazovku
     echo $text . (php_sapi_name() === 'cli' ? "\n" : "<br>\n");
-    if (php_sapi_name() !== 'cli') {
+    if (!$internalRun && php_sapi_name() !== 'cli') {
         flush();
         if (ob_get_level() > 0) {
             ob_flush();
@@ -66,10 +100,10 @@ function zprava($text, $log_file = null) {
 
 // Konfigurace STARÉ databáze (zdroj dat)
 $old_db_config = [
-    'host' => 'md396.wedos.net',
-    'username' => 'w340619_clanky',
-    'password' => 'bqsUuxcr',
-    'database' => 'd340619_clanky'
+    'host' => defined('OLD_DB_HOST') ? OLD_DB_HOST : '',
+    'username' => defined('OLD_DB_USER') ? OLD_DB_USER : '',
+    'password' => defined('OLD_DB_PASS') ? OLD_DB_PASS : '',
+    'database' => defined('OLD_DB_NAME') ? OLD_DB_NAME : ''
 ];
 
 // Funkce pro připojení k databázi
@@ -98,8 +132,7 @@ function connectDB($config, $label) {
 }
 
 // Cesta k audio souborům
-$base_path = $_SERVER['DOCUMENT_ROOT'] ?? __DIR__ . '/..';
-$audio_path = $base_path . '/web/uploads/audio/';
+$audio_path = __DIR__ . '/uploads/audio/';
 
 // Parametry
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 0; // 0 = všechny
@@ -111,6 +144,29 @@ zprava("Parametry: limit=$limit, start_id=$start_id");
 
 // Připojení ke staré databázi
 $pdo_old = connectDB($old_db_config, 'STARÁ DB');
+
+$pdo_new = null;
+try {
+    $new_db_config = [
+        'host' => defined('DB_HOST') ? DB_HOST : '',
+        'username' => defined('DB_USER') ? DB_USER : '',
+        'password' => defined('DB_PASS') ? DB_PASS : '',
+        'database' => defined('DB_NAME') ? DB_NAME : ''
+    ];
+    if ($new_db_config['host'] !== '' && $new_db_config['database'] !== '' && $new_db_config['username'] !== '') {
+        $pdo_new = new PDO(
+            "mysql:host={$new_db_config['host']};dbname={$new_db_config['database']};charset=utf8mb4",
+            $new_db_config['username'],
+            $new_db_config['password'],
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+            ]
+        );
+    }
+} catch (Exception $e) {
+    $pdo_new = null;
+}
 
 // Zkontrolovat, zda složka existuje
 if (!is_dir($audio_path)) {
@@ -311,6 +367,19 @@ foreach ($clanky_audio as $index => $item) {
         // Ověřit, že soubor skutečně existuje na nové cestě
         if (file_exists($new_filepath)) {
             zprava("   💾 Přejmenováno na: $new_filename");
+            if ($pdo_new) {
+                $audioUrl = '/uploads/audio/' . $new_filename;
+                try {
+                    $stmtUpdate = $pdo_new->prepare("UPDATE clanky SET audio = :audio WHERE id = :id");
+                    $stmtUpdate->execute([':audio' => $audioUrl, ':id' => $id_clanku]);
+                } catch (Exception $e) {
+                }
+                try {
+                    $stmtUpdate2 = $pdo_new->prepare("UPDATE clanky SET audio_file = :audio_file WHERE id = :id");
+                    $stmtUpdate2->execute([':audio_file' => $new_filename, ':id' => $id_clanku]);
+                } catch (Exception $e) {
+                }
+            }
             $renamed++;
             zprava("   ✅ Done");
             log_zprava("ÚSPĚCH: Přejmenováno z '$old_file_found' na '$new_filename' (článek ID: $id_clanku)");

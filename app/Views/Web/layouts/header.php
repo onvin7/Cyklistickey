@@ -1,3 +1,6 @@
+<meta name="google-site-verification" content="nzSykCzt2gTUjq9eoh9MQ32LXxw47ZwgtlEWOfol7Zs" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3216992613258357"
+     crossorigin="anonymous"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         hideLoader();
@@ -31,7 +34,7 @@
 
     <div class="navbar">
         <a href="/">
-            <img src="/assets/graphics/logo.png" alt="logo" decoding="async">
+            <img src="/assets/graphics/logo.webp" alt="logo" decoding="async">
         </a>
         <div class="inside-nav">
             <ul>
@@ -50,7 +53,7 @@
 
     <div class="nav-mobile">
         <a href="/">
-            <img src="/assets/graphics/CYKLISTICKEY.png" alt="logo" decoding="async">
+            <img src="/assets/graphics/CYKLISTICKEY.webp" alt="logo" decoding="async">
         </a>
         <div class="header-search header-search--mobile" data-header-search>
             <form action="/search" method="GET" role="search" class="header-search__form">
@@ -112,24 +115,37 @@
 
                 const open = () => {
                     container.classList.add('is-open');
+                    if (container.classList.contains('header-search--mobile')) {
+                        navMobile.classList.add('search-active');
+                    }
                     input.focus();
                     input.select();
                 };
 
                 const close = () => {
                     container.classList.remove('is-open');
+                    if (container.classList.contains('header-search--mobile')) {
+                        navMobile.classList.remove('search-active');
+                    }
                 };
 
                 button.addEventListener('click', (e) => {
-                    if (!container.classList.contains('is-open')) {
+                    const isOpen = container.classList.contains('is-open');
+                    const isEmpty = !input.value.trim();
+
+                    if (!isOpen) {
                         e.preventDefault();
                         open();
-                        return;
-                    }
-
-                    if (!input.value.trim()) {
+                    } else if (isEmpty) {
                         e.preventDefault();
-                        input.focus();
+                        close();
+                    }
+                });
+
+                // Zavření při kliknutí mimo vyhledávání
+                document.addEventListener('click', (e) => {
+                    if (container.classList.contains('is-open') && !container.contains(e.target)) {
+                        close();
                     }
                 });
 

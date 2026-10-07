@@ -27,3 +27,11 @@ Thumbs.db
 *.tmp
 *.temp
 
+# Local dumps, archives, debug (keep on disk, never push)
+old/
+old_trae/
+debug_ads.php
+config/d340619_blog_dump.sql
+config/d340619_blog_struktura.sql
+web/users/
+

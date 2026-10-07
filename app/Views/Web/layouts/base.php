@@ -13,6 +13,10 @@
     $defaultOgUrl = "https://www.cyklistickey.cz";
     ?>
 
+<meta name="google-adsense-account" content="ca-pub-3216992613258357">
+
+
+<meta name="google-site-verification" content="nzSykCzt2gTUjq9eoh9MQ32LXxw47ZwgtlEWOfol7Zs" />
     <!-- ✅ Dynamické SEO (pokud není nastavena proměnná, použije se výchozí hodnota) -->
     <?php
     use App\Helpers\SEOHelper;

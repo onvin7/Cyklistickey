@@ -8,6 +8,9 @@
     <!-- Hero sekce BAV SE SPORTEM -->
     <div class="events-hero">
         <div class="events-hero-content">
+            <div class="events-brand-logo-wrap">
+                <img src="/assets/graphics/bav_se_sportem.webp" alt="Bav se sportem" class="events-brand-logo">
+            </div>
             <h3 class="hero-subtitle">NOVĚ POD HLAVIČKOU PROJEKTU <span class="highlight">BAV SE SPORTEM</span></h3>
             
             <p class="hero-text">

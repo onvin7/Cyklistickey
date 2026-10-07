@@ -62,6 +62,7 @@ $activeLinks = [
     'users' => strpos($currentUri, '/admin/users') !== false,
     'access-control' => strpos($currentUri, '/admin/access-control') !== false,
     'link-clicks' => strpos($currentUri, '/admin/link-clicks') !== false,
+    'migration' => strpos($currentUri, '/admin/migration') !== false,
 ];
 
 ?>
@@ -122,6 +123,11 @@ $activeLinks = [
                     <?php if ($currentRole === 3): // Statistiky kliků jen pro admina ?>
                     <li class="nav-item">
                         <a class="nav-link <?= $activeLinks['link-clicks'] ? 'active' : '' ?>" href="/admin/link-clicks">Prokliky</a>
+                    </li>
+                    <?php endif; ?>
+                    <?php if ($currentRole === 3): ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $activeLinks['migration'] ? 'active' : '' ?>" href="/admin/migration">Migrace</a>
                     </li>
                     <?php endif; ?>
                 <?php endif; ?>

@@ -30,25 +30,51 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="obrazek" class="form-label">Obrázek reklamy</label>
-                    <div class="mb-2">
-                        <img src="/uploads/ads/<?= htmlspecialchars($ad['obrazek']) ?>" 
-                             alt="<?= htmlspecialchars($ad['nazev']) ?>" 
-                             style="max-width: 300px; max-height: 200px; object-fit: contain; border: 1px solid #ddd; padding: 5px;">
+                    <label class="form-label d-block">Typ reklamy <span class="text-danger">*</span></label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="typ" id="typ_image" value="image" 
+                               <?= !empty($ad['obrazek']) ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="typ_image">Obrázek s odkazem</label>
                     </div>
-                    <input type="file" name="obrazek" id="obrazek" class="form-control" accept="image/*">
-                    <div class="form-text">Nahrajte nový obrázek pouze pokud chcete změnit současný. Podporované formáty: JPEG, PNG, GIF, WebP. Požadovaný rozměr: 1024×180 px.</div>
-                    <div id="imagePreview" class="mt-2" style="display: none;">
-                        <img id="previewImg" src="" alt="Náhled" style="max-width: 300px; max-height: 200px; object-fit: contain;">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="typ" id="typ_code" value="code"
+                               <?= !empty($ad['kod']) ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="typ_code">Vlastní kód (Google Ads / Script)</label>
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <label for="odkaz" class="form-label">Odkaz (URL) <span class="text-danger">*</span></label>
-                    <input type="url" name="odkaz" id="odkaz" class="form-control" required 
-                           value="<?= htmlspecialchars($ad['odkaz']) ?>"
-                           placeholder="https://www.example.com">
-                    <div class="form-text">URL adresa, na kterou má reklama odkazovat</div>
+                <div id="image_fields" style="<?= !empty($ad['obrazek']) ? 'display: block;' : 'display: none;' ?>">
+                    <div class="mb-4">
+                        <label for="obrazek" class="form-label">Obrázek reklamy</label>
+                        <?php if (!empty($ad['obrazek'])): ?>
+                        <div class="mb-2">
+                            <img src="/uploads/ads/<?= htmlspecialchars($ad['obrazek']) ?>" 
+                                 alt="<?= htmlspecialchars($ad['nazev']) ?>" 
+                                 style="max-width: 300px; max-height: 200px; object-fit: contain; border: 1px solid #ddd; padding: 5px;">
+                        </div>
+                        <?php endif; ?>
+                        <input type="file" name="obrazek" id="obrazek" class="form-control" accept="image/*">
+                        <div class="form-text">Nahrajte nový obrázek pouze pokud chcete změnit současný. Podporované formáty: JPEG, PNG, GIF, WebP. Požadovaný rozměr: 1024×180 px.</div>
+                        <div id="imagePreview" class="mt-2" style="display: none;">
+                            <img id="previewImg" src="" alt="Náhled" style="max-width: 300px; max-height: 200px; object-fit: contain;">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="odkaz" class="form-label">Odkaz (URL) <span class="text-danger">*</span></label>
+                        <input type="url" name="odkaz" id="odkaz" class="form-control" 
+                               value="<?= htmlspecialchars($ad['odkaz'] ?? '') ?>"
+                               placeholder="https://www.example.com">
+                        <div class="form-text">URL adresa, na kterou má reklama odkazovat</div>
+                    </div>
+                </div>
+
+                <div id="code_fields" style="<?= !empty($ad['kod']) ? 'display: block;' : 'display: none;' ?>">
+                    <div class="mb-4">
+                        <label for="kod" class="form-label">Vlastní kód / Script <span class="text-danger">*</span></label>
+                        <textarea name="kod" id="kod" class="form-control" rows="5" placeholder="Sem vložte kód reklamy (např. od Google Ads)"><?= htmlspecialchars($ad['kod'] ?? '') ?></textarea>
+                        <div class="form-text">Vložený kód bude vykreslen přímo do stránky.</div>
+                    </div>
                 </div>
 
                 <?php
@@ -89,10 +115,10 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="frekvence" class="form-label">Frekvence zobrazování</label>
+                    <label for="frekvence" class="form-label">Váha reklamy (1–10)</label>
                     <input type="number" name="frekvence" id="frekvence" class="form-control" 
-                           value="<?= $ad['frekvence'] ?>" min="1" required>
-                    <div class="form-text">Jak často se má reklama zobrazovat (1 = vždy, vyšší hodnoty = méně často)</div>
+                           value="<?= $ad['frekvence'] ?>" min="1" max="10" required>
+                    <div class="form-text">Relativní váha ve výběru (vyšší = častěji). 1–10.</div>
                 </div>
 
                 <div class="mb-4">
@@ -129,6 +155,33 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Přepínání typů reklamy
+    const typImage = document.getElementById('typ_image');
+    const typCode = document.getElementById('typ_code');
+    const imageFields = document.getElementById('image_fields');
+    const codeFields = document.getElementById('code_fields');
+    const obrazekInput = document.getElementById('obrazek');
+    const odkazInput = document.getElementById('odkaz');
+    const kodInput = document.getElementById('kod');
+
+    function toggleFields() {
+        if (typImage.checked) {
+            imageFields.style.display = 'block';
+            codeFields.style.display = 'none';
+            odkazInput.required = true;
+            kodInput.required = false;
+        } else {
+            imageFields.style.display = 'none';
+            codeFields.style.display = 'block';
+            odkazInput.required = false;
+            kodInput.required = true;
+        }
+    }
+
+    typImage.addEventListener('change', toggleFields);
+    typCode.addEventListener('change', toggleFields);
+    toggleFields(); // Inicializace
+
     // Náhled obrázku
     const imageInput = document.getElementById('obrazek');
     const imagePreview = document.getElementById('imagePreview');

@@ -1,9 +1,5 @@
 <?php
-// DEBUG LOGY ZAKOMENTOVÁNY - pro debug odkomentovat
-// $testFile = dirname(__DIR__) . '/logs/debug_test.log';
-// @file_put_contents($testFile, date('Y-m-d H:i:s') . " - web/index.php loaded - URI: " . ($_SERVER['REQUEST_URI'] ?? 'N/A') . "\n", FILE_APPEND);
 
-// Zapnutí output buffering pro zabránění problémů s headers
 if (!ob_get_level()) {
     ob_start();
 }
@@ -20,6 +16,10 @@ if (session_status() === PHP_SESSION_NONE) {
         $cookieParams['httponly']
     );
     session_start();
+}
+
+if (!defined('ROUTING_DEBUG')) {
+    define('ROUTING_DEBUG', false);
 }
 
 require '../config/db.php';
@@ -121,45 +121,41 @@ $routes = [
 
 $routeFound = false;
 
-// DEBUG LOGY ZAKOMENTOVÁNY - pro debug odkomentovat
-// $debugFile = dirname(__DIR__) . '/logs/debug_test.log';
-// @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ROUTING START - URI: $uri, METHOD: " . $_SERVER['REQUEST_METHOD'] . "\n", FILE_APPEND);
-// @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - POST keys: " . implode(', ', array_keys($_POST ?? [])) . "\n", FILE_APPEND);
+if (ROUTING_DEBUG) {
+    $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    $debugFile = dirname(__DIR__) . '/logs/debug_routing.log';
+    @mkdir(dirname($debugFile), 0755, true);
 
-// Debug logování pro všechny requests - NA SAMÉM ZAČÁTKU
-$requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-$debugFile = dirname(__DIR__) . '/logs/debug_routing.log';
-@mkdir(dirname($debugFile), 0755, true);
+    @file_put_contents($debugFile, "\n" . str_repeat("=", 80) . "\n", FILE_APPEND);
+    @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ROUTING START\n", FILE_APPEND);
+    @file_put_contents($debugFile, "URI: $uri\n", FILE_APPEND);
+    @file_put_contents($debugFile, "REQUEST_METHOD: $requestMethod\n", FILE_APPEND);
+    @file_put_contents($debugFile, "REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? 'N/A') . "\n", FILE_APPEND);
+    @file_put_contents($debugFile, "HTTP_REFERER: " . ($_SERVER['HTTP_REFERER'] ?? 'N/A') . "\n", FILE_APPEND);
+    @file_put_contents($debugFile, "Content-Type: " . ($_SERVER['CONTENT_TYPE'] ?? 'N/A') . "\n", FILE_APPEND);
+    @file_put_contents($debugFile, "Content-Length: " . ($_SERVER['CONTENT_LENGTH'] ?? 'N/A') . "\n", FILE_APPEND);
+    @file_put_contents($debugFile, "\$_POST exists: " . (isset($_POST) ? 'YES' : 'NO') . "\n", FILE_APPEND);
+    @file_put_contents($debugFile, "\$_POST empty: " . (empty($_POST) ? 'YES' : 'NO') . "\n", FILE_APPEND);
 
-// ZAPÍŠEME VŠECHNY INFO NA SAMÉM ZAČÁTKU
-@file_put_contents($debugFile, "\n" . str_repeat("=", 80) . "\n", FILE_APPEND);
-@file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ROUTING START\n", FILE_APPEND);
-@file_put_contents($debugFile, "URI: $uri\n", FILE_APPEND);
-@file_put_contents($debugFile, "REQUEST_METHOD: $requestMethod\n", FILE_APPEND);
-@file_put_contents($debugFile, "REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? 'N/A') . "\n", FILE_APPEND);
-@file_put_contents($debugFile, "HTTP_REFERER: " . ($_SERVER['HTTP_REFERER'] ?? 'N/A') . "\n", FILE_APPEND);
-@file_put_contents($debugFile, "Content-Type: " . ($_SERVER['CONTENT_TYPE'] ?? 'N/A') . "\n", FILE_APPEND);
-@file_put_contents($debugFile, "Content-Length: " . ($_SERVER['CONTENT_LENGTH'] ?? 'N/A') . "\n", FILE_APPEND);
-@file_put_contents($debugFile, "\$_POST exists: " . (isset($_POST) ? 'YES' : 'NO') . "\n", FILE_APPEND);
-@file_put_contents($debugFile, "\$_POST empty: " . (empty($_POST) ? 'YES' : 'NO') . "\n", FILE_APPEND);
+    if ($requestMethod === 'POST') {
+        @file_put_contents($debugFile, "POST keys: " . implode(', ', array_keys($_POST ?? [])) . "\n", FILE_APPEND);
+        @file_put_contents($debugFile, "POST data:\n" . print_r($_POST, true) . "\n", FILE_APPEND);
 
-if ($requestMethod === 'POST') {
-    @file_put_contents($debugFile, "POST keys: " . implode(', ', array_keys($_POST ?? [])) . "\n", FILE_APPEND);
-    @file_put_contents($debugFile, "POST data:\n" . print_r($_POST, true) . "\n", FILE_APPEND);
-    
-    // Zkusíme přečíst raw POST data
-    $rawPost = file_get_contents('php://input');
-    @file_put_contents($debugFile, "Raw POST data length: " . strlen($rawPost) . "\n", FILE_APPEND);
-    @file_put_contents($debugFile, "Raw POST data (first 500): " . substr($rawPost, 0, 500) . "\n", FILE_APPEND);
-} else {
-    @file_put_contents($debugFile, "GET keys: " . implode(', ', array_keys($_GET ?? [])) . "\n", FILE_APPEND);
-    @file_put_contents($debugFile, "GET data:\n" . print_r($_GET, true) . "\n", FILE_APPEND);
+        $rawPost = file_get_contents('php://input');
+        @file_put_contents($debugFile, "Raw POST data length: " . strlen($rawPost) . "\n", FILE_APPEND);
+        @file_put_contents($debugFile, "Raw POST data (first 500): " . substr($rawPost, 0, 500) . "\n", FILE_APPEND);
+    } else {
+        @file_put_contents($debugFile, "GET keys: " . implode(', ', array_keys($_GET ?? [])) . "\n", FILE_APPEND);
+        @file_put_contents($debugFile, "GET data:\n" . print_r($_GET, true) . "\n", FILE_APPEND);
+    }
 }
 
 foreach ($routes as $path => $route) {
     if (preg_match('#^' . $path . '$#', $uri, $matches)) {
         error_log("Route matched: " . $path);
-        @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - Route matched: $path\n", FILE_APPEND);
+        if (ROUTING_DEBUG) {
+            @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - Route matched: $path\n", FILE_APPEND);
+        }
         
         // Speciální handling pro sitemap a robots
         if ($route[0] === 'sitemap') {
@@ -203,27 +199,39 @@ foreach ($routes as $path => $route) {
             $controller->$method($_POST['email'] ?? '', $_POST['password'] ?? '');
         } else if ($method === 'store') {
             // Registrace - očekává $_POST v metodě
-            @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - STORE METHOD called\n", FILE_APPEND);
+            if (ROUTING_DEBUG) {
+                @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - STORE METHOD called\n", FILE_APPEND);
+            }
             if ($requestMethod !== 'POST') {
-                @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ERROR: STORE called with $requestMethod instead of POST\n", FILE_APPEND);
+                if (ROUTING_DEBUG) {
+                    @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ERROR: STORE called with $requestMethod instead of POST\n", FILE_APPEND);
+                }
                 http_response_code(405);
                 die('Method Not Allowed - POST required');
             }
             $controller->$method();
         } else if ($method === 'resetPassword') {
             // Reset hesla - očekává $_POST v metodě
-            @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - RESET PASSWORD METHOD called\n", FILE_APPEND);
+            if (ROUTING_DEBUG) {
+                @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - RESET PASSWORD METHOD called\n", FILE_APPEND);
+            }
             if ($requestMethod !== 'POST') {
-                @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ERROR: RESET PASSWORD called with $requestMethod instead of POST\n", FILE_APPEND);
+                if (ROUTING_DEBUG) {
+                    @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ERROR: RESET PASSWORD called with $requestMethod instead of POST\n", FILE_APPEND);
+                }
                 http_response_code(405);
                 die('Method Not Allowed - POST required');
             }
             $controller->$method();
         } else if ($method === 'saveNewPassword') {
             // Uložení nového hesla - očekává $_POST v metodě
-            @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - SAVE NEW PASSWORD METHOD called\n", FILE_APPEND);
+            if (ROUTING_DEBUG) {
+                @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - SAVE NEW PASSWORD METHOD called\n", FILE_APPEND);
+            }
             if ($requestMethod !== 'POST') {
-                @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ERROR: SAVE NEW PASSWORD called with $requestMethod instead of POST\n", FILE_APPEND);
+                if (ROUTING_DEBUG) {
+                    @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ERROR: SAVE NEW PASSWORD called with $requestMethod instead of POST\n", FILE_APPEND);
+                }
                 http_response_code(405);
                 die('Method Not Allowed - POST required');
             }
@@ -243,7 +251,9 @@ foreach ($routes as $path => $route) {
             $controller->$method();
         }
 
-        @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ROUTING END - Method executed\n", FILE_APPEND);
+        if (ROUTING_DEBUG) {
+            @file_put_contents($debugFile, date('Y-m-d H:i:s') . " - ROUTING END - Method executed\n", FILE_APPEND);
+        }
         $routeFound = true;
         break;
     }

@@ -1,4 +1,5 @@
 <?php
+
 // Globální nastavení session cookie - MUSÍ být před jakýmkoli session_start()
 // Zajistí konzistentní nastavení napříč celou aplikací
 ini_set('session.cookie_path', '/');

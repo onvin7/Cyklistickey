@@ -39,33 +39,21 @@ body {
 
 
 .container-kontakt .foto-header {
-
     width: 100%;
-
     height: 420px;
-
     object-fit: contain;
-
     overflow: hidden;
-
     background-position: 50% 0;
-
-    margin-bottom: 50px;
-
-    margin-top: -42.4px;
-
+    margin-bottom: 0;
+    margin-top: -45px;
 }
 
 
-
 .parallax-image {
-
     width: 100%;
-
     object-fit: contain;
-
     position: relative;
-
+    top: 0 !important;
 }
 
 
@@ -102,12 +90,11 @@ body {
 
 .container-kontakt .text {
     width: 60%;
-    margin-top: 150px; /* Added top margin to prevent collision with header */
+    margin-top: 20px;
 }
 
 @media screen and (max-width: 930px) {
     .container-kontakt .text {
-        margin-top: 50px; /* Smaller margin for mobile as layout changes */
     }
 }
 
@@ -146,15 +133,20 @@ body {
 }
 
 .container-kontakt .text table {
-
     color: white;
-
     margin: 20px 0;
-
     border-collapse: collapse;
-
     width: 100%;
+    font-size: 0.9rem;
+}
 
+@media screen and (max-width: 600px) {
+    .container-kontakt .text table {
+        font-size: 0.8rem;
+    }
+    .container-kontakt .text table td {
+        padding: 5px;
+    }
 }
 
 .container-kontakt .text table td {
@@ -213,40 +205,36 @@ body {
 
     text-transform: uppercase;
 
-    margin-top: 50px;
+    margin-top: 80px;
 
 }
 
 
 
 @media screen and (max-width: 700px) {
+    .container-kontakt .text h1 {
+        font-size: 35px;
+        margin-top: 30px;
+    }
+
+    .container-kontakt .text h2 {
+        font-size: 28px;
+        margin-top: 40px;
+    }
 
     .container-kontakt .text {
-
         width: 90%;
-
     }
-
-
 
     .container-kontakt .foto-header {
-
         width: 100%;
-
         height: max-content;
-
         object-fit: contain;
-
         overflow: hidden;
-
         background-position: 50% 0;
-
         margin-bottom: 25px;
-
         margin-top: 60px;
-
     }
-
 }
 
 .galerie {
@@ -254,27 +242,37 @@ body {
     white-space: nowrap;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    margin-block: 50px;
-    padding-left: 10%;
+    margin-block: 30px;
+    padding-left: 12.5%;
     cursor: default;
 }
 
-.galerie.team {
+.foto-header picture,
+.foto-header-mobile picture {
+    width: 100%;
+    display: block;
+}
+
+.galerie.team,
+.galerie.cycli-gallery {
     width: 100%;
     cursor: grab;
     overflow-x: auto;
     user-select: none;
-    scrollbar-width: none; /* Pro Firefox */
+    scrollbar-width: none;
     position: relative;
     transition: all 0.2s ease;
 }
 
-.galerie.team::-webkit-scrollbar {
-    display: none; /* Pro Chrome, Safari a Opera */
+.galerie.team::-webkit-scrollbar,
+.galerie.cycli-gallery::-webkit-scrollbar {
+    display: none;
 }
 
 .galerie.team:active,
-.galerie.team.active {
+.galerie.team.active,
+.galerie.cycli-gallery:active,
+.galerie.cycli-gallery.active {
     cursor: grabbing;
     scale: 0.99;
     opacity: 0.98;
@@ -377,29 +375,18 @@ body {
 
 
 @media screen and (max-width: 700px) {
-
     .galerie {
-
         padding-left: 5%;
-
+        margin-block: 20px;
     }
-
-
 
     .galerie img:nth-child(1) {
-
         margin-right: 5px;
-
     }
-
-
 
     .galerie img {
-
         height: 250px;
-
     }
-
 }
 
 
@@ -428,14 +415,16 @@ body {
 
 
 
-.galerie .team-image img {
-
+.galerie .team-image img,
+.galerie .team-image img#kategorie {
     height: 400px;
-
     width: auto;
-
     display: block;
+    object-fit: cover;
+}
 
+.galerie .team-image img#kategorie {
+    object-fit: contain;
 }
 
 
@@ -476,11 +465,9 @@ body {
 
 
 @media screen and (max-width: 700px) {
-
-    .galerie .team-image img {
-
+    .galerie .team-image img,
+    .galerie .team-image img#kategorie {
         height: 250px;
-
     }
 
 
@@ -525,13 +512,27 @@ body {
 
 
 .partneri img {
-
-    width: 300px;
-
+    width: 200px;
+    max-width: 40%;
     height: auto;
+    border-radius: 15px;
+}
 
-    border-radius: 25px;
+@media screen and (max-width: 700px) {
+    .partneri {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        width: 90%;
+    }
 
+    .partneri img {
+        width: 100%;
+        max-width: none;
+        height: 70px;
+        object-fit: contain;
+        border-radius: 10px;
+    }
 }
 
 

@@ -78,6 +78,24 @@ class Article
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
+    public function getByIdAdmin($id)
+    {
+        $query = "SELECT clanky.*, 
+                        users.name AS autor_jmeno, 
+                        users.surname AS autor_prijmeni, 
+                        clanky_kategorie.id_kategorie
+                    FROM clanky
+                    LEFT JOIN users ON clanky.user_id = users.id
+                    LEFT JOIN clanky_kategorie ON clanky.id = clanky_kategorie.id_clanku
+                    WHERE clanky.id = :id 
+                    ";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
     public function getByIdUser($userId)
     {
         $query = "SELECT DISTINCT c.id, c.nazev, c.nahled_foto, c.datum, c.url,
