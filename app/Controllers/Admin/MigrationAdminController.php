@@ -12,9 +12,18 @@ class MigrationAdminController
 
     public function __construct($db)
     {
+        $this->requireSuperAdmin();
         $this->db = $db;
         $this->rootPath = dirname(dirname(dirname(__DIR__)));
         $this->stateFile = $this->rootPath . '/web/cache/migration/state.json';
+    }
+
+    private function requireSuperAdmin(): void
+    {
+        if (!isset($_SESSION['role']) || (int) $_SESSION['role'] !== 3) {
+            http_response_code(403);
+            die('Nemáte oprávnění k přístupu na tuto stránku.');
+        }
     }
 
     public function index()

@@ -1,4 +1,3 @@
-<meta name="google-site-verification" content="nzSykCzt2gTUjq9eoh9MQ32LXxw47ZwgtlEWOfol7Zs" />
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3216992613258357"
      crossorigin="anonymous"></script>
 <script>
